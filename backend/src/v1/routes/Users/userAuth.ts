@@ -110,7 +110,7 @@ userAuth.post('/verify', async (req, res) => {
             res.status(400).json({ message: "Invalid otp" });
             return
         }
-        if(user.isVerified){
+        if (user.isVerified) {
             res.status(400).json({ message: "User already verified" });
             return
         }
@@ -153,6 +153,38 @@ userAuth.post('/login', async (req, res) => {
         const sessionToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, { expiresIn: '10h' });
         res.cookie("AuthToken", sessionToken);
         res.json({ sessionToken, message: "User logged in successfully" });
+        return
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "There was an error" });
+        return
+    }
+});
+userAuth.get('/logout', async (req, res) => {
+    res.clearCookie("AuthToken");
+    res.json({ message: "User logged out successfully" });
+    return
+});
+userAuth.get("/get-user", async (req, res) => {
+    const token = req.cookies.AuthToken;
+    if (!token) {
+        res.status(400).json({ message: "Token not found" });
+        return
+    }
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+        const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+        if (!user) {
+            res.status(400).json({ message: "User not found" });
+            return
+        }
+        res.json({
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            username: user.username,
+            email: user.email
+        });
         return
     } catch (error) {
         console.log(error)
