@@ -4,7 +4,6 @@ require("dotenv").config();
 import { userAuth } from './Users/userAuth';
 import cors from 'cors';
 
-
 const app = express();
 
 app.use(cors({
@@ -14,6 +13,9 @@ app.use(cors({
 
 app.use(express.json());
 app.use("/api/v1/user", userAuth);
+
+
+
 
 
 
