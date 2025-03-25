@@ -20,6 +20,10 @@ model User {
   username  String   @unique
   email     String   @unique
   password  String
+  otp       String?
+  otpExpiry DateTime?
+  isVerified Boolean  @default(false)
+  isSubscribed Boolean @default(false)
   membership Membership?
   membershipId String?
   blogs     Blog[]
