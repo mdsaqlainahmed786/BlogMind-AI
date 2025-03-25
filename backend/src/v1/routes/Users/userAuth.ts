@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import dotenv from 'dotenv';
+import cookieParser from "cookie-parser"
 import express, { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import z from "zod";
@@ -23,9 +24,8 @@ const resetPasswordInput = z.object({
     password: z.string().min(8)
 });
 
-userAuth.get('/login', (req, res) => {
-    res.send('User Login');
-});
+
+userAuth.use(cookieParser());
 
 userAuth.post('/register', async (req: Request, res: Response) => {
     const bodyParser = userSignupInput.safeParse(req.body);
@@ -43,15 +43,41 @@ userAuth.post('/register', async (req: Request, res: Response) => {
         const user = await prisma.user.create({
             data: { firstName, lastName, username, email, password: hashedPassword }
         });
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-        res.json({ token });
+        const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, { expiresIn: '10d' });
+        res.cookie("token", accessToken);
+        res.json({ accessToken, message: "User created successfully" });
         return
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: "There was an error" });
         return
     }
-
-
-    // res.send('User Register');
+});
+userAuth.post('/login', async (req, res) => {
+    const bodyParser = userSigninInput.safeParse(req.body);
+    if (!bodyParser.success) {
+        res.status(400).json({ error: "There was an error", issues: bodyParser.error.issues });
+        return
+    }
+    const { email, password } = bodyParser.data;
+    try {
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) {
+             res.status(400).json({ message: "User does not exist" }); 
+             return 
+            }
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
+             res.status(400).json({ message: "Invalid password" });
+              return 
+            }
+        const sessionToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, { expiresIn: '10h' });
+        res.cookie("AuthToken", sessionToken);
+        res.json({ sessionToken, message: "User logged in successfully" });
+        return
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "There was an error" });
+        return
+    }
 });
