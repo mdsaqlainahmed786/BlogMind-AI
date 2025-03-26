@@ -49,7 +49,30 @@ blogsRouter.get('/', authenticateUser, async (req: AuthenticatedRequest, res) =>
     try {
         const blogs = await prisma.blog.findMany({
             include: {
-                author: true,
+                author:{
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        username: true,
+                        email: true,
+                    }
+                },
+                
+                Comments: {
+                    include: {
+                        user: {
+                            select: {
+                                id: true,
+                                firstName: true,
+                                lastName: true,
+                                username: true,
+                                email: true,
+
+                            }
+                        }
+                    }
+                },
                 _count: {
                     select: { likes: true },
                 }
@@ -62,6 +85,7 @@ blogsRouter.get('/', authenticateUser, async (req: AuthenticatedRequest, res) =>
             isAIGenerated: blog.isAIGenerated,
             heading: blog.heading,
             description: blog.description,
+            Comments: blog.Comments,
             createdAt: blog.createdAt,
             updatedAt: blog.updatedAt,
             likeCount: blog._count.likes, // Access the like count here
@@ -82,8 +106,30 @@ blogsRouter.get('/:id', authenticateUser, async (req: AuthenticatedRequest, res)
         const { id } = req.params;
         const blog = await prisma.blog.findUnique({
             where: { id },
-            include: { 
-                author: true,
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        username: true,
+                        email: true,
+                    }
+                },
+                Comments: {
+                    include: {
+                        user: {
+                            select: {
+                                id: true,
+                                firstName: true,
+                                lastName: true,
+                                username: true,
+                                email: true,
+
+                            }
+                        }
+                    }
+                },
                 _count: {
                     select: { likes: true },
                 }

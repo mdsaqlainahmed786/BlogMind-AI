@@ -1,1 +1,1 @@
-{"root":["./backend/src/v1/middleware/authmiddleware.ts","./backend/src/v1/routes/index.ts","./backend/src/v1/routes/blogs/blogs.ts","./backend/src/v1/routes/users/userauth.ts"],"version":"5.8.2"}
+{"root":["./backend/src/v1/middleware/authmiddleware.ts","./backend/src/v1/routes/index.ts","./backend/src/v1/routes/blogs/blogs.ts","./backend/src/v1/routes/blogs/comments.ts","./backend/src/v1/routes/users/userauth.ts"],"version":"5.8.2"}
