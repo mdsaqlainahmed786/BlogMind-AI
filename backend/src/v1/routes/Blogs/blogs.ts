@@ -12,13 +12,13 @@ interface AuthenticatedRequest extends Request {
         id: string;
         username: string;
         email: string;
-        
+
     }
 }
 
 // Create a new blog
 //@ts-ignore
-blogsRouter.post('/', authenticateUser, async (req:AuthenticatedRequest, res) => {
+blogsRouter.post('/', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {
         if (!req.user) {
             return res.status(401).json({ message: "Unauthorized!" });
@@ -41,8 +41,8 @@ blogsRouter.post('/', authenticateUser, async (req:AuthenticatedRequest, res) =>
 
 // Get all blogs
 //@ts-ignore
-blogsRouter.get('/',authenticateUser, async (req:AuthenticatedRequest, res) => {
-    if(!req.user){
+blogsRouter.get('/', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    if (!req.user) {
         return res.status(401).json({ message: "Unauthorized!" });
     }
     try {
@@ -57,8 +57,8 @@ blogsRouter.get('/',authenticateUser, async (req:AuthenticatedRequest, res) => {
 
 // Get a single blog by ID
 //@ts-ignore
-blogsRouter.get('/:id', authenticateUser, async (req:AuthenticatedRequest, res) => {
-    if(!req.user){
+blogsRouter.get('/:id', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    if (!req.user) {
         return res.status(401).json({ message: "Unauthorized!" });
     }
     try {
@@ -79,8 +79,8 @@ blogsRouter.get('/:id', authenticateUser, async (req:AuthenticatedRequest, res) 
 
 // Update a blog by ID
 //@ts-ignore
-blogsRouter.put('/:id', authenticateUser, async (req:AuthenticatedRequest, res) => {
-    if(!req.user){
+blogsRouter.put('/:id', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    if (!req.user) {
         return res.status(401).json({ message: "Unauthorized!" });
     }
     try {
@@ -99,8 +99,8 @@ blogsRouter.put('/:id', authenticateUser, async (req:AuthenticatedRequest, res) 
 
 // Delete a blog by ID
 //@ts-ignore
-blogsRouter.delete('/:id', authenticateUser, async (req:AuthenticatedRequest, res) => {
-    if(!req.user){
+blogsRouter.delete('/:id', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    if (!req.user) {
         res.status(401).json({ message: "Unauthorized!" });
         return
     }
@@ -112,5 +112,30 @@ blogsRouter.delete('/:id', authenticateUser, async (req:AuthenticatedRequest, re
         res.json({ message: "Blog deleted successfully" });
     } catch (error) {
         res.status(500).json({ error: "Error deleting blog", details: error });
+    }
+});
+
+// like handler
+//@ts-ignore
+blogsRouter.post('/:id/like', authenticateUser, async (req: AuthenticatedRequest, res) => {
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized!" });
+    }
+    try {
+        const { id } = req.params;
+        const blog = await prisma.blog.findUnique({
+            where: { id },
+        });
+        if (!blog) {
+            res.status(404).json({ error: "Blog not found" });
+            return
+        }
+        const updatedBlog = await prisma.blog.update({
+            where: { id },
+            data: { likes: blog.likes + 1 },
+        });
+        res.json(updatedBlog);
+    } catch (error) {
+        res.status(500).json({ error: "Error liking blog", details: error });
     }
 });
