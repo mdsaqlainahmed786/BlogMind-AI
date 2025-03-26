@@ -5,9 +5,8 @@ import { NextFunction, Request, Response } from 'express';
 // Authentication Middleware
 interface AuthencatedRequest extends Request {
     user?:{
-        username:string;
-        email:string;
-        isVerfied:boolean;
+        id:string;
+        isVerified:boolean;
     }
 }
 export const authenticateUser = (req:AuthencatedRequest, res:Response, next:NextFunction) => {
@@ -17,12 +16,13 @@ export const authenticateUser = (req:AuthencatedRequest, res:Response, next:Next
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+
         req.user = {
-            username: decoded.username,
-            email: decoded.email,
-            isVerfied: decoded.isVerfiied
+            id: decoded.id,
+            isVerified: decoded.isVerified
         }
-        if(!req.user.isVerfied){
+        console.log(req.user);
+        if(!req.user.isVerified){
             return res.status(401).json({ message: "Unauthorized: User is not verified" });
         }
         next();
