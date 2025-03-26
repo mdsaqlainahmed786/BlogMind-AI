@@ -25,6 +25,7 @@ blogsRouter.post('/', authenticateUser, async (req: AuthenticatedRequest, res) =
         }
         const { authorId, isAIGenerated, heading, description } = req.body;
 
+
         const newBlog = await prisma.blog.create({
             data: {
                 authorId: req.user.id,
@@ -47,9 +48,25 @@ blogsRouter.get('/', authenticateUser, async (req: AuthenticatedRequest, res) =>
     }
     try {
         const blogs = await prisma.blog.findMany({
-            include: { author: true },
+            include: {
+                author: true,
+                _count: {
+                    select: { likes: true },
+                }
+            },
+
         });
-        res.json(blogs);
+        const blogsWithLikeCount = blogs.map(blog => ({
+            id: blog.id,
+            authorId: blog.authorId,
+            isAIGenerated: blog.isAIGenerated,
+            heading: blog.heading,
+            description: blog.description,
+            createdAt: blog.createdAt,
+            updatedAt: blog.updatedAt,
+            likeCount: blog._count.likes, // Access the like count here
+        }));
+        res.status(200).json(blogsWithLikeCount);
     } catch (error) {
         res.status(500).json({ error: "Error fetching blogs", details: error });
     }
@@ -65,7 +82,12 @@ blogsRouter.get('/:id', authenticateUser, async (req: AuthenticatedRequest, res)
         const { id } = req.params;
         const blog = await prisma.blog.findUnique({
             where: { id },
-            include: { author: true },
+            include: { 
+                author: true,
+                _count: {
+                    select: { likes: true },
+                }
+            },
         });
         if (!blog) {
             res.status(404).json({ error: "Blog not found" });
@@ -117,25 +139,44 @@ blogsRouter.delete('/:id', authenticateUser, async (req: AuthenticatedRequest, r
 
 // like handler
 //@ts-ignore
-blogsRouter.post('/:id/like', authenticateUser, async (req: AuthenticatedRequest, res) => {
+blogsRouter.post('/:id/like', authenticateUser, async (req: AuthenticatedRequest, res: Response) => {
     if (!req.user) {
         return res.status(401).json({ message: "Unauthorized!" });
     }
+
+    const { id } = req.params; // Blog ID
+    const userId = req.user.id; // User ID
+
     try {
-        const { id } = req.params;
-        const blog = await prisma.blog.findUnique({
-            where: { id },
+        // Check if the user has already liked the blog
+        const existingLike = await prisma.like.findUnique({
+            where: { blogId_userId: { blogId: id, userId } },
         });
-        if (!blog) {
-            res.status(404).json({ error: "Blog not found" });
-            return
+
+        if (existingLike) {
+            // Unlike the blog
+            await prisma.like.delete({
+                where: { blogId_userId: { blogId: id, userId } },
+            });
+            // Get updated like count
+            const likeCount = await prisma.like.count({
+                where: { blogId: id },
+            });
+            return res.json({ message: "Like removed", likeCount });
+        } else {
+            // Like the blog
+            await prisma.like.create({
+                data: { blogId: id, userId },
+            });
+            // Get updated like count
+            const likeCount = await prisma.like.count({
+                where: { blogId: id },
+            });
+            return res.json({ message: "Blog liked", likeCount });
         }
-        const updatedBlog = await prisma.blog.update({
-            where: { id },
-            data: { likes: blog.likes + 1 },
-        });
-        res.json(updatedBlog);
     } catch (error) {
-        res.status(500).json({ error: "Error liking blog", details: error });
+        res.status(500).json({ error: "Error toggling like", details: error });
     }
 });
+
+

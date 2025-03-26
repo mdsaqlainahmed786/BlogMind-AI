@@ -14,43 +14,54 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  firstName String
-  lastName  String
-  username  String   @unique
-  email     String   @unique
-  password  String
-  otp       String?
-  otpExpiry DateTime?
-  isVerified Boolean  @default(false)
-  isSubscribed Boolean @default(false)
-  membership Membership?
+  id           String      @id @default(uuid())
+  firstName    String
+  lastName     String
+  username     String      @unique
+  email        String      @unique
+  password     String
+  otp          String?
+  otpExpiry    DateTime?
+  isVerified   Boolean     @default(false)
+  isSubscribed Boolean     @default(false)
+  membership   Membership?
   membershipId String?
-  blogs     Blog[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  blogs        Blog[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  Like         Like[]
 }
 
 model Membership {
-  id             String   @id @default(uuid())
-  user           User     @relation(fields: [userId], references: [id])
-  userId         String   @unique
-  plan           MembershipPlan
-  aiBlogsLeft    Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id          String         @id @default(uuid())
+  user        User           @relation(fields: [userId], references: [id])
+  userId      String         @unique
+  plan        MembershipPlan
+  aiBlogsLeft Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 }
 
 model Blog {
-  id          String   @id @default(uuid())
-  author      User     @relation(fields: [authorId], references: [id])
-  authorId    String
-  isAIGenerated Boolean @default(false)
-  heading     String
-  description String
-  likes       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(uuid())
+  author        User     @relation(fields: [authorId], references: [id])
+  authorId      String
+  isAIGenerated Boolean  @default(false)
+  heading       String
+  description   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  likes         Like[]
+}
+
+model Like {
+  id     String @id @default(uuid())
+  blog   Blog   @relation(fields: [blogId], references: [id])
+  blogId String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  @@unique([blogId, userId]) // Ensures one like per user per blog
 }
 
 enum MembershipPlan {
@@ -58,4 +69,3 @@ enum MembershipPlan {
   STANDARD
   PREMIUM
 }
-
