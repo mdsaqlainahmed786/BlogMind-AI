@@ -150,7 +150,7 @@ userAuth.post('/login', async (req, res) => {
             res.status(400).json({ message: "User is not verified" });
             return
         }
-        const sessionToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, { expiresIn: '10h' });
+        const sessionToken = jwt.sign({ id: user.id, isVerified: user.isVerified }, process.env.JWT_SECRET as string, { expiresIn: '10h' });
         res.cookie("AuthToken", sessionToken);
         res.json({ sessionToken, message: "User logged in successfully" });
         return
