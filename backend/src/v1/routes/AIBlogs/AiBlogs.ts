@@ -75,18 +75,6 @@ AiBlogsRouter.post('/upgrade', authenticateUser, async (req: AuthenticatedReques
         where: { userId }
     });
 
-    if (!userId) return res.status(400).json({ message: "User not found" });
-    console.log("User Membership", userMembership);
-    if(!userMembership) {
-        await prisma.membership.update({
-            where: { userId },
-            data: {
-                aiBlogsLeft: 0,
-                plan: "BASIC"
-            }
-        });
-    }
-
     if (plan === "STANDARD") {
         await prisma.membership.update({
             where: { userId },
