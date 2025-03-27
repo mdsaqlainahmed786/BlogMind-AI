@@ -1,6 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import { authenticateUser } from '../../Middleware/authMiddleWare';
+import { memberShipMiddleWare } from '../../Middleware/memberShipMiddleware';
 import { Request, Response, NextFunction } from 'express';
 
 const prisma = new PrismaClient();
@@ -18,7 +19,7 @@ interface AuthenticatedRequest extends Request {
 
 // Create a new blog
 //@ts-ignore
-blogsRouter.post('/', authenticateUser, async (req: AuthenticatedRequest, res) => {
+blogsRouter.post('/', authenticateUser, memberShipMiddleWare,  async (req: AuthenticatedRequest, res) => {
     try {
         if (!req.user) {
             return res.status(401).json({ message: "Unauthorized!" });
