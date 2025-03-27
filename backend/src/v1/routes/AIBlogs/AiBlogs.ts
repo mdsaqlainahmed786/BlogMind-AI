@@ -4,6 +4,7 @@ import { memberShipMiddleWare } from '../../Middleware/memberShipMiddleware';
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
+import axios from 'axios';
 dotenv.config();
 
 const prisma = new PrismaClient();
@@ -16,6 +17,9 @@ interface AuthenticatedRequest extends express.Request {
         email: string;
     }
 }
+interface UnsplashResponse {
+    results: { urls: { regular: string } }[];
+}
 //@ts-ignore
 AiBlogsRouter.post('/generate', authenticateUser, memberShipMiddleWare, async (req: AuthenticatedRequest, res) => {
     try {
@@ -27,22 +31,22 @@ AiBlogsRouter.post('/generate', authenticateUser, memberShipMiddleWare, async (r
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-        // Generate and wait for complete response
         const result = await model.generateContent(`Write a comprehensive blog about ${heading}`);
         const response = await result.response;
-        const description = await response.text(); // Convert response to string
-
-        // Create blog with valid string data
+        const description = await response.text();
+        const unsplashImg = await axios.get<UnsplashResponse>(`https://api.unsplash.com/search/photos?client_id=${process.env.UNSPALSH_CLEINTID}&query=${heading}`);
+        const imageUrl = unsplashImg.data.results[0].urls.regular;
         const newBlog = await prisma.blog.create({
             data: {
                 authorId: userId,
                 isAIGenerated: true,
                 heading,
-                description // Now a string
+                description,
+                imageUrl
             }
         });
 
-        // Update membership
+
         await prisma.membership.update({
             where: { userId },
             data: { aiBlogsLeft: { decrement: 1 } }
@@ -61,45 +65,65 @@ AiBlogsRouter.post('/upgrade', authenticateUser, async (req: AuthenticatedReques
     if (!req.user) {
         return res.status(401).json({ message: "Unauthorized!" });
     }
-    try {
-        const userId = req.user.id;
-        const { plan } = req.body;
+    //   try {
+    const userId = req.user.id;
+    console.log("User ID", userId);
+    const { plan } = req.body;
+    console.log("Plan", plan);
 
-        const userMembership = await prisma.membership.findUnique({
-            where: { userId }
+    const userMembership = await prisma.membership.findUnique({
+        where: { userId }
+    });
+
+    if (!userId) return res.status(400).json({ message: "User not found" });
+    console.log("User Membership", userMembership);
+    if(!userMembership) {
+        await prisma.membership.update({
+            where: { userId },
+            data: {
+                aiBlogsLeft: 0,
+                plan: "BASIC"
+            }
         });
-
-        if (plan === "STANDARD") {
-            await prisma.membership.update({
-                where: { userId },
-                data: { aiBlogsLeft: { increment: 10 } }
-            })
-        }
-        else if (plan === "PREMIUM") {
-            await prisma.membership.update({
-                where: { userId },
-                data: { aiBlogsLeft: { increment: 25 } }
-            })
-        }
-
-        if (userMembership) {
-            await prisma.membership.update({
-                where: { userId },
-                data: { plan }
-            });
-        } else {
-            await prisma.membership.create({
-                data: {
-                    userId,
-                    plan
-                }
-            });
-        }
-
-        return res.status(201).json({ message: `Membership upgraded successfully to ${plan}` });
-    } catch (error) {
-        res.status(500).json({ error: "Error upgrading membership", details: error });
     }
+
+    if (plan === "STANDARD") {
+        await prisma.membership.update({
+            where: { userId },
+            data: {
+                aiBlogsLeft: { increment: 10 },
+                plan: "STANDARD"
+            }
+        })
+    }
+    else if (plan === "PREMIUM") {
+        await prisma.membership.update({
+            where: { userId },
+            data: {
+                aiBlogsLeft: { increment: 25 },
+                plan: "PREMIUM"
+            }
+        })
+    }
+
+    if (userMembership) {
+        await prisma.membership.update({
+            where: { userId },
+            data: { plan }
+        });
+    } else {
+        await prisma.membership.create({
+            data: {
+                userId,
+                plan
+            }
+        });
+    }
+
+    return res.status(201).json({ message: `Membership upgraded successfully to ${plan}` });
+    // } catch (error) {
+    //     res.status(500).json({ error: "Error upgrading membership", details: error });
+    // }
 })
 //@ts-ignore
 AiBlogsRouter.get('/membership', authenticateUser, async (req: AuthenticatedRequest, res) => {
