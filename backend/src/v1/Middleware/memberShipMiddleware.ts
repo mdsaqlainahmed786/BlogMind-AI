@@ -9,6 +9,8 @@ interface AuthencatedRequest extends Request {
         isVerified: boolean;
     }
 }
+
+
 const prisma = new PrismaClient();
 export const memberShipMiddleWare = async (req: AuthencatedRequest, res: Response, next: NextFunction) => {
     const token = req.cookies.AuthToken;
@@ -28,9 +30,18 @@ export const memberShipMiddleWare = async (req: AuthencatedRequest, res: Respons
         if (!memberShipPlan) {
             return res.status(401).json({ message: "Unauthorized: No Membership Plan" });
         }
-       if(memberShipPlan.aiBlogsLeft <= 0){
-            return res.status(401).json({ message: "Unauthorized: No AI Blogs Left" });
-       }
+
+        console.log("Membership Plan", memberShipPlan);
+
+        if (memberShipPlan.aiBlogsLeft <= 0) {
+            await prisma.membership.update({
+                where: { userId: req.user?.id },
+                data: { 
+                    plan: "BASIC"
+                 }
+            })
+            res.status(401).json({ message: "Unauthorized: No AI Blogs Left" });
+        }
         next();
     } catch (error) {
         return res.status(401).json({ message: "Unauthorized: Invalid token" });
