@@ -24,7 +24,7 @@ model User {
   otpExpiry    DateTime?
   isVerified   Boolean     @default(false)
   isSubscribed Boolean     @default(false)
-  membership   Membership?
+  membership   Membership? 
   membershipId String?
   blogs        Blog[]
   createdAt    DateTime    @default(now())
@@ -50,6 +50,7 @@ model Blog {
   isAIGenerated Boolean    @default(false)
   heading       String
   description   String
+  imageUrl      String?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   likes         Like[]

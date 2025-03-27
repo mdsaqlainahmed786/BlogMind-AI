@@ -33,6 +33,7 @@ blogsRouter.post('/', authenticateUser, memberShipMiddleWare,  async (req: Authe
                 isAIGenerated,
                 heading,
                 description,
+                imageUrl:""
             },
         });
         res.status(201).json(newBlog);
@@ -85,6 +86,7 @@ blogsRouter.get('/', authenticateUser, async (req: AuthenticatedRequest, res) =>
             authorId: blog.authorId,
             isAIGenerated: blog.isAIGenerated,
             heading: blog.heading,
+            imageUrl: blog.imageUrl,
             description: blog.description,
             Comments: blog.Comments,
             createdAt: blog.createdAt,

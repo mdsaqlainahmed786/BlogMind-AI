@@ -70,7 +70,7 @@ userAuth.post('/register', async (req: Request, res: Response) => {
                 console.error('Error sending email:', error);
             }
         }
-        sendMail(transporter, mailOptions)
+        // sendMail(transporter, mailOptions)
         const user = await prisma.user.create({
             data: { firstName, lastName, username, email, password: hashedPassword, isVerified: false, otp }
         });
@@ -119,6 +119,19 @@ userAuth.post('/verify', async (req, res) => {
         res.clearCookie("Temptoken");
         const accessToken = jwt.sign({ id: user.id, isVerified: true }, process.env.JWT_SECRET as string, { expiresIn: '10h' });
         res.cookie("AuthToken", accessToken);
+        const userMembership = await prisma.membership.findUnique({
+            where: { userId: user.id }
+        });
+        console.log("User Membership", userMembership);
+        if (!userMembership) {
+            await prisma.membership.create({
+                data: {
+                    userId: user.id,
+                    aiBlogsLeft: 0,
+                    plan: "BASIC"
+                }
+            });
+        }
         res.json({ message: "User verified successfully" });
         return
 
