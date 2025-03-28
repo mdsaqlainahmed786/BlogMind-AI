@@ -19,7 +19,7 @@ interface AuthenticatedRequest extends Request {
 
 // Create a new blog
 //@ts-ignore
-blogsRouter.post('/', authenticateUser, memberShipMiddleWare,  async (req: AuthenticatedRequest, res) => {
+blogsRouter.post('/', authenticateUser,  async (req: AuthenticatedRequest, res) => {
     try {
         if (!req.user) {
             return res.status(401).json({ message: "Unauthorized!" });
@@ -44,10 +44,7 @@ blogsRouter.post('/', authenticateUser, memberShipMiddleWare,  async (req: Authe
 
 // Get all blogs
 //@ts-ignore
-blogsRouter.get('/', authenticateUser, async (req: AuthenticatedRequest, res) => {
-    if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized!" });
-    }
+blogsRouter.get('/', async (req, res) => {
     try {
         const blogs = await prisma.blog.findMany({
             include: {
@@ -101,10 +98,7 @@ blogsRouter.get('/', authenticateUser, async (req: AuthenticatedRequest, res) =>
 
 // Get a single blog by ID
 //@ts-ignore
-blogsRouter.get('/:id', authenticateUser, async (req: AuthenticatedRequest, res) => {
-    if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized!" });
-    }
+blogsRouter.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const blog = await prisma.blog.findUnique({
@@ -188,7 +182,7 @@ blogsRouter.delete('/:id', authenticateUser, async (req: AuthenticatedRequest, r
 
 // like handler
 //@ts-ignore
-blogsRouter.post('/:id/like', authenticateUser, async (req: AuthenticatedRequest, res: Response) => {
+blogsRouter.get('/:id/like', authenticateUser, async (req: AuthenticatedRequest, res: Response) => {
     if (!req.user) {
         return res.status(401).json({ message: "Unauthorized!" });
     }
