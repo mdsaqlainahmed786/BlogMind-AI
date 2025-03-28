@@ -31,7 +31,7 @@ AiBlogsRouter.post('/generate', authenticateUser, memberShipMiddleWare, async (r
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-        const result = await model.generateContent(`Write a comprehensive blog about ${heading}`);
+        const result = await model.generateContent(`Please write a blog post about ${heading} and use facts and data throughout the article while citing your sources as well as write the introduction in a storytelling format.`);
         const response = await result.response;
         const description = await response.text();
         const unsplashImg = await axios.get<UnsplashResponse>(`https://api.unsplash.com/search/photos?client_id=${process.env.UNSPALSH_CLEINTID}&query=${heading}`);
@@ -65,7 +65,7 @@ AiBlogsRouter.post('/upgrade', authenticateUser, async (req: AuthenticatedReques
     if (!req.user) {
         return res.status(401).json({ message: "Unauthorized!" });
     }
-    //   try {
+      try {
     const userId = req.user.id;
     console.log("User ID", userId);
     const { plan } = req.body;
@@ -109,9 +109,9 @@ AiBlogsRouter.post('/upgrade', authenticateUser, async (req: AuthenticatedReques
     }
 
     return res.status(201).json({ message: `Membership upgraded successfully to ${plan}` });
-    // } catch (error) {
-    //     res.status(500).json({ error: "Error upgrading membership", details: error });
-    // }
+    } catch (error) {
+        res.status(500).json({ error: "Error upgrading membership", details: error });
+    }
 })
 //@ts-ignore
 AiBlogsRouter.get('/membership', authenticateUser, async (req: AuthenticatedRequest, res) => {
