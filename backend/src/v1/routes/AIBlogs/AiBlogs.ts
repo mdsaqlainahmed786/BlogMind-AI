@@ -65,50 +65,49 @@ AiBlogsRouter.post('/upgrade', authenticateUser, async (req: AuthenticatedReques
     if (!req.user) {
         return res.status(401).json({ message: "Unauthorized!" });
     }
-      try {
-    const userId = req.user.id;
-    console.log("User ID", userId);
-    const { plan } = req.body;
-    console.log("Plan", plan);
+    try {
+        const userId = req.user.id;
 
-    const userMembership = await prisma.membership.findUnique({
-        where: { userId }
-    });
+        const { plan } = req.body;
 
-    if (plan === "STANDARD") {
-        await prisma.membership.update({
-            where: { userId },
-            data: {
-                aiBlogsLeft: { increment: 10 },
-                plan: "STANDARD"
-            }
-        })
-    }
-    else if (plan === "PREMIUM") {
-        await prisma.membership.update({
-            where: { userId },
-            data: {
-                aiBlogsLeft: { increment: 25 },
-                plan: "PREMIUM"
-            }
-        })
-    }
-
-    if (userMembership) {
-        await prisma.membership.update({
-            where: { userId },
-            data: { plan }
+        const userMembership = await prisma.membership.findUnique({
+            where: { userId }
         });
-    } else {
-        await prisma.membership.create({
-            data: {
-                userId,
-                plan
-            }
-        });
-    }
 
-    return res.status(201).json({ message: `Membership upgraded successfully to ${plan}` });
+        if (plan === "STANDARD") {
+            await prisma.membership.update({
+                where: { userId },
+                data: {
+                    aiBlogsLeft: { increment: 10 },
+                    plan: "STANDARD"
+                }
+            })
+        }
+        else if (plan === "PREMIUM") {
+            await prisma.membership.update({
+                where: { userId },
+                data: {
+                    aiBlogsLeft: { increment: 25 },
+                    plan: "PREMIUM"
+                }
+            })
+        }
+
+        if (userMembership) {
+            await prisma.membership.update({
+                where: { userId },
+                data: { plan }
+            });
+        } else {
+            await prisma.membership.create({
+                data: {
+                    userId,
+                    plan
+                }
+            });
+        }
+
+        return res.status(201).json({ message: `Membership upgraded successfully to ${plan}` });
     } catch (error) {
         res.status(500).json({ error: "Error upgrading membership", details: error });
     }
