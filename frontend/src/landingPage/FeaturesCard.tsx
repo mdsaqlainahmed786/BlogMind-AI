@@ -181,7 +181,7 @@ export default function NeonCardDemo({ info }: { info: InfoItem[] }) {
                             <span className={`bg-gradient-to-r ${item.titleColor} bg-clip-text text-2xl font-bold text-transparent drop-shadow-lg`}>
                                 {item.title}
                             </span>
-                            <p className="text-center text-sm font-medium text-gray-300/90">
+                            <p className="text-center text-sm font-medium text-white">
                                 {item.content}
                             </p>
                         </div>
