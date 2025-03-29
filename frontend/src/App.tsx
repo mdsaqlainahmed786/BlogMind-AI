@@ -1,11 +1,43 @@
-import { Brain, Sparkles, Newspaper, Rocket, Lock } from 'lucide-react';
-import { TestimonialsCarousel } from './landingPage/TestimonialsCarousel';
-
+import { Sparkles, Newspaper, Rocket, Lock } from "lucide-react";
+import { TestimonialsCarousel } from "./landingPage/TestimonialsCarousel";
+import Navbar from "./landingPage/NavBar";
+import { Footer } from "./landingPage/Footer";
+import NeonCardDemo from "./landingPage/FeaturesCard";
 
 function App() {
+  const info = [
+    {
+      id: 1,
+      icon: <Newspaper />,
+      title: "AI-Powered Writing",
+      content:
+        "Generate engaging blog posts with our advanced AI that understands your style and tone.",
+      gradientColors: ["#FF0080", "#7928CA", "#FF0080"],
+      titleColor: "from-pink-500 to-purple-500",
+      glowIntensity: 0.6,
+    },
+    {
+      id: 2,
+      icon: <Rocket />,
+      title: "SEO Optimization",
+      content: "Automatically optimize your content for search engines to reach a wider audience.",
+      gradientColors: ["#FF0080", "#7928CA", "#FF0080"],
+      titleColor: "from-pink-500 to-purple-500",
+      glowIntensity: 0.6,
+    },
+    {
+      id: 3,
+      icon: <Lock />,
+      title: "Premium Content",
+      content: "Access exclusive features and premium AI capabilities with our membership plan.",
+      gradientColors: ["#FF0080", "#7928CA", "#FF0080"],
+      titleColor: "from-pink-500 to-purple-500",
+      glowIntensity: 0.6,
+    },
+    ];
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800">
-      <nav className="container mx-auto px-6 py-4 sticky top-0 bg-white/5 backdrop-blur-sm z-50">
+      {/* <nav className="container mx-auto px-6 py-4 sticky top-0 bg-white/5 backdrop-blur-sm z-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Brain className="h-8 w-8 text-pink-400" />
@@ -21,15 +53,17 @@ function App() {
             </button>
           </div>
         </div>
-      </nav>
+      </nav> */}
+      <Navbar />
 
       <main>
-        <section className="container mx-auto px-6 py-20 text-center">
+        <section className="container mx-auto px-6 pt-56 pb-20 text-center">
           <h1 className="text-5xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
             Transform Your Ideas into Engaging Content
           </h1>
           <p className="text-gray-300 text-xl md:text-2xl mb-12 max-w-3xl mx-auto">
-            Harness the power of AI to create compelling blog posts that captivate your audience. Write smarter, not harder.
+            Harness the power of AI to create compelling blog posts that
+            captivate your audience. Write smarter, not harder.
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <button className="bg-gradient-to-r from-pink-500 cursor-pointer to-purple-500 px-8 py-4 rounded-full text-white font-semibold text-lg hover:opacity-90 transition flex items-center justify-center gap-2">
@@ -44,7 +78,8 @@ function App() {
           <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
             Unleash Your Creative Potential
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <NeonCardDemo info={info} />
+          {/* <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white/5 backdrop-blur-sm p-8 rounded-2xl hover:transform hover:-translate-y-1 transition">
               <Newspaper className="h-12 w-12 text-pink-400 mb-6" />
               <h3 className="text-2xl font-semibold text-white mb-4">AI-Powered Writing</h3>
@@ -60,16 +95,18 @@ function App() {
               <h3 className="text-2xl font-semibold text-white mb-4">Premium Content</h3>
               <p className="text-gray-300">Access exclusive features and premium AI capabilities with our membership plan.</p>
             </div>
-          </div>
+          </div> */}
         </section>
-        <section id="features" className="container mx-auto px-6 py-20">
-        <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+        <section id="features" className="pt-80 container mx-auto px-6 md:py-20">
+          <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
             What are users say
           </h2>
           <TestimonialsCarousel />
         </section>
+
       </main>
-      <footer className="border-t border-gray-800">
+      <Footer />
+      {/* <footer className="border-t border-gray-800">
         <div className="container mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
@@ -85,7 +122,7 @@ function App() {
             </div>
           </div>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }
