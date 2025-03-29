@@ -24,15 +24,15 @@ export const Footer = () => {
           aria-hidden="true"
         ></div>
 
-        <div className="mb-8 h-[1px] w-screen mx-auto rounded-full bg-gradient-to-r from-pink-500 to-purple-500" />
+        <div className="mb-8 h-[1px] w-screen mx-auto rounded-full bg-gradient-to-r from-blue-500 to-blue-800" />
         <div className="container mx-auto px-6 lg:px-16 relative">
           {/* Upper Section */}
           <div className="flex flex-wrap justify-between gap-12">
             {/* Company Info */}
             <div className="w-full lg:w-1/4">
               <div className="flex items-center space-x-3 mb-6">
-                <Brain className="h-10 w-10 text-pink-400" />
-                <span className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+                <Brain className="h-10 w-10 text-blue-400" />
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-800 bg-clip-text text-transparent">
                   BlogMind AI
                 </span>
               </div>
@@ -174,35 +174,35 @@ export const Footer = () => {
               <div className="flex space-x-5">
                 <a
                   href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 bg-purple-800 p-2 rounded-full hover:bg-purple-700"
+                  className="text-gray-400 hover:text-white transition-colors duration-200 bg-blue-800 p-2 rounded-full hover:bg-blue-700"
                 >
                   <Twitter size={20} />
                   <span className="sr-only">Twitter</span>
                 </a>
                 <a
                   href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 bg-purple-800 p-2 rounded-full hover:bg-purple-700"
+                  className="text-gray-400 hover:text-white transition-colors duration-200 bg-blue-800 p-2 rounded-full hover:bg-blue-700"
                 >
                   <Facebook size={20} />
                   <span className="sr-only">Facebook</span>
                 </a>
                 <a
                   href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 bg-purple-800 p-2 rounded-full hover:bg-purple-700"
+                  className="text-gray-400 hover:text-white transition-colors duration-200 bg-blue-800 p-2 rounded-full hover:bg-blue-700"
                 >
                   <Instagram size={20} />
                   <span className="sr-only">Instagram</span>
                 </a>
                 <a
                   href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 bg-purple-800 p-2 rounded-full hover:bg-purple-700"
+                  className="text-gray-400 hover:text-white transition-colors duration-200 bg-blue-800 p-2 rounded-full hover:bg-blue-700"
                 >
                   <Linkedin size={20} />
                   <span className="sr-only">LinkedIn</span>
                 </a>
                 <a
                   href="#"
-                  className="text-gray-400 hover:text-white transition-colors duration-200 bg-purple-800 p-2 rounded-full hover:bg-purple-700"
+                  className="text-gray-400 hover:text-white transition-colors duration-200 bg-blue-800 p-2 rounded-full hover:bg-blue-700"
                 >
                   <Youtube size={20} />
                   <span className="sr-only">YouTube</span>
@@ -212,7 +212,7 @@ export const Footer = () => {
           </div>
 
           {/* Newsletter */}
-          <div className="mt-16 border-t border-pink-600 pt-8">
+          <div className="mt-16 border-t border-blue-600 pt-8">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center">
               <div className="mb-6 lg:mb-0">
                 <h3 className="text-white font-semibold text-xl mb-3">
@@ -228,7 +228,7 @@ export const Footer = () => {
                   <input
                     type="email"
                     placeholder="Enter your email"
-                    className="w-full sm:w-auto px-4 py-2 pl-10 rounded-md text-white border border-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full sm:w-auto px-4 py-2 pl-10 rounded-md text-white border border-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     aria-label="Email for newsletter"
                   />
                   <Mail
@@ -236,7 +236,7 @@ export const Footer = () => {
                     size={16}
                   />
                 </div>
-                <button className="bg-gradient-to-r from-pink-500 cursor-pointer to-purple-500 px-4 py-2 rounded-full text-white font-semibold text-md hover:opacity-90 transition flex items-center justify-center gap-2">
+                <button className="bg-gradient-to-r from-blue-500 cursor-pointer to-blue-500 px-4 py-2 rounded-full text-white font-semibold text-md hover:opacity-90 transition flex items-center justify-center gap-2">
                   Subscribe
                   <ArrowRight className="ml-2" size={16} />
                 </button>
@@ -256,7 +256,7 @@ export const Footer = () => {
           </div>
 
           {/* Bottom Section */}
-          <div className="mt-12 border-t border-pink-600 pt-8 flex flex-col lg:flex-row justify-between items-center">
+          <div className="mt-12 border-t border-blue-600 pt-8 flex flex-col lg:flex-row justify-between items-center">
             <p className="text-gray-500 text-sm">
               © {new Date().getFullYear()} BlogMind AI. All rights reserved.
             </p>

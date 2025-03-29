@@ -31,8 +31,8 @@ export default function Navbar() {
       <div className="flex items-center justify-between mx-auto w-full max-w-screen-xl">
         {/* Logo Section */}
         <div className="flex items-center space-x-2">
-            <Brain className="h-8 w-8 text-pink-400" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+            <Brain className="h-8 w-8 text-blue-400" />
+            <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent">
               BlogMind AI
             </span>
           </div>

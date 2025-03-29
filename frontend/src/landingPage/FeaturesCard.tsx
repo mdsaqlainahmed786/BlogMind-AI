@@ -72,7 +72,7 @@ interface NeonCardProps {
             />
 
             <div
-                className="relative h-full w-full rounded-2xl border border-white/10 bg-purple-900/[0.85] p-8 transition-all duration-500 group-hover:bg-slate-900/70"
+                className="relative h-full w-full rounded-2xl border border-white/10 bg-blue-900/[0.85] p-8 transition-all duration-500 group-hover:bg-slate-900/70"
                 style={{
                     backdropFilter: "blur(12px)",
                     WebkitBackdropFilter: "blur(12px)",
@@ -175,7 +175,7 @@ export default function NeonCardDemo({ info }: { info: InfoItem[] }) {
                         key={item.id}
                     >
                         <div className="flex h-full flex-col items-center justify-center space-y-4">
-                            <div className="flex items-center justify-center rounded-full p-4 text-pink-500 shadow-xl transition-all duration-500">
+                            <div className="flex items-center justify-center rounded-full p-4 text-blue-500 shadow-xl transition-all duration-500">
                               {item.icon}
                             </div>
                             <span className={`bg-gradient-to-r ${item.titleColor} bg-clip-text text-2xl font-bold text-transparent drop-shadow-lg`}>
