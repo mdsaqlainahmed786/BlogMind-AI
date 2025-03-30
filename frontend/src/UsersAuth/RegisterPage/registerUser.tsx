@@ -3,6 +3,7 @@ import { Brain, Mail, Lock, User, ArrowRight, Eye, EyeOff } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import { Link } from "react-router-dom";
 import AnimatedBackground from "../Plasma";
+import { useNavigate } from "react-router-dom";
 
 interface ValidationErrors {
   firstName: string;
@@ -13,6 +14,7 @@ interface ValidationErrors {
 }
 
 function RegisterUser() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -53,7 +55,9 @@ function RegisterUser() {
       }
       case "email": {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return !emailRegex.test(value) ? "Please enter a valid email address" : "";
+        return !emailRegex.test(value)
+          ? "Please enter a valid email address"
+          : "";
       }
       case "password":
         return value.length < 8
@@ -67,7 +71,7 @@ function RegisterUser() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    
+
     if (touched[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -87,7 +91,7 @@ function RegisterUser() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate all fields
     const newErrors: ValidationErrors = {
       firstName: validateField("firstName", formData.firstName),
@@ -108,16 +112,27 @@ function RegisterUser() {
 
     // Check if there are any errors
     if (Object.values(newErrors).every((error) => error === "")) {
-      console.log("Form submitted:", formData);
+      navigate("/users/verify", { state: { formData } });
+      console.log("User registered:", formData);
     }
   };
+
+  // const handleSubmitRegister = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if()
+  //   // Perform your registration logic here
+  //   console.log("User registered:", formData);
+  // }
+  // Function to get the class name for input fields based on validation state
 
   const getInputClassName = (fieldName: keyof ValidationErrors) => `
     w-full  border rounded-lg py-3 px-12 text-white placeholder-blue-300 
     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-    ${touched[fieldName] && errors[fieldName] 
-      ? "border-red-500 focus:ring-red-500" 
-      : "border-blue-400/20"}
+    ${
+      touched[fieldName] && errors[fieldName]
+        ? "border-red-500 focus:ring-red-500"
+        : "border-blue-400/20"
+    }
   `;
 
   return (
@@ -141,7 +156,11 @@ function RegisterUser() {
                   First Name
                 </label>
                 <div className="relative">
-                  <User className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5 ${touched.firstName && errors.firstName && "top-1/3"}`} />
+                  <User
+                    className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5 ${
+                      touched.firstName && errors.firstName && "top-1/3"
+                    }`}
+                  />
                   <input
                     type="text"
                     name="firstName"
@@ -152,7 +171,9 @@ function RegisterUser() {
                     onBlur={handleBlur}
                   />
                   {touched.firstName && errors.firstName && (
-                    <p className="mt-1 text-sm text-red-400">{errors.firstName}</p>
+                    <p className="mt-1 text-sm text-red-400">
+                      {errors.firstName}
+                    </p>
                   )}
                 </div>
               </div>
@@ -162,7 +183,11 @@ function RegisterUser() {
                   Last Name
                 </label>
                 <div className="relative">
-                  <User className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5 ${touched.lastName && errors.lastName && "top-1/3"}`}/>
+                  <User
+                    className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5 ${
+                      touched.lastName && errors.lastName && "top-1/3"
+                    }`}
+                  />
                   <input
                     type="text"
                     name="lastName"
@@ -173,7 +198,9 @@ function RegisterUser() {
                     onBlur={handleBlur}
                   />
                   {touched.lastName && errors.lastName && (
-                    <p className="mt-1 text-sm text-red-400">{errors.lastName}</p>
+                    <p className="mt-1 text-sm text-red-400">
+                      {errors.lastName}
+                    </p>
                   )}
                 </div>
               </div>
@@ -184,7 +211,11 @@ function RegisterUser() {
                 Username
               </label>
               <div className="relative">
-                <User className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5 ${touched.username && errors.username && "top-1/4"}`}/>
+                <User
+                  className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5 ${
+                    touched.username && errors.username && "top-1/4"
+                  }`}
+                />
                 <input
                   type="text"
                   name="username"
@@ -205,7 +236,11 @@ function RegisterUser() {
                 Email Address
               </label>
               <div className="relative">
-                <Mail className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5 ${touched.email && errors.email && "top-1/3"}`}/>
+                <Mail
+                  className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5 ${
+                    touched.email && errors.email && "top-1/3"
+                  }`}
+                />
                 <input
                   type="email"
                   name="email"
@@ -226,7 +261,11 @@ function RegisterUser() {
                 Create Password
               </label>
               <div className="relative">
-                <Lock className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5 ${touched.password && errors.password && "top-1/3"}`}/>
+                <Lock
+                  className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5 ${
+                    touched.password && errors.password && "top-1/3"
+                  }`}
+                />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
@@ -238,7 +277,9 @@ function RegisterUser() {
                 />
                 <button
                   type="button"
-                  className={`absolute cursor-pointer right-3 top-1/2 transform -translate-y-1/2 text-blue-300 hover:text-blue-400  ${touched.password && errors.password && "top-1/3"}`}
+                  className={`absolute cursor-pointer right-3 top-1/2 transform -translate-y-1/2 text-blue-300 hover:text-blue-400  ${
+                    touched.password && errors.password && "top-1/3"
+                  }`}
                   onClick={() => setShowPassword((prev) => !prev)}
                 >
                   {showPassword ? (
@@ -253,7 +294,19 @@ function RegisterUser() {
               </div>
             </div>
 
-            <button className={`relative inline-flex w-full cursor-pointer items-center justify-center px-10 py-3 overflow-hidden font-medium tracking-tighter text-white bg-gray-800 rounded-lg group transition-transform duration-150 active:scale-95 ${errors.firstName || errors.lastName || errors.username || errors.email || errors.password ? "opacity-50 cursor-not-allowed" : ""}`} disabled={!(errors.firstName || errors.lastName || errors.username || errors.email || errors.password)} type="submit">
+            <button
+              className={`relative inline-flex w-full cursor-pointer items-center justify-center px-10 py-3 overflow-hidden font-medium tracking-tighter text-white bg-gray-800 rounded-lg group transition-transform duration-150 active:scale-95 ${
+                errors.firstName ||
+                errors.lastName ||
+                errors.username ||
+                errors.email ||
+                errors.password
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+              disabled={Object.values(errors).some((error) => error !== "")}
+              type="submit"
+            >
               <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-gradient-to-r cursor-pointer from-blue-500 to-blue-600 text-white rounded-lg group-hover:w-full group-hover:h-full"></span>
               <span className="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-gray-700"></span>
               <div className="relative flex items-center space-x-2 text-white group-hover:text-white">
@@ -265,7 +318,10 @@ function RegisterUser() {
 
           <p className="mt-6 text-center text-blue-200">
             Already have an account?{" "}
-            <Link to="/users/login" className="text-blue-400 hover:text-blue-300">
+            <Link
+              to="/users/login"
+              className="text-blue-400 hover:text-blue-300"
+            >
               <span className="font-semibold">Log In</span>
             </Link>
           </p>

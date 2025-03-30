@@ -133,3 +133,28 @@
 .animate-floating {
   animation: floating 6s ease-in-out infinite;
 }
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+/* Custom focus styles for OTP inputs */
+.otp-input:focus {
+  @apply ring-1 ring-[#0a66c2] border-[#0a66c2];
+}
+
+/* Error state for OTP inputs */
+.otp-error .otp-input {
+  @apply border-red-500 bg-red-500/5;
+}
