@@ -10,13 +10,94 @@ function LoginUser() {
     email: "",
     password: "",
   });
+  interface ValidationErrors {
+    email: string;
+    password: string;
+  }
+  
 
+  const [touched, setTouched] = useState<Record<string, boolean>>({
+    email: false,
+    password: false,
+  });
   const [showPassword, setShowPassword] = useState(false);
+    const [errors, setErrors] = useState<ValidationErrors>({
+      email: "",
+      password: "",
+    });
+    interface ValidationErrors {
+        email: string;
+        password: string;
+      }
+
+      const validateField = (name: string, value: string): string => {
+        switch (name) {
+          case "email": {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return !emailRegex.test(value) ? "Please enter a valid email address" : "";
+          }
+          case "password":
+            return value.length < 8
+              ? "Password must be at least 8 characters long"
+              : "";
+          default:
+            return "";
+        }
+      };
+      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+          const { name, value } = e.target;
+          setFormData((prev) => ({ ...prev, [name]: value }));
+          
+          if (touched[name]) {
+            setErrors((prev) => ({
+              ...prev,
+              [name]: validateField(name, value),
+            }));
+          }
+        };
+
+         const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+            const { name, value } = e.target;
+            setTouched((prev) => ({ ...prev, [name]: true }));
+            setErrors((prev) => ({
+              ...prev,
+              [name]: validateField(name, value),
+            }));
+          };
+
+      
+  
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    
+    // Validate all fields
+    const newErrors: ValidationErrors = {
+      email: validateField("email", formData.email),
+      password: validateField("password", formData.password),
+    };
+
+    setErrors(newErrors);
+    setTouched({
+      email: true,
+      password: true,
+    });
+
+    // Check if there are any errors
+    if (Object.values(newErrors).every((error) => error === "")) {
+      console.log("Form submitted:", formData);
+    }
   };
+
+  
+  const getInputClassName = (fieldName: keyof ValidationErrors) => `
+    w-full  border rounded-lg py-3 px-12 text-white placeholder-blue-300 
+    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+    ${touched[fieldName] && errors[fieldName] 
+      ? "border-red-500 focus:ring-red-500" 
+      : "border-blue-400/20"}
+  `;
+
 
   return (
     
@@ -39,16 +120,19 @@ function LoginUser() {
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5" />
+                  <Mail className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5 ${touched.email && errors.email && "top-1/3"}`} />
                   <input
                     type="email"
-                    className="w-full bg-white/10 border border-blue-400/20 rounded-lg py-3 px-12 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    name="email"
+                    onBlur={handleBlur}
+                    className={getInputClassName("email")}
                     placeholder="you@example.com"
+                    onChange={handleChange}
                     value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
                   />
+                  {touched.email&& errors.email && (
+                    <p className="mt-1 text-sm text-red-400">{errors.email}</p>
+                  )}
                 </div>
               </div>
 
@@ -57,19 +141,19 @@ function LoginUser() {
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5" />
+                <Lock className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5 ${touched.password && errors.password && "top-1/3"}`}/>
                   <input
                     type="password"
-                    className="w-full bg-white/10 border border-blue-400/20 rounded-lg py-3 px-12 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className={getInputClassName("password")}
                     placeholder="••••••••"
                     value={formData.password}
-                    onChange={(e) =>
-                      setFormData({ ...formData, password: e.target.value })
-                    }
+                    name="password"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
                   />
                   <button
                     type="button"
-                    className="absolute cursor-pointer right-3 top-1/2 transform -translate-y-1/2 text-blue-300 hover:text-blue-400"
+                    className={`absolute cursor-pointer right-3 top-1/2 transform -translate-y-1/2 text-blue-300 hover:text-blue-400  ${touched.password && errors.password && "top-1/3"}`}
                     onClick={() => setShowPassword((prev) => !prev)}
                   >
                     {showPassword ? (
@@ -78,6 +162,9 @@ function LoginUser() {
                       <Eye className="h-5 w-5" />
                     )}
                   </button>
+                  {touched.password && errors.password && (
+                  <p className="mt-1 text-sm text-red-400">{errors.password}</p>
+                )}
                 </div>
               </div>
 
