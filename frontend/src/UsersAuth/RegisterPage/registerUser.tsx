@@ -3,6 +3,7 @@ import { Brain, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { Eye, EyeOff } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import { Link } from "react-router-dom";
+import AnimatedBackground from "../Plasma";
 
 function RegisterUser() {
   const [formData, setFormData] = useState({
@@ -24,6 +25,7 @@ function RegisterUser() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 py-32">
        <Navbar />
+       <AnimatedBackground/>
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center">

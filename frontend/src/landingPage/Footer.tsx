@@ -12,7 +12,7 @@ import {
 
 export const Footer = () => {
   return (
-    <div className="flex flex-col h-2/3 text-gray-300 overflow-hidden relative">
+    <div className="flex flex-col h-2/3 text-gray-300 overflow-hidden relative ">
       {/* Main Content (Placeholder for Page Content) */}
 
       {/* Footer Section */}

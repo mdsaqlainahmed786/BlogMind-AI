@@ -57,7 +57,7 @@ export default function LandingPage() {
 
      
       <main>
-        <section className="container mx-auto px-6 pt-56 pb-20 text-center">
+        <section className="container mx-auto px-6 pt-64 pb-48 text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-8 text-white">
             Transform Your Ideas into Engaging Content
           </h1>
@@ -84,7 +84,7 @@ export default function LandingPage() {
             </Link>
           </div>
         </section>
-        <section id="features" className="container mx-auto px-6 py-20">
+        <section id="features" className="container mx-auto px-6 py-20 ">
           <h2 className="text-4xl font-bold text-center mb-16 text-white">
             Unleash Your Creative Potential
           </h2>
