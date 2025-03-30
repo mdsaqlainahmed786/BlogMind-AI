@@ -1,10 +1,12 @@
 import { Sparkles, Newspaper, Rocket, Lock } from "lucide-react";
 import { TestimonialsCarousel } from "./TestimonialsCarousel";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import NeonCardDemo from "./FeaturesCard";
 import Navbar from "./NavBar";
 
 export default function LandingPage() {
+  const navigate = useNavigate();
   const info = [
     {
       id: 1,
@@ -66,7 +68,7 @@ export default function LandingPage() {
             captivate your audience. Write smarter, not harder.
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <button className="bg-gradient-to-r from-blue-500 cursor-pointer to-blue-800 px-5 py-3 rounded-md text-white font-semibold text-lg hover:opacity-90 transition flex items-center justify-center gap-2">
+            <button onClick={()=>navigate('/users/membership')} className="bg-gradient-to-r from-blue-500 cursor-pointer to-blue-800 px-5 py-3 rounded-md text-white font-semibold text-lg hover:opacity-90 transition flex items-center justify-center gap-2">
               <span className="bg-gradient-to-br from-[#ff8a05] via-[#ff5478] to-[#ff00c6] group-hover:from-[#ff00c6] group-hover:via-[#ff5478] group-hover:to-[#ff8a05] absolute"></span>
               <Sparkles className="h-5 w-5" />
               Start Creating Now
