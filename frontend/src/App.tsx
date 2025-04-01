@@ -18,7 +18,7 @@ function App() {
           <Route path="/users/membership" element={<MemberShip />} />
           <Route path="/users/verify" element={<OtpVerification />} /> {/* I can add here /verify/:userID to make it unique */}4
           <Route path="/blogs/all" element={<AllBlogs />} />
-          <Route path="/blog/:blog" element={<Blog />} /> 
+          <Route path="/blog/:blogName" element={<Blog />} /> 
           
           {/* Add more routes here as needed */}
         </Routes>

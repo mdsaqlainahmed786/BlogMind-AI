@@ -1,5 +1,3 @@
-import React from "react";
-import { useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import ReactMarkdown from "react-markdown";
 import { format } from "date-fns";
@@ -28,18 +26,9 @@ interface BlogPost {
 }
 
 function Blog() {
-  const { slug } = useParams<{ slug: string }>();
-
-  // Convert slug to title
-  const title =
-    slug
-      ?.split("-")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ") || "";
-
   // Static blog data
   const blogData: BlogPost = {
-    heading: "gaming",
+    heading: "Shadow fight arena is'nt a game, it's a Irritation",
     isAiGenerated: true,
     description: `## Level Up Your Life: A Comprehensive Guide to the World of Gaming
 
@@ -57,10 +46,10 @@ Before diving headfirst, let's break down the fundamental building blocks of the
       "https://images.unsplash.com/photo-1657664072470-99b02c2143f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3MjkyMzF8MHwxfHNlYXJjaHwxfHxnYW1pbmd8ZW58MHx8fHwxNzQzMDY3MTcxfDA&ixlib=rb-4.0.3&q=80&w=1080",
     createdAt: "2025-03-27T10:01:46.569Z",
     author: {
-      firstName: "Nouman",
-      lastName: "Idiots",
-      username: "nouman-123",
-      avatar: "https://i.pravatar.cc/150?img=8",
+      firstName: "Sarah",
+      lastName: "Connor",
+      username: "sarah-789",
+      avatar: "https://i.pravatar.cc/150?img=5",
       email: "mdnoumanahmed789@gmail.com",
     },
     _count: {
@@ -81,7 +70,7 @@ Before diving headfirst, let's break down the fundamental building blocks of the
             {/* Author info */}
             <div className="px-1 py-4 flex justify-start w-full max-w-[85vw]">
               <span className="text-start font-bold text-3xl px-5 md:font-extrabold md:text-4xl">
-                Gaming One of the best and worst moments of your life
+                {blogData.heading}
               </span>
             </div>
 
@@ -109,9 +98,11 @@ Before diving headfirst, let's break down the fundamental building blocks of the
                 </div>
                 <Badge className="bg-amber-400 -mt-9">PREMIUM USER</Badge>
               </div>
-                <div className="flex md:mr-10">
-                  {blogData.isAiGenerated && <AiGeneratedBadge className="w-10 h-10"/>}
-                </div>
+              <div className="flex md:mr-10">
+                {blogData.isAiGenerated && (
+                  <AiGeneratedBadge className="w-10 h-10" />
+                )}
+              </div>
             </div>
 
             <div className="hidden px-6 py-4 border-t border-b  border-gray-600/50 md:flex items-center justify-between">
@@ -132,15 +123,12 @@ Before diving headfirst, let's break down the fundamental building blocks of the
             </div>
 
             {/* Title */}
-            <div className="px-6 pb-6">
-              <h1 className="text-3xl font-bold text-white">{title}</h1>
-            </div>
 
             {/* Main image */}
             <div className="w-full aspect-video">
               <img
                 src={blogData.imageUrl}
-                alt={title}
+                alt={blogData.heading}
                 className="w-full h-full object-cover"
               />
             </div>

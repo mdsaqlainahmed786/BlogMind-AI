@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ThumbsUp, MessageCircle, Calendar, Sparkles } from "lucide-react";
 import Navbar from "../landingPage/NavBar";
+import { Link } from "react-router-dom";
 
 interface Blog {
   id: string;
@@ -73,6 +74,7 @@ function Blogs() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
           <div className="space-y-8">
             {filteredBlogs.map((blog) => (
+              <Link to={`/blog/${blog.id}`} key={blog.id}>
               <article
                 key={blog.id}
                 className="backdrop-blur-xl bg-white/10 rounded-xl p-6 border cursor-pointer border-white/20 hover:bg-white/20 transition-all duration-300"
@@ -145,6 +147,7 @@ function Blogs() {
                   )}
                 </div>
               </article>
+              </Link>
             ))}
           </div>
         </div>
