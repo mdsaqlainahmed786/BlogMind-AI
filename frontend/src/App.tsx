@@ -4,6 +4,7 @@ import LoginUser from "./UsersAuth/LoginUserPage/LoginUser";
 import RegisterUser from "./UsersAuth/RegisterPage/registerUser";
 import MemberShip from "./MemberShip/memberShip";
 import OtpVerification from "./UsersAuth/RegisterPage/OtpVerification";
+import AllBlogs from "./Blogs/allBlogs";
 
 function App() {
   return (
@@ -14,8 +15,9 @@ function App() {
           <Route path="/users/register" element={<RegisterUser />} />
           <Route path="/users/login" element={<LoginUser />} />
           <Route path="/users/membership" element={<MemberShip />} />
-          <Route path="/users/verify" element={<OtpVerification />} />
-
+          <Route path="/users/verify" element={<OtpVerification />} /> {/* I can add here /verify/:userID to make it unique */}4
+          <Route path="/blogs/all" element={<AllBlogs />} />
+          
           {/* Add more routes here as needed */}
         </Routes>
       </BrowserRouter>

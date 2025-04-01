@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ChevronDown, Brain } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { NotebookPen } from "lucide-react";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -48,32 +49,10 @@ export default function Navbar() {
         {/* Right Actions */}
         <div className="flex items-center gap-6 z-10">
           {/* Icons */}
-          <div className="hidden md:flex items-center gap-6">
-            <a
-              href="#features"
-              className="text-gray-300 hover:text-white transition"
-            >
-              Features
-            </a>
-            <a
-              href="#pricing"
-              className="text-gray-300 hover:text-white transition"
-            >
-              Pricing
-            </a>
-            <a
-              href="#testimonials"
-              className="text-gray-300 hover:text-white transition"
-            >
-              Testimonials
-            </a>
-            <a
-              href="#contact"
-              className="text-gray-300 hover:text-white transition"
-            >
-              Contact
-            </a>
-          </div>
+           <div className="flex items-center gap-2 group transition-colors duration-300 cursor-pointer">
+            <NotebookPen className="text-white group-hover:text-blue-400 transition-colors duration-300 cursor-pointer" />
+            <span className="hidden md:block text-white group-hover:text-blue-400 transition-colors duration-300">Start Writing</span>
+           </div>
           {/* User Profile */}
           <div className="relative group">
             <div className="flex items-center gap-3 cursor-pointer">
