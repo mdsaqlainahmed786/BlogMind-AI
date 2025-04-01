@@ -92,7 +92,7 @@ function Blogs() {
                           <span className="text-white font-medium">
                             {blog.author.name}
                           </span>
-                          {blog.AiGenerated && <AiGeneratedBadge />}
+                          {blog.AiGenerated && <AiGeneratedBadge className="w-6 h-6"/>}
                         </div>
                         <span className="text-blue-300 text-sm">
                           @{blog.author.username}
@@ -196,11 +196,13 @@ function Blogs() {
     </>
   );
 }
-
-export const AiGeneratedBadge = () => {
+interface AiGeneratedBadgeProps {
+  className?: string;
+}
+export const AiGeneratedBadge = ({className}: AiGeneratedBadgeProps) => {
     return (
       <div className="relative group z-50">
-        <div className="relative flex items-center justify-center w-6 h-6 rounded-full">
+        <div className={`relative flex items-center justify-center rounded-full ${className}`}>
           <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 opacity-60"></div>
           <Sparkles
             className="w-5 h-5 text-white relative z-10 animate-[pulse_2s_ease-infinite]"
