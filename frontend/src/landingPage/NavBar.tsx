@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { ChevronDown, Brain, Search, NotebookPen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import { useLocation } from "react-router-dom";
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogoClick = () => {
     navigate("/");
@@ -27,7 +28,10 @@ export default function Navbar() {
     >
       <div className="flex items-center justify-between mx-auto w-full max-w-screen-xl">
         {/* Logo Section */}
-        <div onClick={handleLogoClick} className="flex items-center cursor-pointer space-x-2 flex-shrink-0">
+        <div
+          onClick={handleLogoClick}
+          className="flex items-center cursor-pointer space-x-2 flex-shrink-0"
+        >
           <Brain
             className={`h-8 w-8 transition-colors duration-300 ${
               scrolled
@@ -47,28 +51,31 @@ export default function Navbar() {
         </div>
 
         {/* Search Bar - Hidden on mobile, shown on larger screens */}
-        <div className="hidden md:block flex-grow max-w-2xl mx-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5" />
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-20vw bg-white/10 backdrop-blur-xl border border-blue-400/20 rounded-full py-2 px-10 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+        {location.pathname === "/blogs/all" && (
+          <div className="hidden md:block flex-grow max-w-2xl mx-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5" />
+              <input
+                type="text"
+                placeholder="Search"
+                className="w-20vw bg-white/10 backdrop-blur-xl border border-blue-400/20 rounded-full py-2 px-10 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Mobile Search Icon - Shown only on mobile */}
-       
 
         {/* Right Actions */}
         <div className="flex items-center gap-4 md:gap-6 flex-shrink-0">
           {/* Write Button */}
-          <button className="md:hidden p-2 text-white hover:text-blue-400 transition-colors cursor-pointer duration-300">
-          <Search className="h-5 w-5" />
-        </button>
+          {location.pathname === "/blogs/all" && (
+            <button className="md:hidden p-2 text-white hover:text-blue-400 transition-colors cursor-pointer duration-300">
+              <Search className="h-5 w-5" />
+            </button>
+          )}
           <div className="flex items-center gap-2 group transition-colors duration-300 cursor-pointer">
             <NotebookPen className="text-white group-hover:text-blue-400 transition-colors duration-300 cursor-pointer h-5 w-5" />
             <span className="hidden md:block text-white group-hover:text-blue-400 transition-colors duration-300 text-sm">

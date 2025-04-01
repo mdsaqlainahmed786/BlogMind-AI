@@ -69,7 +69,7 @@ function Blogs() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br py-24 from-blue-700 via-black to-blue-800">
+      <div className="min-h-screen py-24 ">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
           <div className="space-y-8">
             {filteredBlogs.map((blog) => (
