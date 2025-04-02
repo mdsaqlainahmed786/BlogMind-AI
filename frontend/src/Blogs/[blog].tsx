@@ -1,7 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import ReactMarkdown from "react-markdown";
 import { format } from "date-fns";
-import { MessageCircle, Share2, ThumbsUp, Calendar } from "lucide-react";
+import {
+  MessageCircle,
+  Share2,
+  ThumbsUp,
+  Calendar,
+  ThumbsDown,
+  SendHorizonal,
+} from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import { AiGeneratedBadge } from "./allBlogs";
 
@@ -20,6 +27,23 @@ interface BlogPost {
   imageUrl: string;
   createdAt: string;
   author: Author;
+  Comments: {
+    id: string;
+    userId: string;
+    blogId: string;
+    comment: string;
+    createdAt: string;
+    updatedAt: string;
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      username: string;
+      avatar: string;
+      email: string;
+    };
+  }[];
+  _id: string;
   _count: {
     likes: number;
   };
@@ -28,6 +52,7 @@ interface BlogPost {
 function Blog() {
   // Static blog data
   const blogData: BlogPost = {
+    _id: "unique-blog-id",
     heading: "Shadow fight arena is'nt a game, it's a Irritation",
     isAiGenerated: true,
     description:
@@ -42,6 +67,40 @@ function Blog() {
       avatar: "https://i.pravatar.cc/150?img=5",
       email: "mdnoumanahmed789@gmail.com",
     },
+    Comments: [
+      {
+        id: "5005c3fd-033d-40e3-8cb5-b6bf25757a67",
+        userId: "02ae8e84-0db9-4a22-9af0-8742548c5f0a",
+        blogId: "f086901a-918a-4031-a169-6e0932e0dfd2",
+        comment: "Yeah, so true! Mine favorite game is arena.",
+        createdAt: "2025-04-02T04:05:45.195Z",
+        updatedAt: "2025-04-02T04:05:45.195Z",
+        user: {
+          id: "02ae8e84-0db9-4a22-9af0-8742548c5f0a",
+          firstName: "Zack",
+          lastName: "Smith",
+          username: "zack-123",
+          avatar: "https://i.pravatar.cc/150?img=1",
+          email: "zack@gmail.com",
+        },
+      },
+      {
+        id: "e12c9590-ffa9-4383-961c-dc0578d605e7",
+        userId: "02ae8e84-0db9-4a22-9af0-8742548c5f0a",
+        blogId: "f086901a-918a-4031-a169-6e0932e0dfd2",
+        comment: "mine favorite game is mario lol XD",
+        createdAt: "2025-04-02T04:06:14.725Z",
+        updatedAt: "2025-04-02T04:06:14.725Z",
+        user: {
+          id: "02ae8e84-0db9-4a22-9af0-8742548c5f0a",
+          firstName: "Peter Jay",
+          lastName: "ke land",
+          username: "peter-123",
+          avatar: "https://i.pravatar.cc/150?img=2",
+          email: "peter@gmail.com",
+        },
+      },
+    ],
     _count: {
       likes: 57,
     },
@@ -76,7 +135,7 @@ function Blog() {
                   <span className="text-xs md:text-lg">
                     {`${blogData.author.firstName} ${blogData.author.lastName}`}{" "}
                   </span>
-                  <span className="text-sm text-blue-400 ">
+                  <span className="text-sm text-gray-200 ">
                     @{blogData.author.username}
                   </span>
                   {/*  */}
@@ -92,22 +151,22 @@ function Blog() {
 
             <div className="hidden px-6 py-4 border-t border-b  border-gray-600/50 md:flex items-center justify-between">
               <div className="flex items-center space-x-6">
-                <button className="flex items-center space-x-2 text-blue-400 cursor-pointer hover:text-blue-600 transition-colors">
+                <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
                   <ThumbsUp className="w-5 h-5" />
                   <span>{blogData._count.likes}</span>
                 </button>
-                <button className="flex items-center space-x-2 text-blue-400 cursor-pointer hover:text-blue-600 transition-colors">
+                <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
                   <MessageCircle className="w-5 h-5" />
-                  <span>33</span>
+                  <span>{blogData.Comments.length}</span>
                 </button>
-                <div className="flex items-center space-x-2 text-blue-400">
+                <div className="flex items-center space-x-2 text-gray-200">
                   <Calendar className="w-4 h-4" />
                   <span className="text-sm">
                     {format(new Date(blogData.createdAt), "MMM dd, yyyy")}
                   </span>
                 </div>
               </div>
-              <button className="flex items-center space-x-2 text-blue-400 cursor-pointer hover:text-blue-600 transition-colors">
+              <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
                 <Share2 className="w-5 h-5" />
                 <span>Share</span>
               </button>
@@ -126,7 +185,7 @@ function Blog() {
 
             {/* Content */}
             <div className="p-6">
-              <div className="prose prose-invert font-serif prose-lg max-w-none">
+              <div className="prose prose-lg  dark:prose-invert">
                 <ReactMarkdown>{blogData.description}</ReactMarkdown>
               </div>
             </div>
@@ -134,25 +193,80 @@ function Blog() {
             {/* Engagement */}
             <div className="px-6 py-4 border-t  border-gray-700/50 flex items-center justify-between">
               <div className="flex items-center space-x-6">
-                <button className="flex items-center space-x-2 text-blue-400 cursor-pointer hover:text-blue-600 transition-colors">
+                <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
                   <ThumbsUp className="w-5 h-5" />
                   <span>{blogData._count.likes}</span>
                 </button>
-                <button className="flex items-center space-x-2 text-blue-400 cursor-pointer hover:text-blue-600 transition-colors">
+                <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
                   <MessageCircle className="w-5 h-5" />
-                  <span>33</span>
+                  <span>{blogData.Comments.length}</span>
                 </button>
-                <div className="flex items-center space-x-2 text-blue-400">
+                <div className="flex items-center space-x-2 text-gray-200">
                   <Calendar className="w-4 h-4" />
                   <span className="text-sm">
                     {format(new Date(blogData.createdAt), "MMM dd, yyyy")}
                   </span>
                 </div>
               </div>
-              <button className="flex items-center space-x-2 text-blue-400 cursor-pointer hover:text-blue-600 transition-colors">
+              <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
                 <Share2 className="w-5 h-5" />
                 <span>Share</span>
               </button>
+            </div>
+            {/* Comments Section */}
+            <div className="px-6 py-4 border-t border-gray-700/50">
+              <h3 className="text-2xl font-semibold">Comments</h3>
+              <div className="flex space-x-4 mt-4">
+                <img
+                  src={blogData.author.avatar || "/placeholder.svg"}
+                  alt={blogData.author.username}
+                  className="w-10 h-10 rounded-full border-2 border-blue-400"
+                />
+
+                <input
+                  type="text"
+                  placeholder="Share your thoughts..."
+                  className="border border-gray-300 rounded-lg p-2 w-full "
+                />
+                <button className="bg-blue-500 p-2 rounded-lg hover:bg-blue-600 transition-colors">
+                  <SendHorizonal className="w-6 h-6 text-gray-200 cursor-pointer transition-colors" />
+                </button>
+              </div>
+              <div className="mt-4 space-y-4">
+                {blogData.Comments.map((comment) => (
+                  <div
+                    key={comment.id}
+                    className="flex flex-col border-t  border-gray-700/50 items-start py-6 space-x-4"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <img
+                        src={comment.user.avatar || "/placeholder.svg"}
+                        alt={comment.user.username}
+                        className="w-10 h-10 rounded-full border-2 border-blue-400"
+                      />
+                      <div className="flex flex-col">
+                        <span className="font-semibold ">
+                          {comment.user.username}
+                        </span>
+                        <span className="text-sm text-gray-400">
+                          {format(new Date(comment.createdAt), "MMM dd, yyyy")}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-gray-200">{comment.comment}</p>
+                    <div className="flex mt-5 items-center space-x-6">
+                      <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
+                        <ThumbsUp className="w-5 h-5" />
+                        <span>{blogData._count.likes}</span>
+                      </button>
+                      <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
+                        <ThumbsDown className="w-5 h-5" />
+                        <span>2</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </article>
         </div>

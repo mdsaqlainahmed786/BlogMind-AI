@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ThumbsUp, MessageCircle, Calendar, Sparkles } from "lucide-react";
 import Navbar from "../landingPage/NavBar";
 import { Link } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
 
 interface Blog {
   id: string;
@@ -77,7 +78,7 @@ function Blogs() {
               <Link to={`/blog/${blog.id}`} key={blog.id}>
               <article
                 key={blog.id}
-                className="backdrop-blur-xl bg-white/10 rounded-xl p-6 border cursor-pointer border-white/20 hover:bg-white/20 transition-all duration-300"
+                className="backdrop-blur-xl bg-white/10 rounded-xl p-6 border cursor-pointer border-white/20 hover:bg-white/20 transition-all duration-300 mb-10"
               >
                 <div className="flex flex-col-reverse md:flex-row gap-6">
                   {/* Content Section */}
@@ -107,9 +108,9 @@ function Blogs() {
                       {blog.heading}
                     </h2>
                     <p className="text-blue-200 mb-4 line-clamp-3 text-sm md:text-base">
-                      {blog.description
+                      <ReactMarkdown>{blog.description
                         .replace(/\n/g, " ")
-                        .replace(/\*\*/g, "")}
+                        .replace(/\*\*/g, "")}</ReactMarkdown>
                     </p>
 
                     {/* Metadata */}
