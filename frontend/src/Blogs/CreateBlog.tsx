@@ -156,18 +156,19 @@ function CreateBlog() {
             <h1 className="text-2xl md:text-3xl font-bold text-white">
               Create New Blog
             </h1>
-            <div className="relative group z-50 cursor-pointer">
+            <div 
+            style={{
+              filter: `drop-shadow(0 0 2px #FF0080) 
+                 drop-shadow(0 0 3px #7928CA) 
+                 drop-shadow(0 0 4px #0070F3)`,
+            }}
+            className="relative group z-50 cursor-pointer">
               <div
                 className={`relative flex items-center justify-center rounded-sm w-36 pr-3 h-10 md:w-44 md:h-12 space-x-2`}
               >
                 <div className="absolute inset-0 rounded-sm bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 opacity-60"></div>
                 <Sparkles
                   className="w-5 h-5 text-white relative z-10 animate-[pulse_2s_ease-infinite]"
-                  style={{
-                    filter: `drop-shadow(0 0 4px #FF0080) 
-                       drop-shadow(0 0 6px #7928CA) 
-                       drop-shadow(0 0 8px #0070F3)`,
-                  }}
                 />
                 <span className="text-white text-sm z-10 text-center md:text-md">Create with AI</span>
               </div>

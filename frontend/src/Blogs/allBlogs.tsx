@@ -95,7 +95,7 @@ function Blogs() {
                           <span className="text-white font-medium">
                             {blog.author.name}
                           </span>
-                          {blog.AiGenerated && <AiGeneratedBadge className="w-6 h-6"/>}
+                         
                         </div>
                         <span className="text-blue-300 text-sm">
                           @{blog.author.username}
@@ -122,6 +122,7 @@ function Blogs() {
                             {formatDate(blog.createdAt)} 2025
                           </span>
                         </div>
+                        {blog.AiGenerated && <AiGeneratedBadge className="w-6 h-6"/>}
                       </div>
                       <div className="flex items-center gap-4 text-blue-300 text-sm">
                         <button className="flex items-center hover:text-blue-400 transition-colors">
@@ -205,7 +206,13 @@ interface AiGeneratedBadgeProps {
 }
 export const AiGeneratedBadge = ({className}: AiGeneratedBadgeProps) => {
     return (
-      <div className="relative group z-50">
+      <div
+      style={{
+        filter: `drop-shadow(0 0 1px #FF0080) 
+           drop-shadow(0 0 1px #7928CA) 
+           drop-shadow(0 0 1px #0070F3)`,
+      }}
+      className="relative group z-50">
         <div className={`relative flex items-center justify-center rounded-full ${className}`}>
           <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 opacity-60"></div>
           <Sparkles
