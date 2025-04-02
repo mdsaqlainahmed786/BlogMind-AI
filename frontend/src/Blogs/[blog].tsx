@@ -191,7 +191,7 @@ function Blog() {
             </div>
 
             {/* Engagement */}
-            <div className="px-6 py-4 border-t  border-gray-700/50 flex items-center justify-between">
+            <div className="px-6 py-4 border-t border-gray-700/50 flex items-center justify-between">
               <div className="flex items-center space-x-6">
                 <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
                   <ThumbsUp className="w-5 h-5" />
@@ -228,7 +228,7 @@ function Blog() {
                   placeholder="Share your thoughts..."
                   className="border border-gray-300 rounded-lg p-2 w-full "
                 />
-                <button className="bg-blue-500 p-2 rounded-lg hover:bg-blue-600 transition-colors">
+                <button className="bg-blue-500 p-2 rounded-lg hover:bg-blue-600 cursor-pointer transition-colors">
                   <SendHorizonal className="w-6 h-6 text-gray-200 cursor-pointer transition-colors" />
                 </button>
               </div>
