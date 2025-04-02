@@ -76,7 +76,10 @@ export default function Navbar() {
               <Search className="h-5 w-5" />
             </button>
           )}
-          <div className="flex items-center gap-2 group transition-colors duration-300 cursor-pointer">
+          <div
+            onClick={() => navigate("/blog/create")}
+            className="flex items-center gap-2 group transition-colors duration-300 cursor-pointer"
+          >
             <NotebookPen className="text-white group-hover:text-blue-400 transition-colors duration-300 cursor-pointer h-5 w-5" />
             <span className="hidden md:block text-white group-hover:text-blue-400 transition-colors duration-300 text-sm">
               Start Writing
