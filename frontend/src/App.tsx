@@ -7,6 +7,7 @@ import OtpVerification from "./UsersAuth/RegisterPage/OtpVerification";
 import AllBlogs from "./Blogs/allBlogs";
 import Blog from "./Blogs/[blog]";
 import CreateBlog from "./Blogs/CreateBlog";
+import UserProfileEdit from "./UsersAuth/UserProfile/UserProfileEdit";
 
 function App() {
   return (
@@ -14,13 +15,14 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/users/register" element={<RegisterUser />} />
-          <Route path="/users/login" element={<LoginUser />} />
-          <Route path="/users/membership" element={<MemberShip />} />
-          <Route path="/users/verify" element={<OtpVerification />} /> {/* I can add here /verify/:userID to make it unique */}4
+          <Route path="/user/register" element={<RegisterUser />} />
+          <Route path="/user/login" element={<LoginUser />} />
+          <Route path="/user/membership" element={<MemberShip />} />
+          <Route path="/user/verify" element={<OtpVerification />} /> {/* I can add here /verify/:userID to make it unique */}4
           <Route path="/blogs/all" element={<AllBlogs />} />
           <Route path="/blog/:blogName" element={<Blog />} /> 
           <Route path="/blog/create" element={<CreateBlog />} /> {/* This is for creating a blog */}
+          <Route path="/user/profile" element={<UserProfileEdit />} /> 
           {/* Add more routes here as needed */}
         </Routes>
       </BrowserRouter>

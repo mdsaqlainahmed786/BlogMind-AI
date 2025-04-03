@@ -22,7 +22,6 @@ function CreateBlog() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [coverImage, setCoverImage] = useState<string | null>(null);
-  const [isAIAssisted, setIsAIAssisted] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
   const fileInputRef = useRef<HTMLInputElement>(null);

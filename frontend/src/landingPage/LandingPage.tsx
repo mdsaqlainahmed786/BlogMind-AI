@@ -67,6 +67,12 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <button
+              style={{
+
+                filter: `
+                   drop-shadow(0 0 3px #7928CA) 
+                   drop-shadow(0 0 4px #0070F3)`,
+              }}
               onClick={() => navigate("/users/membership")}
               className="bg-gradient-to-r from-blue-500 cursor-pointer to-blue-800 px-5 py-3 rounded-md text-white font-semibold text-lg hover:opacity-90 transition flex items-center justify-center gap-2"
             >

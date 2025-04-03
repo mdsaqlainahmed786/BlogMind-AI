@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ChevronDown, Brain, Search, NotebookPen } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -65,12 +65,7 @@ export default function Navbar() {
             </div>
           </div>
         )}
-
-        {/* Mobile Search Icon - Shown only on mobile */}
-
-        {/* Right Actions */}
         <div className="flex items-center gap-4 md:gap-6 flex-shrink-0">
-          {/* Write Button */}
           {location.pathname === "/blogs/all" && (
             <button className="md:hidden p-2 text-white hover:text-blue-400 transition-colors cursor-pointer duration-300">
               <Search className="h-5 w-5" />
@@ -103,17 +98,17 @@ export default function Navbar() {
 
             {/* Dropdown Menu */}
             <div className="absolute right-0 top-full mt-2 w-48 bg-white/10 backdrop-blur-md rounded-lg shadow-lg py-2 invisible opacity-0 scale-95 group-hover:visible group-hover:opacity-100 group-hover:scale-100 transition-all duration-200">
-              <a
-                href="#"
+              <Link
+                to="/user/profile"
                 className="block px-4 py-2 text-sm text-white hover:bg-white/10 transition duration-200"
               >
                 Profile
-              </a>
+              </Link>
               <a
                 href="#"
                 className="block px-4 py-2 text-sm text-white hover:bg-white/10 transition duration-200"
               >
-                Settings
+                Your Blogs
               </a>
               <a
                 href="#"
