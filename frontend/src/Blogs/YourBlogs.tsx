@@ -11,7 +11,7 @@ import Navbar from "@/landingPage/NavBar";
 import { AiGeneratedBadge } from "./allBlogs";
 import ReactMarkdown from "react-markdown";
 import AnimatedBackground from "@/UsersAuth/Plasma";
-
+import { Link } from "react-router-dom";
 interface Blog {
   id: string;
   heading: string;
@@ -173,9 +173,10 @@ function YourBlogs() {
           {/* Blog List */}
           <div className="space-y-8">
             {filteredBlogs.map((blog) => (
+                  <Link to={`/blog/${blog.id}`} key={blog.id}>
               <article
                 key={blog.id}
-                className="backdrop-blur-xl bg-white/10 rounded-xl p-6 border cursor-pointer border-white/20 hover:bg-white/20 transition-all duration-300"
+                className="backdrop-blur-xl bg-white/10 rounded-xl p-6 border cursor-pointer mb-10 border-white/20 hover:bg-white/20 transition-all duration-300"
               >
                 <div className="flex flex-col-reverse md:flex-row gap-6">
                   {/* Content Section */}
@@ -251,6 +252,7 @@ function YourBlogs() {
                   )}
                 </div>
               </article>
+              </Link>
             ))}
           </div>
         </div>
