@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Brain, Mail, Lock, User, ArrowRight, Eye, EyeOff } from "lucide-react";
+import React, { useState, useRef } from "react";
+import { Brain, Mail, Lock, User, ArrowRight, Eye, EyeOff, Camera, X } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import { Link } from "react-router-dom";
 import AnimatedBackground from "../Plasma";
@@ -23,6 +23,10 @@ function RegisterUser() {
     password: "",
   });
 
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [errors, setErrors] = useState<ValidationErrors>({
     firstName: "",
     lastName: "",
@@ -40,6 +44,40 @@ function RegisterUser() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setProfilePicture(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setProfilePicture(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const validateField = (name: string, value: string): string => {
     switch (name) {
@@ -112,21 +150,13 @@ function RegisterUser() {
 
     // Check if there are any errors
     if (Object.values(newErrors).every((error) => error === "")) {
-      navigate("/user/verify", { state: { formData } });
-      console.log("User registered:", formData);
+      navigate("/user/verify", { state: { ...formData, profilePicture } });
+      console.log("User registered:", { ...formData, profilePicture });
     }
   };
 
-  // const handleSubmitRegister = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if()
-  //   // Perform your registration logic here
-  //   console.log("User registered:", formData);
-  // }
-  // Function to get the class name for input fields based on validation state
-
   const getInputClassName = (fieldName: keyof ValidationErrors) => `
-    w-full  border rounded-lg py-3 px-12 text-white placeholder-blue-300 
+    w-full border rounded-lg py-3 px-12 text-white placeholder-blue-300 
     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
     ${
       touched[fieldName] && errors[fieldName]
@@ -149,6 +179,59 @@ function RegisterUser() {
         </div>
 
         <div className="backdrop-blur-xl bg-white/10 rounded-2xl p-8 shadow-2xl border border-white/20">
+          {/* Profile Picture Upload */}
+          <div className="mb-8">
+            <div
+              className={`relative w-32 h-32 mx-auto rounded-full overflow-hidden cursor-pointer border-2 ${
+                isDragging ? 'border-blue-400' : 'border-blue-400/20'
+              }`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {profilePicture ? (
+                <>
+                  <img
+                    src={profilePicture}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setProfilePicture(null);
+                    }}
+                    className="absolute top-1 right-1 p-1 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </>
+              ) : formData.firstName && formData.lastName ? (
+                <div className="w-full h-full bg-gray-600 flex items-center justify-center text-white text-3xl font-semibold">
+                  {formData.firstName[0]}{formData.lastName[0]}
+                </div>
+              ) : (
+                <div className="w-full h-full bg-gray-600 flex items-center justify-center">
+                  <Camera className="w-8 h-8 text-gray-300" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                <Camera className="w-8 h-8 text-white" />
+              </div>
+            </div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageUpload}
+              accept="image/*"
+              className="hidden"
+            />
+            <p className="text-center text-sm text-blue-200 mt-2">
+              Click or drag to upload profile picture
+            </p>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="flex space-x-4 w-full">
               <div className="flex-1">
