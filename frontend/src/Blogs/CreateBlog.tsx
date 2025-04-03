@@ -1,11 +1,14 @@
-import React, { useState, useRef } from "react";
+"use client"
+
+import type React from "react"
+import { useState, useRef } from "react"
 import {
   X,
   Upload,
   Sparkles,
   Bold,
   Italic,
-  Link as LinkIcon,
+  LinkIcon,
   List,
   Quote,
   Code,
@@ -14,130 +17,136 @@ import {
   ListOrdered,
   Eye,
   Edit3,
-} from "lucide-react";
-import Navbar from "@/landingPage/NavBar";
-import ReactMarkdown from "react-markdown";
-import AnimatedBackground from "@/UsersAuth/Plasma";
+} from "lucide-react"
+import Navbar from "@/landingPage/NavBar"
+import ReactMarkdown from "react-markdown"
+import AnimatedBackground from "@/UsersAuth/Plasma"
+import AIGenerationModal from "@/Blogs/AIGenerationModal"
 
 function CreateBlog() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [coverImage, setCoverImage] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const contentRef = useRef<HTMLTextAreaElement>(null);
-  const [activeBold, setActiveBold] = useState(false);
-  const [activeItalic, setActiveItalic] = useState(false);
-  const [activeCode, setActiveCode] = useState(false);
+  const [title, setTitle] = useState("")
+  const [content, setContent] = useState("")
+  const [coverImage, setCoverImage] = useState<string | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [activeTab, setActiveTab] = useState<"write" | "preview">("write")
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const contentRef = useRef<HTMLTextAreaElement>(null)
+  const [activeBold, setActiveBold] = useState(false)
+  const [activeItalic, setActiveItalic] = useState(false)
+  const [activeCode, setActiveCode] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
+    e.preventDefault()
+    setIsDragging(true)
+  }
 
   const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
+    e.preventDefault()
+    setIsDragging(false)
+  }
 
   const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
+    e.preventDefault()
+    setIsDragging(false)
+    const file = e.dataTransfer.files[0]
     if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onload = () => {
-        setCoverImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+        setCoverImage(reader.result as string)
+      }
+      reader.readAsDataURL(file)
     }
-  };
+  }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onload = () => {
-        setCoverImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+        setCoverImage(reader.result as string)
+      }
+      reader.readAsDataURL(file)
     }
-  };
+  }
 
   const insertFormat = (format: string) => {
-    if (!contentRef.current) return;
+    if (!contentRef.current) return
 
-    const start = contentRef.current.selectionStart;
-    const end = contentRef.current.selectionEnd;
-    const text = content;
-    let insertion = "";
+    const start = contentRef.current.selectionStart
+    const end = contentRef.current.selectionEnd
+    const text = content
+    let insertion = ""
 
     switch (format) {
       case "h1":
-        insertion = "# ";
-        break;
+        insertion = "# "
+        break
       case "h2":
-        insertion = "## ";
-        break;
+        insertion = "## "
+        break
       case "bold":
-        insertion = "**";
-        break;
+        insertion = "**"
+        break
       case "italic":
-        insertion = "_";
-        break;
+        insertion = "_"
+        break
       case "link":
-        insertion = "[](url)";
-        break;
+        insertion = "[](url)"
+        break
       case "bullet":
-        insertion = "* ";
-        break;
+        insertion = "* "
+        break
       case "number":
-        insertion = "1. ";
-        break;
+        insertion = "1. "
+        break
       case "quote":
-        insertion = "> ";
-        break;
+        insertion = "> "
+        break
       case "code":
-        insertion = "`";
-        break;
+        insertion = "`"
+        break
     }
 
-    const newText = text.substring(0, start) + insertion + text.substring(end);
-    setContent(newText);
-  };
+    const newText = text.substring(0, start) + insertion + text.substring(end)
+    setContent(newText)
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
+    e.preventDefault()
+  }
+
   const processContent = (text: string) => {
-    return text.replace(/\\n\\n/g, "\n\n").replace(/\\n/g, "\n");
-  };
+    return text.replace(/\n\n/g, "\n\n").replace(/\n/g, "\n")
+  }
+
+  const handleCreateWithAI = () => {
+    setIsModalOpen(true)
+  }
 
   const ToolbarButton = ({
     icon: Icon,
     title,
     format,
   }: {
-    icon: React.ElementType;
-    title: string;
-    format: string;
+    icon: React.ElementType
+    title: string
+    format: string
   }) => (
     <button
       type="button"
       onClick={() => {
         if (format === "bold") {
-          setActiveBold(!activeBold);
+          setActiveBold(!activeBold)
         } else if (format === "italic") {
-          setActiveItalic(!activeItalic);
+          setActiveItalic(!activeItalic)
         } else if (format === "code") {
-          setActiveCode(!activeCode);
+          setActiveCode(!activeCode)
         }
-        insertFormat(format);
+        insertFormat(format)
       }}
       className={`p-2 hover:bg-white/20 rounded-lg transition-colors duration-200 group ${
-        (activeBold && format === "bold") ||
-        (activeCode && format === "code") ||
-        (activeItalic && format === "italic")
+        (activeBold && format === "bold") || (activeCode && format === "code") || (activeItalic && format === "italic")
           ? "bg-blue-500 text-white"
           : "text-gray-300"
       }`}
@@ -145,7 +154,7 @@ function CreateBlog() {
     >
       <Icon className="w-4 h-4 text-gray-300 group-hover:text-white" />
     </button>
-  );
+  )
 
   return (
     <div className="min-h-screen">
@@ -154,30 +163,23 @@ function CreateBlog() {
       <div className="pt-24 pb-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="backdrop-blur-xl bg-white/10 rounded-2xl p-6 md:p-8 shadow-2xl border border-white/20">
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-2xl md:text-3xl font-bold text-white">
-              Create Blog
-            </h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-white">Create Blog</h1>
             <button
-              className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-300 cursor-pointer
-                           animate-rainbow-bg shadow-rainbow
-                           text-white hover:scale-105 transform
-                         `}
+              onClick={handleCreateWithAI}
+              className="flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-300 cursor-pointer animate-rainbow-bg shadow-rainbow text-white hover:scale-105 transform"
               style={{
                 backgroundSize: "200% 200%",
-                animation:
-                  "gradient 3s ease infinite, glow 1s ease-in-out infinite alternate",
+                animation: "gradient 3s ease infinite, glow 1s ease-in-out infinite alternate",
               }}
             >
-              <Sparkles className={`w-5 h-5  animate-pulse`} />
+              <Sparkles className="w-5 h-5 animate-pulse" />
               <span>Create with AI</span>
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Blog Title
-              </label>
+              <label className="block text-white text-sm font-medium mb-2">Blog Title</label>
               <input
                 type="text"
                 value={title}
@@ -187,14 +189,10 @@ function CreateBlog() {
               />
             </div>
             <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Cover Image
-              </label>
+              <label className="block text-white text-sm font-medium mb-2">Cover Image</label>
               <div
                 className={`border-2 border-dashed rounded-lg p-4 text-center ${
-                  isDragging
-                    ? "border-blue-500 bg-blue-500/10"
-                    : "border-white/20"
+                  isDragging ? "border-blue-500 bg-blue-500/10" : "border-white/20"
                 }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -203,7 +201,7 @@ function CreateBlog() {
                 {coverImage ? (
                   <div className="relative">
                     <img
-                      src={coverImage}
+                      src={coverImage || "/placeholder.svg"}
                       alt="Cover"
                       className="max-h-64 mx-auto rounded-lg object-cover"
                     />
@@ -221,9 +219,7 @@ function CreateBlog() {
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <Upload className="w-12 h-12 text-gray-400 mb-2" />
-                    <p className="text-gray-400">
-                      Drag & drop an image here, or click to select
-                    </p>
+                    <p className="text-gray-400">Drag & drop an image here, or click to select</p>
                   </div>
                 )}
                 <input
@@ -237,17 +233,13 @@ function CreateBlog() {
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="block text-white text-sm font-medium">
-                  Content
-                </label>
+                <label className="block text-white text-sm font-medium">Content</label>
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => setActiveTab("write")}
                     className={`flex items-center gap-2 px-3 py-1.5 cursor-pointer rounded-lg transition-colors ${
-                      activeTab === "write"
-                        ? "bg-blue-500 text-white"
-                        : "bg-white/10 text-gray-300 hover:bg-white/20"
+                      activeTab === "write" ? "bg-blue-500 text-white" : "bg-white/10 text-gray-300 hover:bg-white/20"
                     }`}
                   >
                     <Edit3 className="w-4 h-4" />
@@ -257,9 +249,7 @@ function CreateBlog() {
                     type="button"
                     onClick={() => setActiveTab("preview")}
                     className={`flex items-center gap-2 px-3 cursor-pointer py-1.5 rounded-lg transition-colors ${
-                      activeTab === "preview"
-                        ? "bg-blue-500 text-white"
-                        : "bg-white/10 text-gray-300 hover:bg-white/20"
+                      activeTab === "preview" ? "bg-blue-500 text-white" : "bg-white/10 text-gray-300 hover:bg-white/20"
                     }`}
                   >
                     <Eye className="w-4 h-4" />
@@ -272,48 +262,20 @@ function CreateBlog() {
                 <div className="space-y-0">
                   <div className="flex items-center gap-1 p-2 bg-white/10 border border-white/20 rounded-t-lg">
                     <div className="flex items-center gap-1">
-                      <ToolbarButton
-                        icon={Heading1}
-                        title="Heading 1"
-                        format="h1"
-                      />
-                      <ToolbarButton
-                        icon={Heading2}
-                        title="Heading 2"
-                        format="h2"
-                      />
+                      <ToolbarButton icon={Heading1} title="Heading 1" format="h1" />
+                      <ToolbarButton icon={Heading2} title="Heading 2" format="h2" />
                     </div>
                     <div className="w-px h-6 bg-white/20 mx-1" />
                     <div className="flex items-center gap-1">
                       <ToolbarButton icon={Bold} title="Bold" format="bold" />
-                      <ToolbarButton
-                        icon={Italic}
-                        title="Italic"
-                        format="italic"
-                      />
-                      <ToolbarButton
-                        icon={LinkIcon}
-                        title="Link"
-                        format="link"
-                      />
+                      <ToolbarButton icon={Italic} title="Italic" format="italic" />
+                      <ToolbarButton icon={LinkIcon} title="Link" format="link" />
                     </div>
                     <div className="w-px h-6 bg-white/20 mx-1" />
                     <div className="flex items-center gap-1">
-                      <ToolbarButton
-                        icon={List}
-                        title="Bullet List"
-                        format="bullet"
-                      />
-                      <ToolbarButton
-                        icon={ListOrdered}
-                        title="Numbered List"
-                        format="number"
-                      />
-                      <ToolbarButton
-                        icon={Quote}
-                        title="Quote"
-                        format="quote"
-                      />
+                      <ToolbarButton icon={List} title="Bullet List" format="bullet" />
+                      <ToolbarButton icon={ListOrdered} title="Numbered List" format="number" />
+                      <ToolbarButton icon={Quote} title="Quote" format="quote" />
                       <ToolbarButton icon={Code} title="Code" format="code" />
                     </div>
                   </div>
@@ -329,10 +291,7 @@ function CreateBlog() {
               ) : (
                 <div className="bg-white/10 border border-white/20 rounded-lg p-6 prose prose-invert max-w-none min-h-[300px] overflow-y-auto">
                   <div className="prose prose-lg dark:prose-invert font-sans">
-                    <ReactMarkdown>
-                      {processContent(content) ||
-                        "*Preview will appear here...*"}
-                    </ReactMarkdown>
+                    <ReactMarkdown>{processContent(content) || "*Preview will appear here...*"}</ReactMarkdown>
                   </div>
                 </div>
               )}
@@ -348,6 +307,8 @@ function CreateBlog() {
           </form>
         </div>
       </div>
+
+      <AIGenerationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
       <style>{`
         @keyframes gradient {
@@ -400,7 +361,8 @@ function CreateBlog() {
         }
       `}</style>
     </div>
-  );
+  )
 }
 
-export default CreateBlog;
+export default CreateBlog
+
