@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import ReactMarkdown from "react-markdown";
 import { format } from "date-fns";
 import AnimatedBackground from "@/UsersAuth/Plasma";
+import toast from "react-hot-toast";
 import {
   MessageCircle,
   Share2,
@@ -51,6 +52,25 @@ interface BlogPost {
 }
 
 function Blog() {
+  const handleShareCopyToClipboard = () => {
+    const url = window.location.href; // Get the current URL
+    navigator.clipboard.writeText(url).then(() => {
+      toast.success("Copied to clip board!", {
+        style: {
+          border: "1px solid blue",
+          backgroundColor: "blue",
+          padding: "16px",
+          color: "white",
+        },
+        iconTheme: {
+          primary: "blue",
+          secondary: "white",
+        }, // Add styling and options to customize error toast notification
+      });
+    });
+  }
+
+
   // Static blog data
   const blogData: BlogPost = {
     _id: "unique-blog-id",
@@ -169,7 +189,9 @@ function Blog() {
                   </span>
                 </div>
               </div>
-              <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
+              <button
+                onClick={handleShareCopyToClipboard} 
+               className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
                 <Share2 className="w-5 h-5" />
                 <span>Share</span>
               </button>
