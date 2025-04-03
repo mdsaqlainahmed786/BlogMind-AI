@@ -82,7 +82,7 @@ export default function LandingPage() {
             </button>
 
             <button
-              onClick={() => navigate("/users/register")}
+              onClick={() => navigate("/user/register")}
               className="relative cursor-pointer items-center justify-start inline-block px-5 py-3 overflow-hidden font-bold rounded-md group"
             >
               <span className="w-32 h-32 rotate-45 translate-x-12 -translate-y-2 absolute left-0 top-0 bg-white opacity-[3%]"></span>

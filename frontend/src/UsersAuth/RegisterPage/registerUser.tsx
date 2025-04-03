@@ -319,7 +319,7 @@ function RegisterUser() {
           <p className="mt-6 text-center text-blue-200">
             Already have an account?{" "}
             <Link
-              to="/users/login"
+              to="/user/login"
               className="text-blue-400 hover:text-blue-300"
             >
               <span className="font-semibold">Log In</span>
