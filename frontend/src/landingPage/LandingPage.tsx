@@ -73,7 +73,7 @@ export default function LandingPage() {
                    drop-shadow(0 0 3px #7928CA) 
                    drop-shadow(0 0 4px #0070F3)`,
               }}
-              onClick={() => navigate("/users/membership")}
+              onClick={() => navigate("/user/membership")}
               className="bg-gradient-to-r from-blue-500 cursor-pointer to-blue-800 px-5 py-3 rounded-md text-white font-semibold text-lg hover:opacity-90 transition flex items-center justify-center gap-2"
             >
               <span className="bg-gradient-to-br from-[#ff8a05] via-[#ff5478] to-[#ff00c6] group-hover:from-[#ff00c6] group-hover:via-[#ff5478] group-hover:to-[#ff8a05] absolute"></span>

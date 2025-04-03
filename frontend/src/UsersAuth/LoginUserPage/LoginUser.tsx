@@ -184,7 +184,7 @@ function LoginUser() {
               Don't Have an account?{" "}
               <button className="text-blue-400 cursor-pointer hover:text-blue-300 font-medium">
                 <Link
-                  to="/users/register"
+                  to="/user/register"
                   className="text-blue-400 hover:text-blue-300"
                 >
                   <span className="font-semibold">Register Here</span>

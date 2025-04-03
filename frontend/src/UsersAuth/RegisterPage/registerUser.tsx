@@ -112,7 +112,7 @@ function RegisterUser() {
 
     // Check if there are any errors
     if (Object.values(newErrors).every((error) => error === "")) {
-      navigate("/users/verify", { state: { formData } });
+      navigate("/user/verify", { state: { formData } });
       console.log("User registered:", formData);
     }
   };

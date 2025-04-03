@@ -85,6 +85,10 @@ function Membership() {
                 <Check className="w-5 h-5 mr-3 text-blue-400" />
                 <span>Priority support</span>
               </div>
+              <div className="flex items-center text-blue-200">
+                <Check className="w-5 h-5 mr-3 text-blue-400" />
+                <span>Standard Badge on your profile</span>
+              </div>
             </div>
             <button className="w-full mt-8 bg-gradient-to-r cursor-pointer from-blue-400 to-blue-500 text-white rounded-lg py-3 px-4 font-medium hover:from-blue-500 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-all duration-200">
               Upgrade Now
@@ -123,6 +127,10 @@ function Membership() {
               <div className="flex items-center text-blue-200">
                 <Check className="w-5 h-5 mr-3 text-blue-400" />
                 <span>24/7 priority support</span>
+              </div>
+              <div className="flex items-center text-blue-200">
+                <Check className="w-5 h-5 mr-3 text-blue-400" />
+                <span>Premium badge on your profile</span>
               </div>
             </div>
             <button className="w-full mt-8 bg-gradient-to-r cursor-pointer from-blue-500 to-blue-600 text-white rounded-lg py-3 px-4 font-medium hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-all duration-200">
