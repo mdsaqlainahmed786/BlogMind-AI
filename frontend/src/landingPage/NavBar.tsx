@@ -97,7 +97,7 @@ export default function Navbar() {
             </div>
 
             {/* Dropdown Menu */}
-            <div className="absolute right-0 top-full mt-2 w-48 bg-white/10 backdrop-blur-md rounded-lg shadow-lg py-2 invisible opacity-0 scale-95 group-hover:visible group-hover:opacity-100 group-hover:scale-100 transition-all duration-200">
+            <div className="absolute right-0 top-full mt-2 w-48 bg-white/10 backdrop-blur-xl rounded-lg shadow-lg py-2 invisible opacity-0 scale-95 group-hover:visible group-hover:opacity-100 group-hover:scale-100 transition-all duration-200">
               <Link
                 to="/user/profile"
                 className="block px-4 py-2 text-sm text-white hover:bg-white/10 transition duration-200"
