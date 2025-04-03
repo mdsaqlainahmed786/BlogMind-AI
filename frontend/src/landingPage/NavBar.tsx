@@ -104,12 +104,12 @@ export default function Navbar() {
               >
                 Profile
               </Link>
-              <a
-                href="#"
+              <Link
+                to="/user/blogs"
                 className="block px-4 py-2 text-sm text-white hover:bg-white/10 transition duration-200"
               >
                 Your Blogs
-              </a>
+              </Link>
               <a
                 href="#"
                 className="block px-4 py-2 text-sm text-white hover:bg-white/10 transition duration-200"

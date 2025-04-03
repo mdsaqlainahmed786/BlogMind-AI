@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import ReactMarkdown from "react-markdown";
 import { format } from "date-fns";
+import AnimatedBackground from "@/UsersAuth/Plasma";
 import {
   MessageCircle,
   Share2,
@@ -109,6 +110,8 @@ function Blog() {
   return (
     <>
       <Navbar />
+      <AnimatedBackground />
+
       <div className="min-h-screen py-16 relative">
         {/* Blur overlay */}
         <div className="absolute inset-0 " />

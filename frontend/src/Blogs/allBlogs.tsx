@@ -3,6 +3,7 @@ import { ThumbsUp, MessageCircle, Calendar, Sparkles } from "lucide-react";
 import Navbar from "../landingPage/NavBar";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
+import AnimatedBackground from "@/UsersAuth/Plasma";
 
 interface Blog {
   id: string;
@@ -10,7 +11,8 @@ interface Blog {
   AiGenerated: boolean;
   description: string;
   author: {
-    name: string;
+    firstName: string;
+    lastName: string;
     username: string;
     avatar: string;
   };
@@ -28,7 +30,8 @@ const blogsData: Blog[] = [
       "## Level Up Your Life: A Comprehensive Guide to the World of Gaming\n\nGaming. It's more than just a pastime; it's a culture, an art form, a competitive arena, and a community. From humble beginnings with pixelated screens to the sprawling, immersive virtual worlds we inhabit today, gaming has undergone a radical transformation. Whether you're a seasoned veteran or a curious newcomer, this blog post is your comprehensive guide to navigating the exciting, ever-evolving landscape of gaming.\n\n**I. Understanding the Gaming Universe: Genres, Platforms, and Playstyles**\n\nBefore diving headfirst, let's break down the fundamental building blocks of the gaming universe:\n\n* **Genres:** The cornerstone of game classification, genres help define the core gameplay mechanics and themes:\n    * **Action:** Emphasizing fast-paced combat, reflexes, and problem-solving (e.g., *God of War*, *Devil May Cry*, *Sekiro: Shadows Die Twice*).\n    * **Adventure:** Focusing on exploration, storytelling, puzzle-solving, and character development (e.g., *The Legend of Zelda*, *Uncharted*, *Life is Strange*).\n",
     AiGenerated: true,
     author: {
-      name: "Sarah Connor",
+      firstName: "Sarah ",
+      lastName: "Connors",
       username: "sarah-789",
       avatar: "https://i.pravatar.cc/150?img=5",
     },
@@ -45,7 +48,8 @@ const blogsData: Blog[] = [
       "Artificial intelligence is revolutionizing how we build websites and applications. From code completion to automated testing, AI tools are becoming an essential part of every developer's toolkit. This article explores the latest advancements and how they're changing the development landscape.",
     AiGenerated: false,
     author: {
-      name: "John Developer",
+      firstName: "John Developer",
+      lastName: "Smith",
       username: "jdev-289",
       avatar: "https://i.pravatar.cc/150?img=8",
     },
@@ -71,6 +75,7 @@ function Blogs() {
   return (
     <>
       <Navbar />
+      <AnimatedBackground />
       <div className="min-h-screen py-24 ">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
           <div className="space-y-8">
@@ -87,13 +92,13 @@ function Blogs() {
                     <div className="flex items-center gap-3 mb-4">
                       <img
                         src={blog.author.avatar || "/placeholder.svg"}
-                        alt={blog.author.name}
+                        alt={blog.author.username}
                         className="w-10 h-10 rounded-full border-2 border-blue-400"
                       />
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
                           <span className="text-white font-medium">
-                            {blog.author.name}
+                            {blog.author.firstName} {blog.author.lastName}
                           </span>
                          
                         </div>

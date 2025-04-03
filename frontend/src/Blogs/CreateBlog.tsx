@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import ReactMarkdown from "react-markdown";
+import AnimatedBackground from "@/UsersAuth/Plasma";
 
 function CreateBlog() {
   const [title, setTitle] = useState("");
@@ -149,6 +150,7 @@ function CreateBlog() {
   return (
     <div className="min-h-screen">
       <Navbar />
+      <AnimatedBackground/>
       <div className="pt-24 pb-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="backdrop-blur-xl bg-white/10 rounded-2xl p-6 md:p-8 shadow-2xl border border-white/20">
           <div className="flex items-center justify-between mb-8">

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Camera, X, Save, User, Pencil } from 'lucide-react';
+import { Camera, X, Save, Pencil } from 'lucide-react';
 import Navbar from '@/landingPage/NavBar';
 import AnimatedBackground from '../Plasma';
 
@@ -97,8 +97,9 @@ function UserProfileEdit() {
                         />
                     </div>
                   ) : (
-                    <div className="w-44 h-44 bg-gray-800 flex items-center justify-center rounded-full">
-                      <User className="w-1/3 h-1/3 text-gray-400" />
+                    <div className="w-44 h-44 bg-gray-800 flex items-center justify-center rounded-full border-2 border-blue-500 text-white">
+                    <span className='text-5xl'>{tempProfile.firstName.charAt(0).toUpperCase()}</span>
+                      <span className='text-5xl'>{tempProfile.lastName.charAt(0).toUpperCase()}</span>
                     </div>
                   )}
                   {isEditing && (

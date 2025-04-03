@@ -8,6 +8,7 @@ import AllBlogs from "./Blogs/allBlogs";
 import Blog from "./Blogs/[blog]";
 import CreateBlog from "./Blogs/CreateBlog";
 import UserProfileEdit from "./UsersAuth/UserProfile/UserProfileEdit";
+import YourBlogs from "./Blogs/YourBlogs";
 
 function App() {
   return (
@@ -23,7 +24,7 @@ function App() {
           <Route path="/blog/:blogName" element={<Blog />} /> 
           <Route path="/blog/create" element={<CreateBlog />} /> {/* This is for creating a blog */}
           <Route path="/user/profile" element={<UserProfileEdit />} /> 
-          {/* Add more routes here as needed */}
+          <Route path="/user/blogs" element={<YourBlogs/>} /> 
         </Routes>
       </BrowserRouter>
     </>
