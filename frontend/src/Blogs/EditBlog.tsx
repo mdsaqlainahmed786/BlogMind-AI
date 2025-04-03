@@ -1,8 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   X,
   Upload,
-  Sparkles,
   Bold,
   Italic,
   Link as LinkIcon,
@@ -17,19 +16,44 @@ import {
 } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import ReactMarkdown from "react-markdown";
+import { useLocation, useNavigate } from "react-router-dom";
 import AnimatedBackground from "@/UsersAuth/Plasma";
 
-function CreateBlog() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [coverImage, setCoverImage] = useState<string | null>(null);
+interface BlogPost {
+  heading: string;
+  description: string;
+  imageUrl: string;
+  isAiGenerated: boolean;
+}
+
+function EditBlog() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const blogData = location.state?.blogData as BlogPost;
+
+  const [title, setTitle] = useState(blogData?.heading || "");
+  const [content, setContent] = useState(blogData?.description || "");
+  const [coverImage, setCoverImage] = useState<string | null>(
+    blogData?.imageUrl || null
+  );
+  const [isAIAssisted, setIsAIAssisted] = useState(
+    blogData?.isAiGenerated || false
+  );
   const [isDragging, setIsDragging] = useState(false);
   const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLTextAreaElement>(null);
-  const [activeBold, setActiveBold] = useState(false);
-  const [activeItalic, setActiveItalic] = useState(false);
-  const [activeCode, setActiveCode] = useState(false);
+
+  useEffect(() => {
+    if (!blogData) {
+      navigate("/");
+    }
+  }, [blogData, navigate]);
+
+  const processContent = (text: string) => {
+    return text.replace(/\\n\\n/g, "\n\n").replace(/\\n/g, "\n");
+  };
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
@@ -108,9 +132,8 @@ function CreateBlog() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-  };
-  const processContent = (text: string) => {
-    return text.replace(/\\n\\n/g, "\n\n").replace(/\\n/g, "\n");
+    // Handle form submission for updating the blog
+    console.log({ title, content, coverImage, isAIAssisted });
   };
 
   const ToolbarButton = ({
@@ -124,23 +147,8 @@ function CreateBlog() {
   }) => (
     <button
       type="button"
-      onClick={() => {
-        if (format === "bold") {
-          setActiveBold(!activeBold);
-        } else if (format === "italic") {
-          setActiveItalic(!activeItalic);
-        } else if (format === "code") {
-          setActiveCode(!activeCode);
-        }
-        insertFormat(format);
-      }}
-      className={`p-2 hover:bg-white/20 rounded-lg transition-colors duration-200 group ${
-        (activeBold && format === "bold") ||
-        (activeCode && format === "code") ||
-        (activeItalic && format === "italic")
-          ? "bg-blue-500 text-white"
-          : "text-gray-300"
-      }`}
+      onClick={() => insertFormat(format)}
+      className="p-2 hover:bg-white/20 rounded-lg transition-colors duration-200 group"
       title={title}
     >
       <Icon className="w-4 h-4 text-gray-300 group-hover:text-white" />
@@ -155,25 +163,18 @@ function CreateBlog() {
         <div className="backdrop-blur-xl bg-white/10 rounded-2xl p-6 md:p-8 shadow-2xl border border-white/20">
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-2xl md:text-3xl font-bold text-white">
-              Create Blog
+              Edit Blog
             </h1>
             <button
-              className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-300 cursor-pointer
-                           animate-rainbow-bg shadow-rainbow
-                           text-white hover:scale-105 transform
-                         `}
-              style={{
-                backgroundSize: "200% 200%",
-                animation:
-                  "gradient 3s ease infinite, glow 1s ease-in-out infinite alternate",
-              }}
+              onClick={() => navigate(-1)}
+              className={`px-4 cursor-pointer py-2 rounded-lg text-white bg-gray-800 hover:bg-gray-700 transition-colors`}
             >
-              <Sparkles className={`w-5 h-5  animate-pulse`} />
-              <span>Create with AI</span>
+              <span>Cancel Edit</span>
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Title Input */}
             <div>
               <label className="block text-white text-sm font-medium mb-2">
                 Blog Title
@@ -186,6 +187,8 @@ function CreateBlog() {
                 className="w-full bg-white/10 border border-white/20 rounded-lg py-3 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
+
+            {/* Cover Image Upload */}
             <div>
               <label className="block text-white text-sm font-medium mb-2">
                 Cover Image
@@ -235,6 +238,8 @@ function CreateBlog() {
                 />
               </div>
             </div>
+
+            {/* Content Editor and Preview */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="block text-white text-sm font-medium">
@@ -244,7 +249,7 @@ function CreateBlog() {
                   <button
                     type="button"
                     onClick={() => setActiveTab("write")}
-                    className={`flex items-center gap-2 px-3 py-1.5 cursor-pointer rounded-lg transition-colors ${
+                    className={`flex items-center cursor-pointer gap-2 px-3 py-1.5 rounded-lg transition-colors ${
                       activeTab === "write"
                         ? "bg-blue-500 text-white"
                         : "bg-white/10 text-gray-300 hover:bg-white/20"
@@ -256,7 +261,7 @@ function CreateBlog() {
                   <button
                     type="button"
                     onClick={() => setActiveTab("preview")}
-                    className={`flex items-center gap-2 px-3 cursor-pointer py-1.5 rounded-lg transition-colors ${
+                    className={`flex items-center gap-2 px-3 py-1.5 cursor-pointer rounded-lg transition-colors ${
                       activeTab === "preview"
                         ? "bg-blue-500 text-white"
                         : "bg-white/10 text-gray-300 hover:bg-white/20"
@@ -270,6 +275,7 @@ function CreateBlog() {
 
               {activeTab === "write" ? (
                 <div className="space-y-0">
+                  {/* Formatting Toolbar */}
                   <div className="flex items-center gap-1 p-2 bg-white/10 border border-white/20 rounded-t-lg">
                     <div className="flex items-center gap-1">
                       <ToolbarButton
@@ -317,6 +323,8 @@ function CreateBlog() {
                       <ToolbarButton icon={Code} title="Code" format="code" />
                     </div>
                   </div>
+
+                  {/* Editor */}
                   <textarea
                     ref={contentRef}
                     value={content}
@@ -328,7 +336,7 @@ function CreateBlog() {
                 </div>
               ) : (
                 <div className="bg-white/10 border border-white/20 rounded-lg p-6 prose prose-invert max-w-none min-h-[300px] overflow-y-auto">
-                  <div className="prose prose-lg dark:prose-invert font-sans">
+                  <div className="prose prose-invert max-w-none">
                     <ReactMarkdown>
                       {processContent(content) ||
                         "*Preview will appear here...*"}
@@ -337,12 +345,14 @@ function CreateBlog() {
                 </div>
               )}
             </div>
+
+            {/* Submit Button */}
             <div className="flex justify-end">
               <button
                 type="submit"
                 className="relative inline-flex items-center justify-center px-8 py-3 overflow-hidden font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg group hover:from-blue-600 hover:to-blue-700 transition-all duration-300"
               >
-                Publish Blog
+                Update Blog
               </button>
             </div>
           </form>
@@ -403,4 +413,4 @@ function CreateBlog() {
   );
 }
 
-export default CreateBlog;
+export default EditBlog;

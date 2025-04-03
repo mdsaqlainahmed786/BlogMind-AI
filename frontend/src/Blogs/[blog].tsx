@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { format } from "date-fns";
 import AnimatedBackground from "@/UsersAuth/Plasma";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import {
   MessageCircle,
   Share2,
@@ -10,6 +11,7 @@ import {
   Calendar,
   ThumbsDown,
   SendHorizonal,
+  Edit2,
 } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import { AiGeneratedBadge } from "./allBlogs";
@@ -52,6 +54,7 @@ interface BlogPost {
 }
 
 function Blog() {
+  const navigate = useNavigate();
   const handleShareCopyToClipboard = () => {
     const url = window.location.href; // Get the current URL
     navigator.clipboard.writeText(url).then(() => {
@@ -65,7 +68,7 @@ function Blog() {
         iconTheme: {
           primary: "blue",
           secondary: "white",
-        }, // Add styling and options to customize error toast notification
+        },
       });
     });
   }
@@ -133,10 +136,7 @@ function Blog() {
       <AnimatedBackground />
 
       <div className="min-h-screen py-16 relative">
-        {/* Blur overlay */}
         <div className="absolute inset-0 " />
-
-        {/* Content */}
         <div className="relative z-10 max-w-3xl mx-auto px-4 py-12">
           <article className="bg-white/18 backdrop-blur-xl rounded-lg overflow-hidden text-white shadow-lg border border-white/20">
             {/* Author info */}
@@ -189,17 +189,22 @@ function Blog() {
                   </span>
                 </div>
               </div>
-              <button
+             <div className="flex items-center space-x-6">
+             <button
+            onClick={() => navigate("/user/blog/edit", { state: { blogData } })}
+               className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
+                <Edit2 className="w-5 h-5" />
+                <span>Edit</span>
+              </button>
+             <button
                 onClick={handleShareCopyToClipboard} 
                className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
                 <Share2 className="w-5 h-5" />
                 <span>Share</span>
               </button>
+             </div>
+            
             </div>
-
-            {/* Title */}
-
-            {/* Main image */}
             <div className="w-full aspect-video">
               <img
                 src={blogData.imageUrl}

@@ -10,6 +10,8 @@ import CreateBlog from "./Blogs/CreateBlog";
 import UserProfileEdit from "./UsersAuth/UserProfile/UserProfileEdit";
 import YourBlogs from "./Blogs/YourBlogs";
 
+import EditBlog from "./Blogs/EditBlog";
+
 function App() {
   return (
     <>
@@ -25,6 +27,7 @@ function App() {
           <Route path="/blog/create" element={<CreateBlog />} /> {/* This is for creating a blog */}
           <Route path="/user/profile" element={<UserProfileEdit />} /> 
           <Route path="/user/blogs" element={<YourBlogs/>} /> 
+          <Route path="/user/blog/edit/" element={<EditBlog />} /> {/* This is for editing a blog */}
         </Routes>
       </BrowserRouter>
     </>
