@@ -36,9 +36,6 @@ function EditBlog() {
   const [coverImage, setCoverImage] = useState<string | null>(
     blogData?.imageUrl || null
   );
-  const [isAIAssisted, setIsAIAssisted] = useState(
-    blogData?.isAiGenerated || false
-  );
   const [isDragging, setIsDragging] = useState(false);
   const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -133,7 +130,7 @@ function EditBlog() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission for updating the blog
-    console.log({ title, content, coverImage, isAIAssisted });
+    console.log({ title, content, coverImage });
   };
 
   const ToolbarButton = ({

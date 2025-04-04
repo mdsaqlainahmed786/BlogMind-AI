@@ -52,7 +52,7 @@ export default function Navbar() {
 
         {/* Search Bar - Hidden on mobile, shown on larger screens */}
         {location.pathname === "/blogs/all" && (
-          <div className="hidden md:block flex-grow max-w-2xl mx-6">
+          <div className="hidden md:block flex-grow max-w-2xl mx-4 -ml-32">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5" />
               <input
@@ -81,7 +81,7 @@ export default function Navbar() {
             </span>
           </div>
           <div
-            onClick={() => navigate("/blog/create")}
+            onClick={() => navigate("/user/register")}
             className="flex bg-blue-500 p-2 rounded-lg items-center transition-colors duration-300 cursor-pointer hover:transform hover:scale-105 hover:duration-200 text-white shadow-lg shadow-blue-500/50"
           >
             <span className="">

@@ -71,8 +71,10 @@ function Blog() {
         },
       });
     });
-  }
-
+  };
+  const processContent = (text: string) => {
+    return text.replace(/\n\n/g, "\n\n").replace(/\n/g, "\n");
+  };
 
   // Static blog data
   const blogData: BlogPost = {
@@ -189,21 +191,24 @@ function Blog() {
                   </span>
                 </div>
               </div>
-             <div className="flex items-center space-x-6">
-             <button
-            onClick={() => navigate("/user/blog/edit", { state: { blogData } })}
-               className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
-                <Edit2 className="w-5 h-5" />
-                <span>Edit</span>
-              </button>
-             <button
-                onClick={handleShareCopyToClipboard} 
-               className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
-                <Share2 className="w-5 h-5" />
-                <span>Share</span>
-              </button>
-             </div>
-            
+              <div className="flex items-center space-x-6">
+                <button
+                  onClick={() =>
+                    navigate("/user/blog/edit", { state: { blogData } })
+                  }
+                  className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors"
+                >
+                  <Edit2 className="w-5 h-5" />
+                  <span>Edit</span>
+                </button>
+                <button
+                  onClick={handleShareCopyToClipboard}
+                  className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors"
+                >
+                  <Share2 className="w-5 h-5" />
+                  <span>Share</span>
+                </button>
+              </div>
             </div>
             <div className="w-full aspect-video">
               <img
@@ -215,9 +220,41 @@ function Blog() {
 
             {/* Content */}
             <div className="p-6">
-              <div className="prose prose-lg  dark:prose-invert">
-                <ReactMarkdown>{blogData.description}</ReactMarkdown>
-              </div>
+              <ReactMarkdown
+                components={{
+                  ul: ({ children }) => (
+                    <ul className="list-disc ml-5">{children}</ul>
+                  ),
+                  ol: ({ children }) => (
+                    <ol className="list-decimal ml-5">{children}</ol>
+                  ),
+                  li: ({ children }) => <li className="mb-1">{children}</li>,
+                  h1: ({ children }) => (
+                    <h1 className="text-2xl font-bold mb-2">{children}</h1>
+                  ),
+                  h2: ({ children }) => (
+                    <h2 className="text-xl font-bold mb-2">{children}</h2>
+                  ),
+                  p: ({ children }) => <p className="mb-2">{children}</p>,
+                  blockquote: ({ children }) => (
+                    <blockquote className="border-l-4 border-blue-500 pl-4 italic mb-2">
+                      {children}
+                    </blockquote>
+                  ),
+                  code: ({ children }) => (
+                    <code className="bg-gray-800 text-white px-1 rounded">
+                      {children}
+                    </code>
+                  ),
+                  strong: ({ children }) => (
+                    <strong className="font-bold">{children}</strong>
+                  ),
+                  em: ({ children }) => <em className="italic">{children}</em>,
+                }}
+              >
+                {processContent(blogData.description) ||
+                  "*Preview will appear here...*"}
+              </ReactMarkdown>
             </div>
 
             {/* Engagement */}
