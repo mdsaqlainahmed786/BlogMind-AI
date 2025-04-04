@@ -17,7 +17,7 @@ export default function AIGenerationModal({
   const [isComplete, setIsComplete] = useState(false);
   const [heading, setHeading] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isMemberShipActive, setIsMemberShipActive] = useState(false);
+  const [isMemberShipActive, setIsMemberShipActive] = useState(true);
   const [canClose, setCanClose] = useState(true);
   const navigate = useNavigate();
 
@@ -145,7 +145,7 @@ export default function AIGenerationModal({
                       animation:
                         "gradient 3s ease infinite, glow 1s ease-in-out infinite alternate",
                       boxShadow:
-                        "0 0 10px rgba(255, 0, 128, 0.7), 0 0 20px rgba(121, 40, 202, 0.5)",
+                        "0 0 10px rgba(255, 0, 128, 0.7), 0 0 20px rgba(121, 40, 202, 0.5)",     
                     }}
                   ></div>
                 </div>

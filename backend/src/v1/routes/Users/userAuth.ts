@@ -70,9 +70,9 @@ userAuth.post('/register', async (req: Request, res: Response) => {
                 console.error('Error sending email:', error);
             }
         }
-        // sendMail(transporter, mailOptions)
+        sendMail(transporter, mailOptions)
         const user = await prisma.user.create({
-            data: { firstName, lastName, username, email, password: hashedPassword, isVerified: false, otp }
+            data: { avatar: "", firstName, lastName, username, email, password: hashedPassword, isVerified: false, otp }
         });
 
         const temporaryToken = jwt.sign({ id: user.id, isVerified: false }, process.env.JWT_SECRET as string, { expiresIn: '10m' });
