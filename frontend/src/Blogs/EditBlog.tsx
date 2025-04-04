@@ -335,14 +335,42 @@ function EditBlog() {
                   />
                 </div>
               ) : (
-                <div className="bg-white/10 border border-white/20 rounded-lg p-6 prose prose-invert max-w-none min-h-[300px] overflow-y-auto">
-                  <div className="prose prose-invert max-w-none">
-                    <ReactMarkdown>
-                      {processContent(content) ||
-                        "*Preview will appear here...*"}
-                    </ReactMarkdown>
-                  </div>
-                </div>
+                <ReactMarkdown
+                  components={{
+                    ul: ({ children }) => (
+                      <ul className="list-disc ml-5">{children}</ul>
+                    ),
+                    ol: ({ children }) => (
+                      <ol className="list-decimal ml-5">{children}</ol>
+                    ),
+                    li: ({ children }) => <li className="mb-1">{children}</li>,
+                    h1: ({ children }) => (
+                      <h1 className="text-2xl font-bold mb-2">{children}</h1>
+                    ),
+                    h2: ({ children }) => (
+                      <h2 className="text-xl font-bold mb-2">{children}</h2>
+                    ),
+                    p: ({ children }) => <p className="mb-2">{children}</p>,
+                    blockquote: ({ children }) => (
+                      <blockquote className="border-l-4 border-blue-500 pl-4 italic mb-2">
+                        {children}
+                      </blockquote>
+                    ),
+                    code: ({ children }) => (
+                      <code className="bg-gray-800 text-white px-1 rounded">
+                        {children}
+                      </code>
+                    ),
+                    strong: ({ children }) => (
+                      <strong className="font-bold">{children}</strong>
+                    ),
+                    em: ({ children }) => (
+                      <em className="italic">{children}</em>
+                    ),
+                  }}
+                >
+                  {processContent(content) || "*Preview will appear here...*"}
+                </ReactMarkdown>
               )}
             </div>
 
