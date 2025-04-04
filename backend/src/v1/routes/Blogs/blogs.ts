@@ -116,6 +116,7 @@ blogsRouter.get('/:id', async (req, res) => {
                         firstName: true,
                         lastName: true,
                         username: true,
+                        avatar: true,
                         email: true,
                     }
                 },
@@ -124,6 +125,7 @@ blogsRouter.get('/:id', async (req, res) => {
                         user: {
                             select: {
                                 id: true,
+                                avatar: true,
                                 firstName: true,
                                 lastName: true,
                                 username: true,
