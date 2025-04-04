@@ -1,9 +1,20 @@
 import React, { useState, useRef } from "react";
-import { Brain, Mail, Lock, User, ArrowRight, Eye, EyeOff, Camera, X } from "lucide-react";
+import {
+  Brain,
+  Mail,
+  Lock,
+  User,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Camera,
+  X,
+} from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import { Link } from "react-router-dom";
 import AnimatedBackground from "../Plasma";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface ValidationErrors {
   firstName: string;
@@ -13,8 +24,17 @@ interface ValidationErrors {
   password: string;
 }
 
+interface FormData {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  password: string;
+}
+
 function RegisterUser() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -44,6 +64,24 @@ function RegisterUser() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const handleRegisterUser = async (formData: FormData) => {
+    try {
+      if (!formData) return;
+      if (Object.values(errors).some((error) => error !== "")) return;
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/user/register`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("User registered successfully:", response.data);
+    } catch (error) {
+      console.error("Error registering user:", error);
+    }
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -59,7 +97,7 @@ function RegisterUser() {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = () => {
         setProfilePicture(reader.result as string);
@@ -70,7 +108,7 @@ function RegisterUser() {
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = () => {
         setProfilePicture(reader.result as string);
@@ -150,8 +188,9 @@ function RegisterUser() {
 
     // Check if there are any errors
     if (Object.values(newErrors).every((error) => error === "")) {
-      navigate("/user/verify", { state: { ...formData, profilePicture } });
-      console.log("User registered:", { ...formData, profilePicture });
+      // navigate("/user/verify", { state: { ...formData, profilePicture } });
+      // console.log("User registered:", { ...formData, profilePicture });
+      handleRegisterUser({ ...formData });
     }
   };
 
@@ -183,7 +222,7 @@ function RegisterUser() {
           <div className="mb-8">
             <div
               className={`relative w-32 h-32 mx-auto rounded-full overflow-hidden cursor-pointer border-2 ${
-                isDragging ? 'border-blue-400' : 'border-blue-400/20'
+                isDragging ? "border-blue-400" : "border-blue-400/20"
               }`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -209,7 +248,8 @@ function RegisterUser() {
                 </>
               ) : formData.firstName && formData.lastName ? (
                 <div className="w-full h-full bg-gray-600 flex items-center justify-center text-white text-3xl font-semibold">
-                  {formData.firstName[0]}{formData.lastName[0]}
+                  {formData.firstName[0]}
+                  {formData.lastName[0]}
                 </div>
               ) : (
                 <div className="w-full h-full bg-gray-600 flex items-center justify-center">

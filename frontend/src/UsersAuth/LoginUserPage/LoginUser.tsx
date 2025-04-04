@@ -4,6 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import { Link } from "react-router-dom";
 import AnimatedBackground from "../Plasma";
+import axios from "axios";
 
 function LoginUser() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,11 @@ function LoginUser() {
     password: "",
   });
   interface ValidationErrors {
+    email: string;
+    password: string;
+  }
+
+  interface FormData {
     email: string;
     password: string;
   }
@@ -64,7 +70,19 @@ function LoginUser() {
               [name]: validateField(name, value),
             }));
           };
-
+   const handleUserLogin = async (formData:FormData) => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/login`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Login successful:", response.data);
+    }
+    catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
       
   
 
@@ -85,7 +103,7 @@ function LoginUser() {
 
     // Check if there are any errors
     if (Object.values(newErrors).every((error) => error === "")) {
-      console.log("Form submitted:", formData);
+      handleUserLogin(formData);
     }
   };
 
