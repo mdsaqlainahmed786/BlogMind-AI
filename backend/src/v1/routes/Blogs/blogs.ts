@@ -19,7 +19,7 @@ interface AuthenticatedRequest extends Request {
 
 // Create a new blog
 //@ts-ignore
-blogsRouter.post('/', authenticateUser,  async (req: AuthenticatedRequest, res) => {
+blogsRouter.post('/', authenticateUser, async (req: AuthenticatedRequest, res) => {
     try {
         if (!req.user) {
             return res.status(401).json({ message: "Unauthorized!" });
@@ -33,7 +33,7 @@ blogsRouter.post('/', authenticateUser,  async (req: AuthenticatedRequest, res) 
                 isAIGenerated,
                 heading,
                 description,
-                imageUrl:""
+                imageUrl: ""
             },
         });
         res.status(201).json(newBlog);
@@ -48,16 +48,17 @@ blogsRouter.get('/', async (req, res) => {
     try {
         const blogs = await prisma.blog.findMany({
             include: {
-                author:{
+                author: {
                     select: {
                         id: true,
+                        avatar: true,
                         firstName: true,
                         lastName: true,
                         username: true,
                         email: true,
                     }
                 },
-                
+
                 Comments: {
                     include: {
                         user: {
@@ -81,6 +82,11 @@ blogsRouter.get('/', async (req, res) => {
         const blogsWithLikeCount = blogs.map(blog => ({
             id: blog.id,
             authorId: blog.authorId,
+            firstName: blog.author.firstName,
+            lastName: blog.author.lastName,
+            username: blog.author.username,
+            email: blog.author.email,
+            avatar: blog.author.avatar,
             isAIGenerated: blog.isAIGenerated,
             heading: blog.heading,
             imageUrl: blog.imageUrl,
@@ -88,7 +94,7 @@ blogsRouter.get('/', async (req, res) => {
             Comments: blog.Comments,
             createdAt: blog.createdAt,
             updatedAt: blog.updatedAt,
-            likeCount: blog._count.likes, // Access the like count here
+            likeCount: blog._count.likes,
         }));
         res.status(200).json(blogsWithLikeCount);
     } catch (error) {
@@ -110,6 +116,7 @@ blogsRouter.get('/:id', async (req, res) => {
                         firstName: true,
                         lastName: true,
                         username: true,
+                        avatar: true,
                         email: true,
                     }
                 },
@@ -118,6 +125,7 @@ blogsRouter.get('/:id', async (req, res) => {
                         user: {
                             select: {
                                 id: true,
+                                avatar: true,
                                 firstName: true,
                                 lastName: true,
                                 username: true,
