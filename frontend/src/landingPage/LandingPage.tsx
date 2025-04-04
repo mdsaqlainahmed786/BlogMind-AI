@@ -74,7 +74,7 @@ export default function LandingPage() {
                    drop-shadow(0 0 4px #0070F3)`,
               }}
               onClick={() => navigate("/user/membership")}
-              className="bg-gradient-to-r from-blue-500 cursor-pointer to-blue-800 px-5 py-3 rounded-md text-white font-semibold text-lg hover:opacity-90 transition flex items-center justify-center gap-2"
+              className="bg-gradient-to-r from-blue-500 cursor-pointer to-blue-800 px-5 py-3 rounded-md text-white font-semibold text-lg hover:opacity-90 transition flex items-center justify-center gap-2 hover:scale-105 transform duration-200"
             >
               <span className="bg-gradient-to-br from-[#ff8a05] via-[#ff5478] to-[#ff00c6] group-hover:from-[#ff00c6] group-hover:via-[#ff5478] group-hover:to-[#ff8a05] absolute"></span>
               <Sparkles className="h-5 w-5" />
@@ -82,13 +82,13 @@ export default function LandingPage() {
             </button>
 
             <button
-              onClick={() => navigate("/user/register")}
+              onClick={() => navigate("/blogs/all")}
               className="hover:bg-white hover:text-gray-500 md:hover:bg-transparent md:hover:text-white relative cursor-pointer items-center justify-start inline-block px-5 py-3 overflow-hidden font-bold rounded-md group"
             >
               <span className="w-32 h-32 rotate-45 translate-x-12 -translate-y-2 absolute left-0 top-0 bg-white opacity-[3%]"></span>
               <span className="absolute top-0 left-0 w-48 h-48 -mt-1 transition-all duration-500 ease-in-out rotate-45 -translate-x-56 -translate-y-24 bg-white opacity-100 group-hover:-translate-x-8"></span>
               <span className="relative w-full text-left text-white transition-colors duration-200 ease-in-out group-hover:text-gray-900">
-                Join Us Now!
+                Start Reading
               </span>
 
               <span className="absolute inset-0 border-2 border-white rounded-md"></span>

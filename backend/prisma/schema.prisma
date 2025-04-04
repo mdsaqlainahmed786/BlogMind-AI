@@ -15,6 +15,7 @@ datasource db {
 
 model User {
   id           String      @id @default(uuid())
+  avatar       String?
   firstName    String
   lastName     String
   username     String      @unique
@@ -24,7 +25,7 @@ model User {
   otpExpiry    DateTime?
   isVerified   Boolean     @default(false)
   isSubscribed Boolean     @default(false)
-  membership   Membership? 
+  membership   Membership?
   membershipId String?
   blogs        Blog[]
   createdAt    DateTime    @default(now())

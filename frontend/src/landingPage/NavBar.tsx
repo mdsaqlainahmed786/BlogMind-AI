@@ -33,14 +33,14 @@ export default function Navbar() {
           className="flex items-center cursor-pointer space-x-2 flex-shrink-0"
         >
           <Brain
-            className={`h-8 w-8 transition-colors duration-300 ${
+            className={`h-5 w-5 md:h-8 md:w-8 transition-colors duration-300 ${
               scrolled
                 ? "text-blue-400 bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600"
                 : "text-white"
             }`}
           />
           <span
-            className={`text-2xl font-bold transition-all duration-300 ${
+            className={`text-lg md:text-2xl font-bold transition-all duration-300 ${
               scrolled
                 ? "text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600"
                 : "text-white"
@@ -52,7 +52,7 @@ export default function Navbar() {
 
         {/* Search Bar - Hidden on mobile, shown on larger screens */}
         {location.pathname === "/blogs/all" && (
-          <div className="hidden md:block flex-grow max-w-2xl mx-6">
+          <div className="hidden md:block flex-grow max-w-2xl mx-4 -ml-32">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5" />
               <input
@@ -80,9 +80,17 @@ export default function Navbar() {
               Start Writing
             </span>
           </div>
+          <div
+            onClick={() => navigate("/user/register")}
+            className="flex bg-blue-500 p-2 rounded-lg items-center transition-colors duration-300 cursor-pointer hover:transform hover:scale-105 hover:duration-200 text-white shadow-lg shadow-blue-500/50"
+          >
+            <span className="">
+              Get Started
+            </span>
+          </div>
 
           {/* User Profile */}
-          <div className="relative group">
+          {/* <div className="relative group">
             <div className="flex items-center gap-2 md:gap-3 cursor-pointer">
               <img
                 src="https://i.ibb.co/G2ZwZHB/x8aaxbjh8r6a1-modified.png"
@@ -96,7 +104,7 @@ export default function Navbar() {
               <ChevronDown className="text-white group-hover:rotate-180 transition-transform duration-200 h-5 w-5" />
             </div>
 
-            {/* Dropdown Menu */}
+            
             <div className="absolute right-0 top-full mt-2 w-48 bg-white/10 backdrop-blur-xl rounded-lg shadow-lg py-2 invisible opacity-0 scale-95 group-hover:visible group-hover:opacity-100 group-hover:scale-100 transition-all duration-200">
               <Link
                 to="/user/profile"
@@ -117,7 +125,7 @@ export default function Navbar() {
                 Logout
               </a>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </nav>
