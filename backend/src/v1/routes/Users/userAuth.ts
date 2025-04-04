@@ -164,7 +164,10 @@ userAuth.post('/login', async (req, res) => {
             return
         }
         const sessionToken = jwt.sign({ id: user.id, isVerified: user.isVerified }, process.env.JWT_SECRET as string, { expiresIn: '10h' });
-        res.cookie("AuthToken", sessionToken);
+        res.cookie("AuthToken", sessionToken, {
+            secure: true,
+            sameSite: 'none',
+        });
         res.json({ sessionToken, message: "User logged in successfully" });
         return
     } catch (error) {

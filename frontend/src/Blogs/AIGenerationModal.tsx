@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { CircleCheckBig, WandSparkles, X } from "lucide-react";
 
 interface AIGenerationModalProps {
@@ -18,6 +19,9 @@ export default function AIGenerationModal({
   const [heading, setHeading] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isMemberShipActive, setIsMemberShipActive] = useState(true);
+  const [blogData, setBlogData] = useState({
+    
+  });
   const [canClose, setCanClose] = useState(true);
   const navigate = useNavigate();
 
@@ -38,10 +42,42 @@ export default function AIGenerationModal({
     }
   }, [isGenerating, isComplete]);
 
+  const handleGenerateBlog = async (heading: string) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/aiblogs/generate`,
+        {
+          heading,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 200) {
+        setIsComplete(true);
+        setProgress(100);
+        setIsGenerating(false);
+        setCanClose(true);
+      }
+      const { blog } = response.data;
+      console.log("Generated Blog:", blog);
+      setBlogData(blog);
+    } catch (error) {
+      console.error("Error generating blog:", error);
+      setIsGenerating(false);
+      setCanClose(true);
+    }
+  };
+
   const handleHeadingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (heading.trim()) {
       setIsGenerating(true);
+      setProgress(0);
+      handleGenerateBlog(heading);
       setCanClose(false);
       if (onHeadingSubmit) {
         onHeadingSubmit(heading);
@@ -51,9 +87,8 @@ export default function AIGenerationModal({
 
   const handleEdit = () => {
     navigate(
-      "/user/blog/edit"
-      //{ state: { heading } });
-    );
+      "/user/blog/edit",
+      { state: { blogData } });
     onClose();
   };
 
@@ -145,7 +180,7 @@ export default function AIGenerationModal({
                       animation:
                         "gradient 3s ease infinite, glow 1s ease-in-out infinite alternate",
                       boxShadow:
-                        "0 0 10px rgba(255, 0, 128, 0.7), 0 0 20px rgba(121, 40, 202, 0.5)",     
+                        "0 0 10px rgba(255, 0, 128, 0.7), 0 0 20px rgba(121, 40, 202, 0.5)",
                     }}
                   ></div>
                 </div>
@@ -204,7 +239,7 @@ export default function AIGenerationModal({
         <>
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center">
             <div
-             className="flex justify-center items-center"
+              className="flex justify-center items-center"
               onClick={onClose}
             ></div>
             <div className="relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 w-full max-w-md mx-4 border border-white/10 shadow-2xl">
@@ -217,17 +252,16 @@ export default function AIGenerationModal({
                 </button>
               )}
               <div className="flex justify-center items-center flex-col text-center">
-
-              <h3 className="text-lg font-bold mb-4">Membership Required</h3>
-              <p className="mb-4">
-              Upgrade your membership to generate blogs with AI.
-              </p>
-              <button
-                onClick={() => navigate("/user/membership")}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
-              >
-                Upgrade Membership
-              </button>
+                <h3 className="text-lg font-bold mb-4">Membership Required</h3>
+                <p className="mb-4">
+                  Upgrade your membership to generate blogs with AI.
+                </p>
+                <button
+                  onClick={() => navigate("/user/membership")}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
+                >
+                  Upgrade Membership
+                </button>
               </div>
             </div>
           </div>
