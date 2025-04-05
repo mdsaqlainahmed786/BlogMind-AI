@@ -29,12 +29,12 @@ interface BlogPost {
 function EditBlog() {
   const location = useLocation();
   const navigate = useNavigate();
-  const blog = location.state?.blog as BlogPost;
+  const blogData = location.state?.blogData as BlogPost;
 
-  const [title, setTitle] = useState(blog?.heading || "");
-  const [content, setContent] = useState(blog?.description || "");
+  const [title, setTitle] = useState(blogData?.heading || "");
+  const [content, setContent] = useState(blogData?.description || "");
   const [coverImage, setCoverImage] = useState<string | null>(
-    blog?.imageUrl || null
+    blogData?.imageUrl || null
   );
   const [isDragging, setIsDragging] = useState(false);
   const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
@@ -42,10 +42,10 @@ function EditBlog() {
   const contentRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (!blog) {
+    if (!blogData) {
       navigate("/");
     }
-  }, [blog, navigate]);
+  }, [blogData, navigate]);
 
   const processContent = (text: string) => {
     return text.replace(/\\n\\n/g, "\n\n").replace(/\\n/g, "\n");
