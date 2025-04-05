@@ -82,6 +82,12 @@ AiBlogsRouter.post('/upgrade', authenticateUser, async (req: AuthenticatedReques
                     plan: "STANDARD"
                 }
             })
+            await prisma.user.update({
+                where: { id: userId },
+                data: {
+                    membershipPlan: "STANDARD"
+                }
+            });
         }
         else if (plan === "PREMIUM") {
             await prisma.membership.update({
@@ -91,6 +97,12 @@ AiBlogsRouter.post('/upgrade', authenticateUser, async (req: AuthenticatedReques
                     plan: "PREMIUM"
                 }
             })
+            await prisma.user.update({
+                where: { id: userId },
+                data: {
+                    membershipPlan: "PREMIUM"
+                }
+            });
         }
 
         if (userMembership) {

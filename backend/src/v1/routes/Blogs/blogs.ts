@@ -118,6 +118,7 @@ blogsRouter.get('/:id', async (req, res) => {
                         username: true,
                         avatar: true,
                         email: true,
+                        membershipPlan: true,
                     }
                 },
                 Comments: {
@@ -130,6 +131,7 @@ blogsRouter.get('/:id', async (req, res) => {
                                 lastName: true,
                                 username: true,
                                 email: true,
+                                membershipPlan: true,
 
                             }
                         }

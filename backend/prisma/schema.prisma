@@ -27,11 +27,15 @@ model User {
   isSubscribed Boolean     @default(false)
   membership   Membership?
   membershipId String?
+  membershipPlan MembershipPlan? @default(BASIC)
   blogs        Blog[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   Like         Like[]
   Comments     Comments[]
+
+  @@index([username], name: "idx_username")
+  @@index([email], name: "idx_email")
 }
 
 model Membership {
@@ -56,6 +60,8 @@ model Blog {
   updatedAt     DateTime   @updatedAt
   likes         Like[]
   Comments      Comments[]
+
+  @@index([heading], name: "idx_heading")
 }
 
 model Like {

@@ -176,7 +176,7 @@ function Blog() {
               <div className="flex items-center space-x-6">
                 <button
                   onClick={() =>
-                    navigate("/user/blog/edit", { state: { blog } })
+                    navigate("/user/blog/edit", { state: { blogData: blog } })
                   }
                   className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors"
                 >
@@ -268,7 +268,7 @@ function Blog() {
             <div className="px-6 py-4 border-t border-gray-700/50">
               <h3 className="text-2xl font-semibold">Comments</h3>
               <div className="flex space-x-4 mt-4">
-              {blog?.author.avatar === null || blog?.author.avatar === "" ? (
+                {blog?.author.avatar === null || blog?.author.avatar === "" ? (
                   <div className="w-12 h-10 rounded-full border-2 border-white bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center text-white text-sm">
                     {blog?.author.firstName[0]}
                     {blog?.author.lastName[0]}
@@ -292,10 +292,11 @@ function Blog() {
               </div>
               <div className="mt-4 space-y-4">
                 {blog?.Comments.length === 0 && (
-                  <p className="text-gray-400 text-center py-10">No comments yet. Be the first to comment</p>
+                  <p className="text-gray-400 text-center py-10">
+                    No comments yet. Be the first to comment
+                  </p>
                 )}
                 {blog?.Comments.map((comment) => (
-                
                   <div
                     key={comment.id}
                     className="flex flex-col border-t  border-gray-700/50 items-start py-6 space-x-4"

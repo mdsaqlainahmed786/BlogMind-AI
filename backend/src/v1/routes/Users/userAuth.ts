@@ -5,7 +5,7 @@ import express, { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import z from "zod";
 import nodemailer from 'nodemailer';
-import { PrismaClient } from '@prisma/client';
+import { MembershipPlan, PrismaClient } from '@prisma/client';
 export const userAuth = express.Router();
 const prisma = new PrismaClient();
 const userSignupInput = z.object({
@@ -199,6 +199,9 @@ userAuth.get("/get-user", async (req, res) => {
             firstName: user.firstName,
             lastName: user.lastName,
             username: user.username,
+            avatar: user.avatar,
+            isVerified: user.isVerified,
+            MembershipPlan: user.membershipPlan,
             email: user.email
         });
         return
