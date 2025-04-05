@@ -2,6 +2,8 @@ import React, { useState, useCallback } from "react";
 import { Brain, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import AnimatedBackground from "../Plasma";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import {
   InputOTP,
   InputOTPGroup,
@@ -14,6 +16,7 @@ function OtpVerification() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -27,10 +30,34 @@ function OtpVerification() {
         if (otp.length !== 6) {
           throw new Error("Please enter a valid 6-digit code");
         }
+        console.log("OTP submitted:", otp);
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/user/verify`,
+          { otp },
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("OTP verification response:", response.data);
+        if (response.status === 200) {
+          setIsSuccess(true);
+          setError("");
+          setOtp("");
+          navigate("/");
+        } else if (
+          response.data.message === "Invalid otp" ||
+          response.status === 400
+        ) {
+          setError("Invalid OTP! Please try again");
+        }
 
-        setIsSuccess(true);
+        // setIsSuccess(true);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Verification failed");
+        setError("Verification failed");
+        console.error("Error during OTP verification:", err);
       } finally {
         setIsLoading(false);
       }
@@ -43,7 +70,7 @@ function OtpVerification() {
       setError("");
     }
   };
-  
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 py-32 relative">
       <Navbar />

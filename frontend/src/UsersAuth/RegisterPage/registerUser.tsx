@@ -13,7 +13,7 @@ import {
 import Navbar from "@/landingPage/NavBar";
 import { Link } from "react-router-dom";
 import AnimatedBackground from "../Plasma";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 interface ValidationErrors {
@@ -33,7 +33,7 @@ interface FormData {
 }
 
 function RegisterUser() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -72,12 +72,17 @@ function RegisterUser() {
         `${import.meta.env.VITE_BACKEND_URL}/user/register`,
         formData,
         {
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
       console.log("User registered successfully:", response.data);
+      if (response.status === 200) {
+        navigate("/user/verify");
+        console.log("User registered:", { ...formData, profilePicture });
+      }
     } catch (error) {
       console.error("Error registering user:", error);
     }

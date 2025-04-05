@@ -5,6 +5,7 @@ import Navbar from "@/landingPage/NavBar";
 import { Link } from "react-router-dom";
 import AnimatedBackground from "../Plasma";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function LoginUser() {
   const [formData, setFormData] = useState({
@@ -26,6 +27,7 @@ function LoginUser() {
     password: false,
   });
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   const [errors, setErrors] = useState<ValidationErrors>({
     email: "",
     password: "",
@@ -84,6 +86,9 @@ function LoginUser() {
         }
       );
       console.log("Login successful:", response.data);
+      if (response.status === 200) {
+        navigate("/");
+      }
     } catch (error) {
       console.error("Login failed:", error);
     }
