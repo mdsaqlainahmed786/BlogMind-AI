@@ -19,9 +19,7 @@ export default function AIGenerationModal({
   const [heading, setHeading] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isMemberShipActive, setIsMemberShipActive] = useState(true);
-  const [blogData, setBlogData] = useState({
-    
-  });
+  const [blogData, setBlogData] = useState({});
   const [canClose, setCanClose] = useState(true);
   const navigate = useNavigate();
 
@@ -29,10 +27,9 @@ export default function AIGenerationModal({
     if (isGenerating && !isComplete) {
       const interval = setInterval(() => {
         setProgress((prev) => {
-          if (prev >= 100) {
+          if (prev >= 98) {
             clearInterval(interval);
-            setIsComplete(true);
-            return 100;
+            return prev;
           }
           return prev + 1;
         });
@@ -46,9 +43,7 @@ export default function AIGenerationModal({
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/aiblogs/generate`,
-        {
-          heading,
-        },
+        { heading },
         {
           withCredentials: true,
           headers: {
@@ -56,15 +51,17 @@ export default function AIGenerationModal({
           },
         }
       );
-      if (response.status === 200) {
+
+      const { blog } = response.data;
+      setBlogData(blog);
+      console.log("Blog data:", blog);
+
+      if (response.status === 200 || blogData) {
+        setProgress(100); // Move to 100% only when blog is present
         setIsComplete(true);
-        setProgress(100);
         setIsGenerating(false);
         setCanClose(true);
       }
-      const { blog } = response.data;
-      console.log("Generated Blog:", blog);
-      setBlogData(blog);
     } catch (error) {
       console.error("Error generating blog:", error);
       setIsGenerating(false);
@@ -86,9 +83,8 @@ export default function AIGenerationModal({
   };
 
   const handleEdit = () => {
-    navigate(
-      "/user/blog/edit",
-      { state: { blogData } });
+    navigate("/user/blog/edit", { state: { blogData } });
+    console.log("Blog data to edit:", blogData);
     onClose();
   };
 
@@ -138,7 +134,7 @@ export default function AIGenerationModal({
               </p>
             </div>
 
-            {!isGenerating ? (
+            {!isGenerating && !isComplete ? (
               <form onSubmit={handleHeadingSubmit} className="space-y-4">
                 <div>
                   <label
@@ -167,7 +163,7 @@ export default function AIGenerationModal({
                   </button>
                 </div>
               </form>
-            ) : !isComplete ? (
+            ) : isGenerating && !isComplete ? (
               <div className="mb-6">
                 <div className="h-2 w-full bg-gray-700 rounded-full overflow-hidden relative">
                   <div
@@ -189,7 +185,8 @@ export default function AIGenerationModal({
                 </div>
               </div>
             ) : (
-              <>
+              blogData &&
+              isComplete && (
                 <div className="flex-col justify-center items-center text-center">
                   <div>
                     <CircleCheckBig className="w-20 h-20 text-green-500 mx-auto mb-4" />
@@ -212,7 +209,7 @@ export default function AIGenerationModal({
                     </button>
                   </div>
                 </div>
-              </>
+              )
             )}
           </div>
 
