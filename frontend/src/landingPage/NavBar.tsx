@@ -2,20 +2,12 @@ import { useState, useEffect } from "react";
 import { ChevronDown, Brain, Search, NotebookPen } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { useUserStore } from "@/stores/useUserStore";
 import axios from "axios";
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [user, setUser] = useState({
-    id: "",
-    firstName: "",
-    lastName: "",
-    username: "",
-    email: "",
-    avatar: "",
-    MemberShipPlan: "",
-    isVerified: Boolean,
-  });
+  const { user, setUser, clearUser } = useUserStore();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -75,16 +67,7 @@ export default function Navbar() {
         }
       );
       console.log("Logout response:", response.data);
-      setUser({
-        id: "",
-        firstName: "",
-        lastName: "",
-        username: "",
-        email: "",
-        avatar: "",
-        MemberShipPlan: "",
-        isVerified: Boolean,
-      });
+      clearUser();
       navigate("/");
     } catch (error) {
       console.error("Error logging out:", error);
@@ -156,7 +139,7 @@ export default function Navbar() {
           )} */}
 
           {/* User Profile */}
-          {user.email ? (
+          {user?.email ? (
             <div className="relative group">
               <div className="flex items-center gap-2 md:gap-3 cursor-pointer">
                 {user && user?.avatar === null || user?.avatar === "" ? (

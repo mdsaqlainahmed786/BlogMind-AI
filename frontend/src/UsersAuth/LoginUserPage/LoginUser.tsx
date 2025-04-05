@@ -6,8 +6,11 @@ import { Link } from "react-router-dom";
 import AnimatedBackground from "../Plasma";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useUserStore } from "@/stores/useUserStore";
+import { useEffect } from "react";
 
 function LoginUser() {
+  const { user } = useUserStore();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -37,6 +40,12 @@ function LoginUser() {
     password: string;
   }
 
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
   const validateField = (name: string, value: string): string => {
     switch (name) {
       case "email": {
@@ -53,6 +62,8 @@ function LoginUser() {
         return "";
     }
   };
+
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -64,6 +75,7 @@ function LoginUser() {
       }));
     }
   };
+
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

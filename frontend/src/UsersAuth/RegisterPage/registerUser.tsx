@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Brain,
   Mail,
@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import AnimatedBackground from "../Plasma";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { useUserStore } from "@/stores/useUserStore";
 interface ValidationErrors {
   firstName: string;
   lastName: string;
@@ -45,6 +45,7 @@ function RegisterUser() {
 
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const { user } = useUserStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [errors, setErrors] = useState<ValidationErrors>({
@@ -87,6 +88,12 @@ function RegisterUser() {
       console.error("Error registering user:", error);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();

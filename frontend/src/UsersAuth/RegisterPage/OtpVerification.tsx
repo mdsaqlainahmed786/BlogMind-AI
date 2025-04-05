@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Brain, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import AnimatedBackground from "../Plasma";
 import axios from "axios";
+import { useUserStore } from "@/stores/useUserStore";
 import { useNavigate } from "react-router-dom";
 import {
   InputOTP,
@@ -16,6 +17,7 @@ function OtpVerification() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const { user } = useUserStore();
   const navigate = useNavigate();
 
   const handleSubmit = useCallback(
@@ -64,6 +66,11 @@ function OtpVerification() {
     },
     [otp]
   );
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
   const handleOtpChange = (value: string) => {
     if (/^\d*$/.test(value)) {
       setOtp(value);
