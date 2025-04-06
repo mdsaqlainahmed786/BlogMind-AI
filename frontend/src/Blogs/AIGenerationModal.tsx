@@ -217,7 +217,6 @@ export default function AIGenerationModal({
               )
             )}
           </div>
-
           <style>{`
         @keyframes gradient {
           0% { background-position: 0% 50%; }

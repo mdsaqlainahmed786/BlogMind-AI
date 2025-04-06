@@ -1,5 +1,5 @@
 import ReactMarkdown from "react-markdown";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import AnimatedBackground from "@/UsersAuth/Plasma";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -61,6 +61,7 @@ interface BlogPost {
 function Blog() {
   const navigate = useNavigate();
   const [blog, setBlog] = useState<BlogPost | null>(null);
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [comments, setComments] = useState<BlogPost["Comments"]>([]);
   const [comment, setComment] = useState("");
   const { blogId } = useParams<{ blogId: string }>();
@@ -155,6 +156,13 @@ function Blog() {
   useEffect(() => {
     fetchComments();
   }, [blogId]);
+
+  useEffect(() => {
+    if (!blog) return; // Ensure blog is not null before processing
+    if (user?.id === blog?.author.id) {
+      setIsAuthorized(true);
+    }
+  }, [blog, user]);
 
   useEffect(() => {
     const fetchBlogData = async () => {
@@ -279,7 +287,7 @@ function Blog() {
                 )}
 
                 <div className="font-medium flex flex-col text-white">
-                  <span className="text-xs md:text-lg">
+                  <span className="text-lg md:text-lg">
                     {`${blog?.author?.firstName} ${blog?.author?.lastName}`}{" "}
                   </span>
                   <span className="text-sm text-gray-200 ">
@@ -295,7 +303,74 @@ function Blog() {
                 )}
               </div>
             </div>
-
+            <div className="px-6 py-4 border-t md:hidden border-gray-700/50 flex items-center justify-between">
+              <div className="flex items-center space-x-6">
+                <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
+                  <ThumbsUp className="w-5 h-5" />
+                  <span>{blog?._count.likes}</span>
+                </button>
+                <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
+                  <MessageCircle className="w-5 h-5" />
+                  <span>{blog?.Comments.length}</span>
+                </button>
+                <div className="flex items-center space-x-2 text-gray-200">
+                  <Calendar className="w-4 h-4" />
+                  <span className="text-sm">
+                    {blog?.createdAt
+                      ? format(new Date(blog.createdAt), "MMM dd, yyyy")
+                      : "Date not available"}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-5">
+                <button
+                  onClick={handleShareCopyToClipboard}
+                  className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors"
+                >
+                  <Share2 className="w-5 h-5" />
+                </button>
+                {isAuthorized && (
+                  <>
+                    <button
+                      onClick={() => {
+                        if (user?.id !== blog?.author.id) {
+                          toast.error(
+                            "You are not authorized to edit this blog",
+                            {
+                              style: {
+                                border: "1px solid red",
+                                backgroundColor: "red",
+                                padding: "16px",
+                                color: "white",
+                              },
+                              iconTheme: {
+                                primary: "red",
+                                secondary: "white",
+                              },
+                            }
+                          );
+                        } else {
+                          navigate("/user/blog/edit", {
+                            state: { blogData: blog },
+                          });
+                        }
+                      }}
+                      className={`flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors`}
+                    >
+                      <Edit2 className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() =>
+                        blog?.author.id && deleteBlogHandler(blog.author.id)
+                      }
+                      className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-red-600 transition-colors"
+                    >
+                      <Trash className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
             <div className="hidden px-6 py-4 border-t border-b  border-gray-600/50 md:flex items-center justify-between">
               <div className="flex items-center space-x-6">
                 <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
@@ -317,50 +392,63 @@ function Blog() {
               </div>
               <div className="flex items-center space-x-6">
                 <button
-                  onClick={() => {
-                    if (user?.id !== blog?.author.id) {
-                      toast.error("You are not authorized to edit this blog", {
-                        style: {
-                          border: "1px solid red",
-                          backgroundColor: "red",
-                          padding: "16px",
-                          color: "white",
-                        },
-                        iconTheme: {
-                          primary: "red",
-                          secondary: "white",
-                        },
-                      });
-                    } else {
-                      navigate("/user/blog/edit", {
-                        state: { blogData: blog },
-                      });
-                    }
-                  }}
-                  className={`flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors`}
-                >
-                  <Edit2 className="w-5 h-5" />
-                  <span>Edit</span>
-                </button>
-                <button
                   onClick={handleShareCopyToClipboard}
                   className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors"
                 >
                   <Share2 className="w-5 h-5" />
                   <span>Share</span>
                 </button>
-                <button
-                  onClick={() =>
-                    blog?.author.id && deleteBlogHandler(blog.author.id)
-                  }
-                  className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-red-600 transition-colors"
-                >
-                  <Trash className="w-5 h-5" />
-                  <span>Delete</span>
-                </button>
+                {isAuthorized && (
+                  <>
+                    <button
+                      onClick={() => {
+                        if (user?.id !== blog?.author.id) {
+                          toast.error(
+                            "You are not authorized to edit this blog",
+                            {
+                              style: {
+                                border: "1px solid red",
+                                backgroundColor: "red",
+                                padding: "16px",
+                                color: "white",
+                              },
+                              iconTheme: {
+                                primary: "red",
+                                secondary: "white",
+                              },
+                            }
+                          );
+                        } else {
+                          navigate("/user/blog/edit", {
+                            state: { blogData: blog },
+                          });
+                        }
+                      }}
+                      className={`flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors`}
+                    >
+                      <Edit2 className="w-5 h-5" />
+                      <span>Edit</span>
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        blog?.author.id && deleteBlogHandler(blog.author.id)
+                      }
+                      className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-red-600 transition-colors"
+                    >
+                      <Trash className="w-5 h-5" />
+                      <span>Delete</span>
+                    </button>
+                  </>
+                )
+                }
               </div>
             </div>
-            <div className={`w-full aspect-video ${blog?.imageUrl ? "" : "hidden"}`}>
+            <div
+              className={`w-full aspect-video ${
+                blog?.imageUrl ? "" : "hidden"
+              }`}
+            >
               <img
                 src={blog?.imageUrl}
                 alt={blog?.heading}
@@ -408,30 +496,7 @@ function Blog() {
             </div>
 
             {/* Engagement */}
-            {/* <div className="px-6 py-4 border-t border-gray-700/50 flex items-center justify-between">
-              <div className="flex items-center space-x-6">
-                <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
-                  <ThumbsUp className="w-5 h-5" />
-                  <span>{blog?._count.likes}</span>
-                </button>
-                <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
-                  <MessageCircle className="w-5 h-5" />
-                  <span>{blog?.Comments.length}</span>
-                </button>
-                <div className="flex items-center space-x-2 text-gray-200">
-                  <Calendar className="w-4 h-4" />
-                  <span className="text-sm">
-                    {blog?.createdAt
-                      ? format(new Date(blog.createdAt), "MMM dd, yyyy")
-                      : "Date not available"}
-                  </span>
-                </div>
-              </div>
-              <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
-                <Share2 className="w-5 h-5" />
-                <span>Share</span>
-              </button>
-            </div> */}
+
             {/* Comments Section */}
             <div className="px-6 py-4 border-t border-gray-700/50">
               <h3 className="text-2xl font-semibold">
