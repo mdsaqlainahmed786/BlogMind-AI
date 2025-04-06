@@ -46,6 +46,7 @@ export default function Navbar() {
             avatar: response.data.avatar,
             MemberShipPlan: response.data.MembershipPlan,
             isVerified: response.data.isVerified,
+            aiBlogsLeft: response.data.aiBlogsLeft,
           });
         }
       } catch (error) {
