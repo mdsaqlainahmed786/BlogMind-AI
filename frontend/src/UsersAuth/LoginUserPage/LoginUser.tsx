@@ -5,8 +5,12 @@ import Navbar from "@/landingPage/NavBar";
 import { Link } from "react-router-dom";
 import AnimatedBackground from "../Plasma";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useUserStore } from "@/stores/useUserStore";
+import { useEffect } from "react";
 
 function LoginUser() {
+  const { user } = useUserStore();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -26,6 +30,7 @@ function LoginUser() {
     password: false,
   });
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   const [errors, setErrors] = useState<ValidationErrors>({
     email: "",
     password: "",
@@ -34,6 +39,12 @@ function LoginUser() {
     email: string;
     password: string;
   }
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const validateField = (name: string, value: string): string => {
     switch (name) {
@@ -51,6 +62,8 @@ function LoginUser() {
         return "";
     }
   };
+
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -62,6 +75,7 @@ function LoginUser() {
       }));
     }
   };
+
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -84,6 +98,9 @@ function LoginUser() {
         }
       );
       console.log("Login successful:", response.data);
+      if (response.status === 200) {
+        navigate("/");
+      }
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -171,7 +188,7 @@ function LoginUser() {
                   }`}
                 />
                 <input
-                  type="password"
+                 type={showPassword ? "text" : "password"}
                   className={getInputClassName("password")}
                   placeholder="••••••••"
                   value={formData.password}

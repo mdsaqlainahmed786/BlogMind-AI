@@ -77,6 +77,9 @@ blogsRouter.get('/', async (req, res) => {
                     select: { likes: true },
                 }
             },
+            orderBy: {
+                createdAt: 'desc',
+            },
 
         });
         const blogsWithLikeCount = blogs.map(blog => ({
@@ -118,6 +121,7 @@ blogsRouter.get('/:id', async (req, res) => {
                         username: true,
                         avatar: true,
                         email: true,
+                        membershipPlan: true,
                     }
                 },
                 Comments: {
@@ -130,6 +134,7 @@ blogsRouter.get('/:id', async (req, res) => {
                                 lastName: true,
                                 username: true,
                                 email: true,
+                                membershipPlan: true,
 
                             }
                         }
@@ -152,13 +157,23 @@ blogsRouter.get('/:id', async (req, res) => {
 
 // Update a blog by ID
 //@ts-ignore
-blogsRouter.put('/:id', authenticateUser, async (req: AuthenticatedRequest, res) => {
+blogsRouter.put('/edit', authenticateUser, async (req: AuthenticatedRequest, res) => {
     if (!req.user) {
         return res.status(401).json({ message: "Unauthorized!" });
     }
     try {
-        const { id } = req.params;
-        const { heading, description } = req.body;
+
+        const { id, heading, description } = req.body;
+
+        const toBeUpdatedBlog = await prisma.blog.findUnique({
+            where: { id },
+        });
+        if (toBeUpdatedBlog?.authorId !== req.user.id) {
+            return res.status(401).json({ message: "You are not allowed to edit blogs, that does'nt belong to you!" });
+        }
+        if (!toBeUpdatedBlog) {
+            return res.status(404).json({ error: "Blog not found" });
+        }
 
         const updatedBlog = await prisma.blog.update({
             where: { id },
@@ -179,6 +194,15 @@ blogsRouter.delete('/:id', authenticateUser, async (req: AuthenticatedRequest, r
     }
     try {
         const { id } = req.params;
+        const toBeDeletedBlog = await prisma.blog.findUnique({
+            where: { id },
+        });
+        if (!toBeDeletedBlog) {
+            return res.status(404).json({ error: "Blog not found" });
+        }
+        if (toBeDeletedBlog.authorId !== req.user.id) {
+            return res.status(401).json({ message: "You are not allowed to delete blogs, that does'nt belong to you!" });
+        }
         await prisma.blog.delete({
             where: { id },
         });

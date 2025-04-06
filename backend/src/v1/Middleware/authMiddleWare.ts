@@ -21,7 +21,7 @@ export const authenticateUser = (req:AuthencatedRequest, res:Response, next:Next
             id: decoded.id,
             isVerified: decoded.isVerified
         }
-        console.log(req.user);
+        // console.log(req.user);
         if(!req.user.isVerified){
             return res.status(401).json({ message: "Unauthorized: User is not verified" });
         }

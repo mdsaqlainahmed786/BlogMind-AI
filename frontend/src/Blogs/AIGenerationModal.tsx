@@ -2,11 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CircleCheckBig, WandSparkles, X } from "lucide-react";
+import { useUserStore } from "@/stores/useUserStore";
 
 interface AIGenerationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onHeadingSubmit?: (heading: string) => void;
+}
+interface BlogData {
+  id: string;
 }
 
 export default function AIGenerationModal({
@@ -19,9 +23,11 @@ export default function AIGenerationModal({
   const [heading, setHeading] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isMemberShipActive, setIsMemberShipActive] = useState(true);
-  const [blogData, setBlogData] = useState({});
+  const [blogData, setBlogData] = useState({} as BlogData);
   const [canClose, setCanClose] = useState(true);
   const navigate = useNavigate();
+  const { user } = useUserStore();
+
 
   useEffect(() => {
     if (isGenerating && !isComplete) {
@@ -38,6 +44,12 @@ export default function AIGenerationModal({
       return () => clearInterval(interval);
     }
   }, [isGenerating, isComplete]);
+
+  useEffect(() => {
+    if (user?.MemberShipPlan === "BASIC") {
+      setIsMemberShipActive(false);
+    }
+  }, [user]);
 
   const handleGenerateBlog = async (heading: string) => {
     try {
@@ -88,13 +100,15 @@ export default function AIGenerationModal({
     onClose();
   };
 
-  const handlePublish = () => {
+  const handleClose = () => {
     onClose();
     setIsComplete(false);
     setIsGenerating(false);
     setProgress(0);
     setCanClose(true);
     setHeading("");
+    navigate('/blog/' + blogData.id)
+
   };
 
   if (!isOpen) return null;
@@ -196,14 +210,14 @@ export default function AIGenerationModal({
                   </div>
                   <div className="flex flex-col sm:flex-row gap-4 mt-8">
                     <button
-                      onClick={handlePublish}
-                      className="flex-1 relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg group hover:from-blue-600 hover:to-blue-700 transition-all duration-300"
+                      onClick={handleClose}
+                      className="flex-1 inline-flex items-center justify-center px-6 py-3 font-medium text-white bg-white/10 border border-white/20 rounded-lg hover:bg-white/20 transition-all duration-300"
                     >
-                      Publish Blog
+                      Close
                     </button>
                     <button
                       onClick={handleEdit}
-                      className="flex-1 inline-flex items-center justify-center px-6 py-3 font-medium text-white bg-white/10 border border-white/20 rounded-lg hover:bg-white/20 transition-all duration-300"
+                      className="flex-1 relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-medium text-white bg-gradient-to-r cursor-pointer from-blue-500 to-blue-600 rounded-lg group hover:from-blue-600 hover:to-blue-700 transition-all duration-300"
                     >
                       Edit Blog
                     </button>
@@ -212,7 +226,6 @@ export default function AIGenerationModal({
               )
             )}
           </div>
-
           <style>{`
         @keyframes gradient {
           0% { background-position: 0% 50%; }

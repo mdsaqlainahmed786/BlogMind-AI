@@ -51,7 +51,7 @@ function Blogs() {
           }
         );
         console.log("Blogs fetched:", response.data);
-        setFilteredBlogs(response.data.reverse());
+        setFilteredBlogs(response.data);
       } catch (error) {
         console.error("Error fetching blogs:", error);
       }

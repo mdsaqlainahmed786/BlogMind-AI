@@ -5,7 +5,7 @@ import express, { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import z from "zod";
 import nodemailer from 'nodemailer';
-import { PrismaClient } from '@prisma/client';
+import { MembershipPlan, PrismaClient } from '@prisma/client';
 export const userAuth = express.Router();
 const prisma = new PrismaClient();
 const userSignupInput = z.object({
@@ -194,11 +194,27 @@ userAuth.get("/get-user", async (req, res) => {
             res.status(400).json({ message: "User not found" });
             return
         }
+        if (!user.isVerified) {
+            res.status(400).json({ message: "User is not verified" });
+            return
+        }
+        const userMembership = await prisma.membership.findUnique({
+            where: { userId: user.id }
+        });
+        if (!userMembership) {
+            res.status(400).json({ message: "User membership not found" });
+            return
+        }
+
         res.json({
             id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
             username: user.username,
+            avatar: user.avatar,
+            isVerified: user.isVerified,
+            MembershipPlan: user.membershipPlan,
+            aiBlogsLeft: userMembership.aiBlogsLeft,
             email: user.email
         });
         return
