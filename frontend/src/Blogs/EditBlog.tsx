@@ -15,6 +15,7 @@ import {
   Edit3,
 } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
+import  toast  from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
 import { useLocation, useNavigate } from "react-router-dom";
 import AnimatedBackground from "@/UsersAuth/Plasma";
@@ -23,6 +24,8 @@ import { useUserStore } from "@/stores/useUserStore";
 
 
 interface BlogPost {
+  id: string;
+  authorId: string;
   heading: string;
   description: string;
   imageUrl: string;
@@ -131,10 +134,39 @@ function EditBlog() {
     setContent(newText);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission for updating the blog
     console.log({ title, content, coverImage });
+    const response = await axios.put(
+      `${import.meta.env.VITE_BACKEND_URL}/blogs/edit`,
+      {
+        id: blogData.id,
+        heading: title,
+        description: content,
+      },
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("Blog updated:", response.data);
+    navigate('/blog/' + blogData.id, )
+    toast.success("Blog Edited successfully!", {
+      style: {
+        border: "1px solid green",
+        backgroundColor: "green",
+        padding: "16px",
+        color: "white",
+      },
+      iconTheme: {
+        primary: "green",
+        secondary: "white",
+      },
+    });
+    console.log(blogData.id)
   };
 
   const ToolbarButton = ({
@@ -379,7 +411,7 @@ function EditBlog() {
             <div className="flex justify-end">
               <button
                 type="submit"
-                className="relative inline-flex items-center justify-center px-8 py-3 overflow-hidden font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg group hover:from-blue-600 hover:to-blue-700 transition-all duration-300"
+                className="relative inline-flex cursor-pointer items-center justify-center px-8 py-3 overflow-hidden font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg group hover:from-blue-600 hover:to-blue-700 transition-all duration-300"
               >
                 Update Blog
               </button>

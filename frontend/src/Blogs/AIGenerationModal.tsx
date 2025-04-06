@@ -95,6 +95,8 @@ export default function AIGenerationModal({
     setProgress(0);
     setCanClose(true);
     setHeading("");
+    navigate('/blog/' + blogData.id)
+
   };
 
   if (!isOpen) return null;

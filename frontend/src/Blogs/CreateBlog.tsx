@@ -25,10 +25,12 @@ import AIGenerationModal from "@/Blogs/AIGenerationModal"
 import axios from "axios"
 import { useUserStore } from "@/stores/useUserStore"
 import toast from "react-hot-toast"
+import { useNavigate } from "react-router-dom"
 
 function CreateBlog() {
   const [title, setTitle] = useState("")
   const { user } = useUserStore()
+  const navigate = useNavigate()
   const [content, setContent] = useState("")
   const [coverImage, setCoverImage] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -154,6 +156,7 @@ function CreateBlog() {
         }
       )
       console.log("Blog created:", response.data)
+      navigate('/blog/' + response.data.id)
       toast.success("Blog submitted successfully!", {
         style: {
           border: "1px solid green",
