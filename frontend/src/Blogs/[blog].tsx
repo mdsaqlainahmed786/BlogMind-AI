@@ -1,5 +1,5 @@
 import ReactMarkdown from "react-markdown";
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import AnimatedBackground from "@/UsersAuth/Plasma";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -495,23 +495,20 @@ function Blog() {
               </ReactMarkdown>
             </div>
 
-            {/* Engagement */}
-
-            {/* Comments Section */}
             <div className="px-6 py-4 border-t border-gray-700/50">
               <h3 className="text-2xl font-semibold">
                 Comments({comments.length})
               </h3>
               <div className="flex space-x-4 mt-4">
-                {blog?.author.avatar === null || blog?.author.avatar === "" ? (
+                {user?.avatar === null || user?.avatar === "" ? (
                   <div className="w-12 h-10 rounded-full border-2 border-white bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center text-white text-sm">
-                    {blog?.author.firstName[0]}
-                    {blog?.author.lastName[0]}
+                    {user?.firstName[0]}
+                    {user?.lastName[0]}
                   </div>
                 ) : (
                   <img
-                    src={blog?.author.avatar || "/placeholder.svg"}
-                    alt={blog?.author.username}
+                    src={user?.avatar || "/placeholder.svg"}
+                    alt={user?.username}
                     className="w-10 h-10 rounded-full border-2 border-blue-400"
                   />
                 )}

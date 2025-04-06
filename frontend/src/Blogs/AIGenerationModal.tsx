@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CircleCheckBig, WandSparkles, X } from "lucide-react";
+import { useUserStore } from "@/stores/useUserStore";
 
 interface AIGenerationModalProps {
   isOpen: boolean;
@@ -25,6 +26,8 @@ export default function AIGenerationModal({
   const [blogData, setBlogData] = useState({} as BlogData);
   const [canClose, setCanClose] = useState(true);
   const navigate = useNavigate();
+  const { user } = useUserStore();
+
 
   useEffect(() => {
     if (isGenerating && !isComplete) {
@@ -41,6 +44,12 @@ export default function AIGenerationModal({
       return () => clearInterval(interval);
     }
   }, [isGenerating, isComplete]);
+
+  useEffect(() => {
+    if (user?.MemberShipPlan === "BASIC") {
+      setIsMemberShipActive(false);
+    }
+  }, [user]);
 
   const handleGenerateBlog = async (heading: string) => {
     try {

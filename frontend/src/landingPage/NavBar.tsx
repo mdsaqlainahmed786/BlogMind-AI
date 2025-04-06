@@ -68,7 +68,7 @@ export default function Navbar() {
       );
       console.log("Logout response:", response.data);
       clearUser();
-      navigate("/");
+      navigate("/user/login");
     } catch (error) {
       console.error("Error logging out:", error);
     }

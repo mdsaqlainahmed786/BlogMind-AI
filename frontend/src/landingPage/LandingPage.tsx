@@ -20,9 +20,9 @@ export default function LandingPage() {
     {
       id: 2,
       icon: <Rocket />,
-      title: "SEO Optimization",
+      title: "HD Image Generation",
       content:
-        "Automatically optimize your content for search engines to reach a wider audience.",
+        "Create stunning images to complement your content, all generated in high definition.",
       gradientColors: ["#00FFFF", "#0066FF", "#00FFFF"],
       titleColor: "from-cyan-200 to-cyan-300",
       glowIntensity: 0.5,
