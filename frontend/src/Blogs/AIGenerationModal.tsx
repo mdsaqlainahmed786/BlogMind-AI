@@ -46,7 +46,7 @@ export default function AIGenerationModal({
   }, [isGenerating, isComplete]);
 
   useEffect(() => {
-    if (user?.MemberShipPlan === "BASIC") {
+    if (user?.MemberShipPlan === "BASIC" || (user?.aiBlogsLeft ?? 0) <= 0) {
       setIsMemberShipActive(false);
     }
   }, [user]);
@@ -266,6 +266,11 @@ export default function AIGenerationModal({
                 <p className="mb-4">
                   Upgrade your membership to generate blogs with AI.
                 </p>
+                <div className="flex flex-col gap-2 mb-4">
+                  <span className="text-gray-500">Your Current Membership: <span className={`${user?.MemberShipPlan === "PREMIUM" && "text-amber-400" || user?.MemberShipPlan==="STANDARD" && "text-white" || user?.MemberShipPlan==="BASIC" && "text-gray-500 "}`}>{user?.MemberShipPlan}</span></span>
+                <span className="text-gray-500">Your AI generated blogs left: <span className="text-red-500">{user?.aiBlogsLeft}</span></span>
+
+                </div>
                 <button
                   onClick={() => navigate("/user/membership")}
                   className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"

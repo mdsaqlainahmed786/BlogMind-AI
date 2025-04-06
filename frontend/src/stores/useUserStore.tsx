@@ -9,6 +9,7 @@ type User = {
   email: string;
   avatar: string;
   MemberShipPlan: string;
+  aiBlogsLeft: number;
   isVerified: boolean | null;
 };
 
