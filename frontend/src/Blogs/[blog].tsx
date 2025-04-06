@@ -66,6 +66,8 @@ function Blog() {
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(true);
   const { blogId } = useParams<{ blogId: string }>();
+  const [likedByUser, setLikedByUser] = useState(false);
+  const [likesOfBlog, setLikesOfBlog] = useState(0);
   const { user } = useUserStore();
   const commentsRef = useRef<HTMLDivElement>(null);
 
@@ -169,30 +171,34 @@ function Blog() {
       setIsAuthorized(true);
     }
   }, [blog, user]);
+  const fetchBlogData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/blogs/${blogId}`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Blog data fetched:", response.data);
+      if (response.data) {
+        setBlog(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching blog data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchBlogData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/blogs/${blogId}`,
-          {
-            withCredentials: true,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log("Blog data fetched:", response.data);
-        if (response.data) {
-          setBlog(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching blog data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    getLikesOfBlog();
+  }, [blogId]);
+
+  useEffect(() => {
     fetchBlogData();
   }, [blogId]);
 
@@ -310,6 +316,82 @@ function Blog() {
     </article>
   );
 
+  const getLikesOfBlog = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/blogs/${blogId}/likes`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Likes fetched:", response.data);
+
+      setLikesOfBlog(response.data.length);
+      const userId = user?.id;
+      const likedUser = response.data?.user?.id
+      if(userId === likedUser) {
+        setLikedByUser(true);
+      }
+    } catch (error) {
+      console.error("Error fetching likes:", error);
+    }
+  };
+
+  const likeHandler = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/blogs/${blogId}/like`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 200) {
+        getLikesOfBlog();
+        if (
+          response.data.message === "Blog liked"
+        ) {
+          setLikedByUser(true);
+          toast.success("Blog liked successfully!", {
+            style: {
+              border: "1px solid green",
+              backgroundColor: "green",
+              padding: "16px",
+              color: "white",
+            },
+            iconTheme: {
+              primary: "green",
+              secondary: "white",
+            },
+          });
+        } else if (
+          response.data.message === "Like removed"
+        ) {
+          setLikedByUser(false);
+          toast.success("Blog unliked successfully!", {
+            style: {
+              border: "1px solid green",
+              backgroundColor: "green",
+              padding: "16px",
+              color: "white",
+            },
+            iconTheme: {
+              primary: "green",
+              secondary: "white",
+            },
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -331,7 +413,8 @@ function Blog() {
 
               <div className="flex justify-between items-center max-w-[85vw]">
                 <div className="p-6 flex items-center space-x-3">
-                  {blog?.author.avatar === null || blog?.author.avatar === "" ? (
+                  {blog?.author.avatar === null ||
+                  blog?.author.avatar === "" ? (
                     <div className="w-14 h-14 rounded-full border-2 border-white bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center text-white text-lg">
                       {blog?.author.firstName[0]}
                       {blog?.author.lastName[0]}
@@ -362,9 +445,12 @@ function Blog() {
 
               <div className="px-6 py-4 border-t md:hidden border-gray-700/50 flex items-center justify-between">
                 <div className="flex items-center space-x-6">
-                  <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
+                  <button
+                    onClick={likeHandler}
+                    className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors"
+                  >
                     <ThumbsUp className="w-5 h-5" />
-                    <span>{blog?._count.likes}</span>
+                    <span>{likesOfBlog}</span>
                   </button>
                   <button
                     onClick={scrollToComments}
@@ -434,9 +520,16 @@ function Blog() {
 
               <div className="hidden px-6 py-4 border-t border-b border-gray-600/50 md:flex items-center justify-between">
                 <div className="flex items-center space-x-6">
-                  <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
+                  <button
+                    onClick={likeHandler}
+                    className={`flex items-center space-x-2 cursor-pointer transition-colors ${
+                      likedByUser
+                        ? "text-blue-600"
+                        : "text-gray-200 hover:text-blue-600"
+                    }`}
+                  >
                     <ThumbsUp className="w-5 h-5" />
-                    <span>{blog?._count.likes}</span>
+                    <span>{likesOfBlog}</span>
                   </button>
                   <button
                     onClick={scrollToComments}
@@ -547,7 +640,9 @@ function Blog() {
                     strong: ({ children }) => (
                       <strong className="font-bold">{children}</strong>
                     ),
-                    em: ({ children }) => <em className="italic">{children}</em>,
+                    em: ({ children }) => (
+                      <em className="italic">{children}</em>
+                    ),
                   }}
                 >
                   {processContent(blog?.description || "") ||
@@ -628,7 +723,10 @@ function Blog() {
                             {comment?.user?.firstName} {comment?.user?.lastName}
                           </span>
                           <span className="text-sm text-gray-400">
-                            {format(new Date(comment?.createdAt), "MMM dd, yyyy")}
+                            {format(
+                              new Date(comment?.createdAt),
+                              "MMM dd, yyyy"
+                            )}
                           </span>
                         </div>
                       </div>

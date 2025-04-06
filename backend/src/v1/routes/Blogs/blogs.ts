@@ -247,11 +247,38 @@ blogsRouter.get('/:id/like', authenticateUser, async (req: AuthenticatedRequest,
             const likeCount = await prisma.like.count({
                 where: { blogId: id },
             });
-            return res.json({ message: "Blog liked", likeCount });
+            return res.json({ message: "Blog liked", likeCount, userId: userId });
         }
     } catch (error) {
         res.status(500).json({ error: "Error toggling like", details: error });
     }
 });
 
+
+blogsRouter.get('/:id/likes', async (req: AuthenticatedRequest, res: Response) => {
+    const { id } = req.params; // Blog ID
+
+    try {
+        const likes = await prisma.like.findMany({
+            where: { blogId: id },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        username: true,
+                        avatar: true,
+                        email: true,
+                        membershipPlan: true,
+                    }
+                }
+            }
+        });
+        res.json(likes);
+    } catch (error) {
+        res.status(500).json({ error: "Error fetching likes", details: error });
+    }
+
+});
 
