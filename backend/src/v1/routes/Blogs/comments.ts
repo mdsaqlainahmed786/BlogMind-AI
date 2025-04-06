@@ -14,13 +14,13 @@ interface AuthenticatedRequest extends express.Request {
 //@ts-ignore
 // Create Comment
 commentsRouter.post('/', authenticateUser, async (req: AuthenticatedRequest, res) => {
-    if (!req.user){
+    if (!req.user) {
         res.status(401).json({ message: "Unauthorized!" });
-         return 
+        return
     }
     try {
         const { blogId, comment } = req.body;
-        
+
         if (!blogId || !comment) {
             return res.status(400).json({ error: "blogId and comment are required" });
         }
@@ -46,7 +46,7 @@ commentsRouter.get('/:blogId', authenticateUser, async (req: AuthenticatedReques
         const comments = await prisma.comments.findMany({
             where: { blogId: req.params.blogId },
             include: {
-                user: { select: { id: true, username: true } } // Only return necessary user info
+                user: { select: { id: true, username: true, firstName: true, lastName: true, avatar: true } } // Only return necessary user info
             },
             orderBy: { createdAt: 'desc' }
         });

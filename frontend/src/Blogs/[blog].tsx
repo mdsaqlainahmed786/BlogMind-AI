@@ -13,13 +13,16 @@ import {
   ThumbsDown,
   SendHorizonal,
   Edit2,
+  Trash,
 } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { AiGeneratedBadge } from "./allBlogs";
+import { useUserStore } from "@/stores/useUserStore";
 
 interface Author {
+  id: string;
   firstName: string;
   lastName: string;
   username: string;
@@ -59,7 +62,10 @@ interface BlogPost {
 function Blog() {
   const navigate = useNavigate();
   const [blog, setBlog] = useState<BlogPost | null>(null);
+  const [comments, setComments] = useState<BlogPost["Comments"]>([]);
+  const [comment, setComment] = useState("");
   const { blogId } = useParams<{ blogId: string }>();
+  const { user } = useUserStore();
   const handleShareCopyToClipboard = () => {
     const url = window.location.href; // Get the current URL
     navigator.clipboard.writeText(url).then(() => {
@@ -77,9 +83,78 @@ function Blog() {
       });
     });
   };
+
+  const deleteBlogHandler = async (authorId: string) => {
+    if (user?.id !== authorId) {
+      toast.error("You are not authorized to delete this blog", {
+        style: {
+          border: "1px solid red",
+          backgroundColor: "red",
+          padding: "16px",
+          color: "white",
+        },
+        iconTheme: {
+          primary: "red",
+          secondary: "white",
+        },
+      });
+
+      return;
+    }
+
+    try {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/blogs/${blogId}`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Blog deleted:", response.data);
+      navigate("/blogs/all");
+      toast.success("Blog deleted successfully!", {
+        style: {
+          border: "1px solid green",
+          backgroundColor: "green",
+          padding: "16px",
+          color: "white",
+        },
+        iconTheme: {
+          primary: "green",
+          secondary: "white",
+        },
+      });
+    } catch (error) {
+      console.error("Error deleting blog:", error);
+    }
+  };
+
   const processContent = (text: string) => {
     return text?.replace(/\n\n/g, "\n\n")?.replace(/\n/g, "\n");
   };
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/blog/comments/${blogId}`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setComments(response.data);
+      console.log("Comments ", comments);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+  useEffect(() => {
+    fetchComments();
+  }, [blogId]);
 
   useEffect(() => {
     const fetchBlogData = async () => {
@@ -104,6 +179,73 @@ function Blog() {
     };
     fetchBlogData();
   }, [blogId]);
+
+  const submitComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // make it send by clicking enter
+
+    if (!comment) {
+      toast.error("Comment cannot be empty", {
+        style: {
+          border: "1px solid red",
+          backgroundColor: "red",
+          padding: "16px",
+          color: "white",
+        },
+        iconTheme: {
+          primary: "red",
+          secondary: "white",
+        },
+      });
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/blog/comments/`,
+        {
+          blogId: blogId,
+          comment: comment,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      fetchComments(); // Fetch updated comments
+      console.log("Comment submitted:", response.data);
+      setComments((prev) => [...prev, response.data]);
+
+      setComment("");
+      toast.success("Comment submitted successfully!", {
+        style: {
+          border: "1px solid green",
+          backgroundColor: "green",
+          padding: "16px",
+          color: "white",
+        },
+        iconTheme: {
+          primary: "green",
+          secondary: "white",
+        },
+      });
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+      toast.error("Error submitting comment", {
+        style: {
+          border: "1px solid red",
+          backgroundColor: "red",
+          padding: "16px",
+          color: "white",
+        },
+        iconTheme: {
+          primary: "red",
+          secondary: "white",
+        },
+      });
+    }
+  };
 
   return (
     <>
@@ -175,10 +317,27 @@ function Blog() {
               </div>
               <div className="flex items-center space-x-6">
                 <button
-                  onClick={() =>
-                    navigate("/user/blog/edit", { state: { blogData: blog } })
-                  }
-                  className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors"
+                  onClick={() => {
+                    if (user?.id !== blog?.author.id) {
+                      toast.error("You are not authorized to edit this blog", {
+                        style: {
+                          border: "1px solid red",
+                          backgroundColor: "red",
+                          padding: "16px",
+                          color: "white",
+                        },
+                        iconTheme: {
+                          primary: "red",
+                          secondary: "white",
+                        },
+                      });
+                    } else {
+                      navigate("/user/blog/edit", {
+                        state: { blogData: blog },
+                      });
+                    }
+                  }}
+                  className={`flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors`}
                 >
                   <Edit2 className="w-5 h-5" />
                   <span>Edit</span>
@@ -189,6 +348,15 @@ function Blog() {
                 >
                   <Share2 className="w-5 h-5" />
                   <span>Share</span>
+                </button>
+                <button
+                  onClick={() =>
+                    blog?.author.id && deleteBlogHandler(blog.author.id)
+                  }
+                  className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors"
+                >
+                  <Trash className="w-5 h-5" />
+                  <span>Delete</span>
                 </button>
               </div>
             </div>
@@ -266,7 +434,9 @@ function Blog() {
             </div>
             {/* Comments Section */}
             <div className="px-6 py-4 border-t border-gray-700/50">
-              <h3 className="text-2xl font-semibold">Comments</h3>
+              <h3 className="text-2xl font-semibold">
+                Comments({comments.length})
+              </h3>
               <div className="flex space-x-4 mt-4">
                 {blog?.author.avatar === null || blog?.author.avatar === "" ? (
                   <div className="w-12 h-10 rounded-full border-2 border-white bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center text-white text-sm">
@@ -283,10 +453,22 @@ function Blog() {
 
                 <input
                   type="text"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      submitComment(e); // Trigger the submit function
+                    }
+                  }}
                   placeholder="Share your thoughts..."
-                  className="border border-gray-300 rounded-lg p-2 w-full "
+                  className="border border-gray-300 rounded-lg p-2 w-full"
                 />
-                <button className="bg-blue-500 p-2 rounded-lg hover:bg-blue-600 cursor-pointer transition-colors">
+
+                <button
+                  onClick={submitComment}
+                  className="bg-blue-500 p-2 rounded-lg hover:bg-blue-600 cursor-pointer transition-colors"
+                >
                   <SendHorizonal className="w-6 h-6 text-gray-200 cursor-pointer transition-colors" />
                 </button>
               </div>
@@ -296,35 +478,35 @@ function Blog() {
                     No comments yet. Be the first to comment
                   </p>
                 )}
-                {blog?.Comments.map((comment) => (
+                {comments.map((comment) => (
                   <div
                     key={comment.id}
                     className="flex flex-col border-t  border-gray-700/50 items-start py-6 space-x-4"
                   >
                     <div className="flex items-center space-x-4">
-                      {blog?.author.avatar === null ||
-                      blog?.author.avatar === "" ? (
+                      {comment.user?.avatar === null ||
+                      comment.user?.avatar === "" ? (
                         <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center text-white text-sm">
-                          {blog.author.firstName[0]}
-                          {blog.author.lastName[0]}
+                          {comment.user?.firstName[0]}
+                          {comment.user?.lastName[0]}
                         </div>
                       ) : (
                         <img
-                          src={blog?.author.avatar || "/placeholder.svg"}
-                          alt={blog?.author.username}
+                          src={comment.user?.avatar || "/placeholder.svg"}
+                          alt={comment.user?.username}
                           className="w-10 h-10 rounded-full border-2 border-blue-400"
                         />
                       )}
                       <div className="flex flex-col">
                         <span className="font-semibold ">
-                          {comment.user.username}
+                          {comment?.user?.firstName} {comment?.user?.lastName}
                         </span>
                         <span className="text-sm text-gray-400">
-                          {format(new Date(comment.createdAt), "MMM dd, yyyy")}
+                          {format(new Date(comment?.createdAt), "MMM dd, yyyy")}
                         </span>
                       </div>
                     </div>
-                    <p className="mt-2 text-gray-200">{comment.comment}</p>
+                    <p className="mt-2 text-gray-200">{comment?.comment}</p>
                     <div className="flex mt-5 items-center space-x-6">
                       <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
                         <ThumbsUp className="w-5 h-5" />

@@ -194,6 +194,18 @@ userAuth.get("/get-user", async (req, res) => {
             res.status(400).json({ message: "User not found" });
             return
         }
+        if (!user.isVerified) {
+            res.status(400).json({ message: "User is not verified" });
+            return
+        }
+        const userMembership = await prisma.membership.findUnique({
+            where: { userId: user.id }
+        });
+        if (!userMembership) {
+            res.status(400).json({ message: "User membership not found" });
+            return
+        }
+
         res.json({
             id: user.id,
             firstName: user.firstName,
@@ -202,6 +214,7 @@ userAuth.get("/get-user", async (req, res) => {
             avatar: user.avatar,
             isVerified: user.isVerified,
             MembershipPlan: user.membershipPlan,
+            aiBlogsLeft: userMembership.aiBlogsLeft,
             email: user.email
         });
         return
