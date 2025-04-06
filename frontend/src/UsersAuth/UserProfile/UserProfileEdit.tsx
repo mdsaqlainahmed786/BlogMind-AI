@@ -1,23 +1,29 @@
-import React, { useState, useRef } from 'react';
-import { Camera, X, Save, Pencil } from 'lucide-react';
-import Navbar from '@/landingPage/NavBar';
-import AnimatedBackground from '../Plasma';
+import React, { useState, useRef, useEffect } from "react";
+import { Camera, X, Save, Pencil } from "lucide-react";
+import Navbar from "@/landingPage/NavBar";
+import AnimatedBackground from "../Plasma";
+import axios from "axios";
+import { useUserStore } from "@/stores/useUserStore";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
-interface UserProfile{
-  firstName: string;
-  lastName: string;
-  username: string;
-  email: string;
+interface UserProfile {
+  firstName: string | null | undefined;
+  lastName: string | null | undefined;
+  username: string | null | undefined;
+  email: string | null | undefined;
   avatar: string;
 }
 
 function UserProfileEdit() {
+  const { user } = useUserStore();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile>({
-    firstName: 'Sarah',
-    lastName: 'Connors',
-    username: 'sarah-831',
-    email: 'sarahconnors@example.com',
-    avatar: 'https://i.pravatar.cc/150?img=5',
+    firstName: "",
+    lastName: "",
+    username: "",
+    email: "",
+    avatar: "",
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -25,6 +31,28 @@ function UserProfileEdit() {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    setProfile({
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      username: user?.username,
+      email: user?.email,
+      avatar: user?.avatar || "",
+    });
+    setTempProfile({
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      username: user?.username,
+      email: user?.email,
+      avatar: user?.avatar || "",
+    });
+  }, [
+    user?.firstName,
+    user?.lastName,
+    user?.username,
+    user?.email,
+    user?.avatar,
+  ]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -40,7 +68,7 @@ function UserProfileEdit() {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = () => {
         setTempProfile({ ...tempProfile, avatar: reader.result as string });
@@ -51,7 +79,7 @@ function UserProfileEdit() {
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = () => {
         setTempProfile({ ...tempProfile, avatar: reader.result as string });
@@ -61,6 +89,46 @@ function UserProfileEdit() {
   };
 
   const handleSave = () => {
+    const updateProfile = async () => {
+      try {
+        const response = await axios.put(
+          `${import.meta.env.VITE_BACKEND_URL}/user/update-user`,
+          {
+            firstName: tempProfile.firstName,
+            lastName: tempProfile.lastName,
+            username: tempProfile.username,
+            email: tempProfile.email,
+            avatar: tempProfile.avatar,
+          },
+          {
+            headers: {
+              ContentType: "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+        console.log(response.data);
+        if (response.status === 200) {
+          setProfile(tempProfile);
+          navigate('/');
+          toast.success("Profile updated successfully!", {
+            style: {
+              border: "1px solid blue",
+              backgroundColor: "blue",
+              padding: "16px",
+              color: "white",
+            },
+            iconTheme: {
+              primary: "blue",
+              secondary: "white",
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Error updating profile:", error);
+      }
+    };
+    updateProfile();
     setProfile(tempProfile);
     setIsEditing(false);
   };
@@ -82,25 +150,29 @@ function UserProfileEdit() {
               <div className="md:w-1/3">
                 <div
                   className={`relative rounded-full overflow-hidden ${
-                    isEditing ? 'cursor-pointer' : ''
-                  } ${isDragging ? 'ring-2 ring-blue-400' : ''}`}
+                    isEditing ? "cursor-pointer" : ""
+                  } ${isDragging ? "ring-2 ring-blue-400" : ""}`}
                   onDragOver={isEditing ? handleDragOver : undefined}
                   onDragLeave={isEditing ? handleDragLeave : undefined}
                   onDrop={isEditing ? handleDrop : undefined}
                   onClick={() => isEditing && fileInputRef.current?.click()}
                 >
                   {tempProfile.avatar ? (
-                    <div className='flex justify-center items-center md:relative'>
-                        <img
-                          src={tempProfile.avatar}
-                          alt="Profile"
-                          className="w-44 h-44 rounded-full border-2 border-blue-500 object-cover"
-                        />
+                    <div className="flex justify-center items-center md:relative">
+                      <img
+                        src={tempProfile.avatar}
+                        alt="Profile"
+                        className="w-44 h-44 rounded-full border-2 border-blue-500 object-cover"
+                      />
                     </div>
                   ) : (
                     <div className="w-44 h-44 bg-gray-800 flex items-center justify-center rounded-full border-2 border-blue-500 text-white">
-                    <span className='text-5xl'>{tempProfile.firstName.charAt(0).toUpperCase()}</span>
-                      <span className='text-5xl'>{tempProfile.lastName.charAt(0).toUpperCase()}</span>
+                      <span className="text-5xl">
+                        {tempProfile?.firstName?.charAt(0).toUpperCase()}
+                      </span>
+                      <span className="text-5xl">
+                        {tempProfile?.lastName?.charAt(0).toUpperCase()}
+                      </span>
                     </div>
                   )}
                   {isEditing && (
@@ -125,7 +197,7 @@ function UserProfileEdit() {
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
                     <h1 className="text-2xl md:text-3xl font-bold text-white">
-                      {isEditing ? 'Edit Profile' : 'Profile'}
+                      {isEditing ? "Edit Profile" : "Profile"}
                     </h1>
                     {!isEditing ? (
                       <button
@@ -133,7 +205,7 @@ function UserProfileEdit() {
                         className="px-4 py-2 flex items-center bg-blue-500 hover:bg-blue-600 cursor-pointer text-white rounded-lg transition-colors"
                       >
                         <Pencil className="w-5 h-5 text-white inline-block mr-1" />
-                       <span className='hidden md:block'>Edit Profile</span> 
+                        <span className="hidden md:block">Edit Profile</span>
                       </button>
                     ) : (
                       <div className="flex gap-2">
@@ -161,7 +233,7 @@ function UserProfileEdit() {
                       {isEditing ? (
                         <input
                           type="text"
-                          value={tempProfile.firstName}
+                          value={tempProfile?.firstName || ""}
                           onChange={(e) =>
                             setTempProfile({
                               ...tempProfile,
@@ -182,7 +254,7 @@ function UserProfileEdit() {
                       {isEditing ? (
                         <input
                           type="text"
-                          value={tempProfile.lastName}
+                          value={tempProfile?.lastName || ""}
                           onChange={(e) =>
                             setTempProfile({
                               ...tempProfile,
@@ -203,7 +275,7 @@ function UserProfileEdit() {
                       {isEditing ? (
                         <input
                           type="text"
-                          value={tempProfile.username}
+                          value={tempProfile?.username || ""}
                           onChange={(e) =>
                             setTempProfile({
                               ...tempProfile,

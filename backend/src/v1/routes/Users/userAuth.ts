@@ -6,6 +6,8 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import z from "zod";
 import nodemailer from 'nodemailer';
 import { MembershipPlan, PrismaClient } from '@prisma/client';
+import { authenticateUser } from "../../Middleware/authMiddleWare";
+import { AugmentedRequest } from "express-rate-limit";
 export const userAuth = express.Router();
 const prisma = new PrismaClient();
 const userSignupInput = z.object({
@@ -23,6 +25,15 @@ const userSigninInput = z.object({
 const resetPasswordInput = z.object({
     password: z.string().min(8)
 });
+interface AuthenticatedRequest extends Request {
+    user?: {
+        id: string;
+        username: string;
+        email: string;
+
+    }
+}
+
 
 
 userAuth.use(cookieParser());
@@ -224,3 +235,30 @@ userAuth.get("/get-user", async (req, res) => {
         return
     }
 });
+
+// @ts-ignore
+userAuth.put('/update-user', authenticateUser, async (req:AugmentedRequest, res) => {
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized!" });
+    }
+    const userId = (req as AuthenticatedRequest).user?.id; // User ID
+    const { firstName, lastName, username, avatar } = req.body;
+    try {
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        if (!user) {
+            res.status(400).json({ message: "User not found" });
+            return
+        }
+        const updatedUser = await prisma.user.update({
+            where: { id: userId },
+            data: { firstName, lastName, username, avatar }
+        });
+        res.json(updatedUser);
+        return
+    }
+    catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "There was an error" });
+        return
+    }
+})
