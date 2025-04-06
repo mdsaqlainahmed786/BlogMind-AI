@@ -77,6 +77,9 @@ blogsRouter.get('/', async (req, res) => {
                     select: { likes: true },
                 }
             },
+            orderBy: {
+                createdAt: 'desc',
+            },
 
         });
         const blogsWithLikeCount = blogs.map(blog => ({
@@ -159,13 +162,13 @@ blogsRouter.put('/edit', authenticateUser, async (req: AuthenticatedRequest, res
         return res.status(401).json({ message: "Unauthorized!" });
     }
     try {
-      
-        const {id, heading, description } = req.body;
+
+        const { id, heading, description } = req.body;
 
         const toBeUpdatedBlog = await prisma.blog.findUnique({
             where: { id },
         });
-        if(toBeUpdatedBlog?.authorId !== req.user.id){
+        if (toBeUpdatedBlog?.authorId !== req.user.id) {
             return res.status(401).json({ message: "You are not allowed to edit blogs, that does'nt belong to you!" });
         }
         if (!toBeUpdatedBlog) {
