@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import { ChevronDown, Brain, Search, NotebookPen } from "lucide-react";
+import { ChevronDown, Brain, NotebookPen } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 import { useUserStore } from "@/stores/useUserStore";
 import axios from "axios";
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  // const [searchQuery, setSearchQuery] = useState("");
   const { user, setUser, clearUser } = useUserStore();
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
 
   const handleLogoClick = () => {
     navigate("/");
@@ -105,7 +105,7 @@ export default function Navbar() {
         </div>
 
         {/* Search Bar - Hidden on mobile, shown on larger screens */}
-        {location.pathname === "/blogs/all" && (
+        {/* {location.pathname === "/blogs/all" && (
           <div className="hidden md:block flex-grow max-w-2xl mx-4 -ml-28">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5" />
@@ -118,13 +118,13 @@ export default function Navbar() {
               />
             </div>
           </div>
-        )}
+        )} */}
         <div className="flex items-center gap-4 md:gap-6 flex-shrink-0">
-          {location.pathname === "/blogs/all" && (
+          {/* {location.pathname === "/blogs/all" && (
             <button className="md:hidden p-2 text-white hover:text-blue-400 transition-colors cursor-pointer duration-300">
               <Search className="h-5 w-5" />
             </button>
-          )}
+          )} */}
           <div
             onClick={() => navigate("/blog/create")}
             className="flex items-center gap-2 group transition-colors duration-300 cursor-pointer"

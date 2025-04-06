@@ -8,6 +8,9 @@ interface AIGenerationModalProps {
   onClose: () => void;
   onHeadingSubmit?: (heading: string) => void;
 }
+interface BlogData {
+  id: string;
+}
 
 export default function AIGenerationModal({
   isOpen,
@@ -19,7 +22,7 @@ export default function AIGenerationModal({
   const [heading, setHeading] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isMemberShipActive, setIsMemberShipActive] = useState(true);
-  const [blogData, setBlogData] = useState({});
+  const [blogData, setBlogData] = useState({} as BlogData);
   const [canClose, setCanClose] = useState(true);
   const navigate = useNavigate();
 
