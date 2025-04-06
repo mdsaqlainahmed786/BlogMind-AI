@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import ReactMarkdown from "react-markdown";
 import { format } from "date-fns";
 import AnimatedBackground from "@/UsersAuth/Plasma";
@@ -113,6 +112,7 @@ function Blog() {
         }
       );
       console.log("Blog deleted:", response.data);
+      setBlog(null); // Clear the blog data after deletion
       navigate("/blogs/all");
       toast.success("Blog deleted successfully!", {
         style: {
@@ -287,7 +287,7 @@ function Blog() {
                   </span>
                   {/*  */}
                 </div>
-                <Badge className="bg-amber-400">PREMIUM USER</Badge>
+                {/* <Badge className="bg-amber-400">PREMIUM USER</Badge> */}
               </div>
               <div className="flex md:mr-10">
                 {blog?.isAIGenerated && (
@@ -353,7 +353,7 @@ function Blog() {
                   onClick={() =>
                     blog?.author.id && deleteBlogHandler(blog.author.id)
                   }
-                  className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors"
+                  className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-red-600 transition-colors"
                 >
                   <Trash className="w-5 h-5" />
                   <span>Delete</span>
@@ -473,7 +473,7 @@ function Blog() {
                 </button>
               </div>
               <div className="mt-4 space-y-4">
-                {blog?.Comments.length === 0 && (
+                {comments.length === 0 && (
                   <p className="text-gray-400 text-center py-10">
                     No comments yet. Be the first to comment
                   </p>

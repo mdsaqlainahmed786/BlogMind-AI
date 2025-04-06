@@ -31,7 +31,7 @@ AiBlogsRouter.post('/generate', authenticateUser, memberShipMiddleWare, async (r
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-        const result = await model.generateContent(`Please write a blog post about ${heading} and use facts and data throughout the article while citing your sources as well as write the introduction in a storytelling format. Use proper spaces, gaps and proper markdown format. Also write a conclusion and a call to action at the end of the blog post. Make sure to write in a friendly tone and use simple language.`);
+        const result = await model.generateContent(`Please write a blog post about ${heading} and use facts and data throughout the article while citing your sources as well as write the introduction in a storytelling format. Use proper spaces, gaps and proper markdown format. Also write a conclusion and a call to action at the end of the blog post. Make sure to write in a friendly tone and use simple language. Make sure you start with the given topic, not any sentence before that`);
         const response = await result.response;
         const description = await response.text();
         const unsplashImg = await axios.get<UnsplashResponse>(`https://api.unsplash.com/search/photos?client_id=${process.env.UNSPALSH_CLEINTID}&query=${heading}`);

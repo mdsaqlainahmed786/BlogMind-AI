@@ -88,7 +88,7 @@ export default function AIGenerationModal({
     onClose();
   };
 
-  const handlePublish = () => {
+  const handleClose = () => {
     onClose();
     setIsComplete(false);
     setIsGenerating(false);
@@ -196,14 +196,14 @@ export default function AIGenerationModal({
                   </div>
                   <div className="flex flex-col sm:flex-row gap-4 mt-8">
                     <button
-                      onClick={handlePublish}
-                      className="flex-1 relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg group hover:from-blue-600 hover:to-blue-700 transition-all duration-300"
+                      onClick={handleClose}
+                      className="flex-1 inline-flex items-center justify-center px-6 py-3 font-medium text-white bg-white/10 border border-white/20 rounded-lg hover:bg-white/20 transition-all duration-300"
                     >
-                      Publish Blog
+                      Close
                     </button>
                     <button
                       onClick={handleEdit}
-                      className="flex-1 inline-flex items-center justify-center px-6 py-3 font-medium text-white bg-white/10 border border-white/20 rounded-lg hover:bg-white/20 transition-all duration-300"
+                      className="flex-1 relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-medium text-white bg-gradient-to-r cursor-pointer from-blue-500 to-blue-600 rounded-lg group hover:from-blue-600 hover:to-blue-700 transition-all duration-300"
                     >
                       Edit Blog
                     </button>

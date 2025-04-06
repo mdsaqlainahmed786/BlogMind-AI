@@ -106,7 +106,7 @@ export default function Navbar() {
 
         {/* Search Bar - Hidden on mobile, shown on larger screens */}
         {location.pathname === "/blogs/all" && (
-          <div className="hidden md:block flex-grow max-w-2xl mx-4 -ml-32">
+          <div className="hidden md:block flex-grow max-w-2xl mx-4 -ml-28">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300 h-5 w-5" />
               <input
