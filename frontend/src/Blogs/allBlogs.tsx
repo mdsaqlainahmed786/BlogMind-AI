@@ -1,16 +1,11 @@
 import { useState, useEffect } from "react";
-import {
-  ThumbsUp,
-  MessageCircle,
-  Calendar,
-  Sparkles,
-  EllipsisVertical,
-} from "lucide-react";
+import { ThumbsUp, MessageCircle, Calendar, Sparkles, FlipVertical as EllipsisVertical } from "lucide-react";
 import Navbar from "../landingPage/NavBar";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import AnimatedBackground from "@/UsersAuth/Plasma";
 import axios from "axios";
+
 interface Blog {
   id: string;
   heading: string;
@@ -28,6 +23,7 @@ interface Blog {
 
 function Blogs() {
   const [filteredBlogs, setFilteredBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -44,7 +40,6 @@ function Blogs() {
           `${import.meta.env.VITE_BACKEND_URL}/blogs`,
           {
             withCredentials: true,
-
             headers: {
               "Content-Type": "application/json",
             },
@@ -52,113 +47,165 @@ function Blogs() {
         );
         console.log("Blogs fetched:", response.data);
         setFilteredBlogs(response.data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching blogs:", error);
+        setLoading(false);
       }
     };
     fetchBlogs();
   }, []);
 
+  const BlogSkeleton = () => (
+    <div className="backdrop-blur-xl bg-white/10 rounded-xl p-6 border border-white/20 mb-10 animate-pulse">
+      <div className="flex flex-col-reverse md:flex-row gap-6">
+        <div className="flex-grow">
+          {/* Author Info Skeleton */}
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-white/20"></div>
+              <div className="flex flex-col gap-1">
+                <div className="h-4 w-24 bg-white/20 rounded"></div>
+                <div className="h-3 w-16 bg-white/20 rounded"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Title Skeleton */}
+          <div className="h-7 w-3/4 bg-white/20 rounded mb-3"></div>
+
+          {/* Description Skeleton */}
+          <div className="space-y-2 mb-4">
+            <div className="h-4 w-full bg-white/20 rounded"></div>
+            <div className="h-4 w-5/6 bg-white/20 rounded"></div>
+            <div className="h-4 w-4/6 bg-white/20 rounded"></div>
+          </div>
+
+          {/* Metadata Skeleton */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="h-4 w-24 bg-white/20 rounded"></div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="h-4 w-16 bg-white/20 rounded"></div>
+              <div className="h-4 w-16 bg-white/20 rounded"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Image Skeleton */}
+        <div className="flex-shrink-0 w-full md:w-48 h-48 bg-white/20 rounded-lg"></div>
+      </div>
+    </div>
+  );
+
   return (
     <>
       <Navbar />
       <AnimatedBackground />
-      <div className="min-h-screen py-24 ">
+      <div className="min-h-screen py-24">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
           <div className="space-y-8">
-            {filteredBlogs.map((blog) => (
-              <Link to={`/blog/${blog.id}`} key={blog.id}>
-                <article
-                  key={blog.id}
-                  className="backdrop-blur-xl bg-white/10 rounded-xl p-6 border cursor-pointer border-white/20 hover:bg-white/20 transition-all duration-300 mb-10"
-                >
-                  <div className="flex flex-col-reverse md:flex-row gap-6">
-                    {/* Content Section */}
-                    <div className="flex-grow">
-                      {/* Author Info */}
-                      <div className="flex items-center justify-between gap-3 mb-4">
-                        <div className="flex items-center gap-2">
-                          {blog?.avatar === null || blog?.avatar === "" ? (
-                            <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center text-white text-sm">
-                              {blog.firstName[0]}
-                              {blog.lastName[0]}
-                            </div>
-                          ) : (
-                            <img
-                              src={blog?.avatar || "/placeholder.svg"}
-                              alt={blog?.username}
-                              className="w-10 h-10 rounded-full border-2 border-blue-400"
-                            />
-                          )}
-                          <div className="flex flex-col">
-                            <div className="flex items-center gap-2">
-                              <span className="text-white font-medium">
-                                {blog?.firstName} {blog?.lastName}
+            {loading ? (
+              // Show skeletons while loading
+              Array.from({ length: 3 }).map((_, index) => (
+                <BlogSkeleton key={index} />
+              ))
+            ) : (
+              // Show actual blogs when loaded
+              filteredBlogs.map((blog) => (
+                <Link to={`/blog/${blog.id}`} key={blog.id}>
+                  <article
+                    className="backdrop-blur-xl bg-white/10 rounded-xl p-6 border cursor-pointer border-white/20 hover:bg-white/20 transition-all duration-300 mb-10"
+                  >
+                    <div className="flex flex-col-reverse md:flex-row gap-6">
+                      {/* Content Section */}
+                      <div className="flex-grow">
+                        {/* Author Info */}
+                        <div className="flex items-center justify-between gap-3 mb-4">
+                          <div className="flex items-center gap-2">
+                            {blog?.avatar === null || blog?.avatar === "" ? (
+                              <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center text-white text-sm">
+                                {blog.firstName[0]}
+                                {blog.lastName[0]}
+                              </div>
+                            ) : (
+                              <img
+                                src={blog?.avatar || "/placeholder.svg"}
+                                alt={blog?.username}
+                                className="w-10 h-10 rounded-full border-2 border-blue-400"
+                              />
+                            )}
+                            <div className="flex flex-col">
+                              <div className="flex items-center gap-2">
+                                <span className="text-white font-medium">
+                                  {blog?.firstName} {blog?.lastName}
+                                </span>
+                              </div>
+                              <span className="text-blue-300 text-sm">
+                                @{blog?.username}
                               </span>
                             </div>
-                            <span className="text-blue-300 text-sm">
-                              @{blog?.username}
-                            </span>
+                          </div>
+
+                          <div onClick={(e) => e.stopPropagation()}>
+                            <EllipsisVertical className="text-blue-400 md:hidden" />
                           </div>
                         </div>
 
-                        <div onClick={(e) => e.stopPropagation()}>
-                          <EllipsisVertical className="text-blue-400 md:hidden" />
-                        </div>
-                      </div>
+                        {/* Blog Content */}
+                        <h2 className="text-xl md:text-2xl font-bold text-white mb-3">
+                          {blog.heading}
+                        </h2>
+                        <p className="text-blue-200 mb-4 line-clamp-3 text-sm md:text-base">
+                          <ReactMarkdown>
+                            {blog?.description
+                              .replace(/\n/g, " ")
+                              .replace(/\*\*/g, "")}
+                          </ReactMarkdown>
+                        </p>
 
-                      {/* Blog Content */}
-                      <h2 className="text-xl md:text-2xl font-bold text-white mb-3">
-                        {blog.heading}
-                      </h2>
-                      <p className="text-blue-200 mb-4 line-clamp-3 text-sm md:text-base">
-                        <ReactMarkdown>
-                          {blog?.description
-                            .replace(/\n/g, " ")
-                            .replace(/\*\*/g, "")}
-                        </ReactMarkdown>
-                      </p>
-
-                      {/* Metadata */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-blue-300" />
-                            <span className="text-blue-300 text-sm">
-                              {formatDate(blog?.createdAt)} 2025
-                            </span>
+                        {/* Metadata */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2">
+                              <Calendar className="w-4 h-4 text-blue-300" />
+                              <span className="text-blue-300 text-sm">
+                                {formatDate(blog?.createdAt)} 2025
+                              </span>
+                            </div>
+                            {blog.isAIGenerated && (
+                              <AiGeneratedBadge className="w-6 h-6" />
+                            )}
                           </div>
-                          {blog.isAIGenerated && (
-                            <AiGeneratedBadge className="w-6 h-6" />
-                          )}
-                        </div>
-                        <div className="flex items-center gap-4 text-blue-300 text-sm">
-                          <button className="flex items-center hover:text-blue-400 transition-colors">
-                            <ThumbsUp className="w-4 h-4 mr-1" />
-                            <span>{blog?.likeCount}</span>
-                          </button>
-                          <button className="flex items-center hover:text-blue-400 transition-colors">
-                            <MessageCircle className="w-4 h-4 mr-1" />
-                            <span>{blog?.Comments?.length}</span>
-                          </button>
+                          <div className="flex items-center gap-4 text-blue-300 text-sm">
+                            <button className="flex items-center hover:text-blue-400 transition-colors">
+                              <ThumbsUp className="w-4 h-4 mr-1" />
+                              <span>{blog?.likeCount}</span>
+                            </button>
+                            <button className="flex items-center hover:text-blue-400 transition-colors">
+                              <MessageCircle className="w-4 h-4 mr-1" />
+                              <span>{blog?.Comments?.length}</span>
+                            </button>
+                          </div>
                         </div>
                       </div>
+
+                      {/* Image Section */}
+                      {blog.imageUrl && (
+                        <div className="flex-shrink-0 w-full md:w-48 h-48 md:h-full overflow-hidden rounded-lg">
+                          <img
+                            src={blog?.imageUrl || "/placeholder.svg"}
+                            alt={blog.heading}
+                            className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      )}
                     </div>
-
-                    {/* Image Section */}
-                    {blog.imageUrl && (
-                      <div className="flex-shrink-0 w-full md:w-48 h-48 md:h-full overflow-hidden rounded-lg">
-                        <img
-                          src={blog?.imageUrl || "/placeholder.svg"}
-                          alt={blog.heading}
-                          className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </article>
-              </Link>
-            ))}
+                  </article>
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -209,9 +256,11 @@ function Blogs() {
     </>
   );
 }
+
 interface AiGeneratedBadgeProps {
   className?: string;
 }
+
 export const AiGeneratedBadge = ({ className }: AiGeneratedBadgeProps) => {
   return (
     <div
