@@ -162,6 +162,16 @@ blogsRouter.put('/:id', authenticateUser, async (req: AuthenticatedRequest, res)
         const { id } = req.params;
         const { heading, description } = req.body;
 
+        const toBeUpdatedBlog = await prisma.blog.findUnique({
+            where: { id },
+        });
+        if(toBeUpdatedBlog?.authorId !== req.user.id){
+            return res.status(401).json({ message: "You are not allowed to edit blogs, that does'nt belong to you!" });
+        }
+        if (!toBeUpdatedBlog) {
+            return res.status(404).json({ error: "Blog not found" });
+        }
+
         const updatedBlog = await prisma.blog.update({
             where: { id },
             data: { heading, description },
@@ -181,6 +191,15 @@ blogsRouter.delete('/:id', authenticateUser, async (req: AuthenticatedRequest, r
     }
     try {
         const { id } = req.params;
+        const toBeDeletedBlog = await prisma.blog.findUnique({
+            where: { id },
+        });
+        if (!toBeDeletedBlog) {
+            return res.status(404).json({ error: "Blog not found" });
+        }
+        if (toBeDeletedBlog.authorId !== req.user.id) {
+            return res.status(401).json({ message: "You are not allowed to delete blogs, that does'nt belong to you!" });
+        }
         await prisma.blog.delete({
             where: { id },
         });

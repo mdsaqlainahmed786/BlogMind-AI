@@ -188,7 +188,7 @@ function LoginUser() {
                   }`}
                 />
                 <input
-                  type="password"
+                 type={showPassword ? "text" : "password"}
                   className={getInputClassName("password")}
                   placeholder="••••••••"
                   value={formData.password}
