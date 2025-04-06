@@ -18,6 +18,9 @@ import Navbar from "@/landingPage/NavBar";
 import ReactMarkdown from "react-markdown";
 import { useLocation, useNavigate } from "react-router-dom";
 import AnimatedBackground from "@/UsersAuth/Plasma";
+import axios from "axios"
+import { useUserStore } from "@/stores/useUserStore";
+
 
 interface BlogPost {
   heading: string;
@@ -30,6 +33,7 @@ function EditBlog() {
   const location = useLocation();
   const navigate = useNavigate();
   const blogData = location.state?.blogData as BlogPost;
+  const { user } = useUserStore();
 
   const [title, setTitle] = useState(blogData?.heading || "");
   const [content, setContent] = useState(blogData?.description || "");

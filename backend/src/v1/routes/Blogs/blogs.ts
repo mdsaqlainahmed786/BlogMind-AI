@@ -154,13 +154,13 @@ blogsRouter.get('/:id', async (req, res) => {
 
 // Update a blog by ID
 //@ts-ignore
-blogsRouter.put('/:id', authenticateUser, async (req: AuthenticatedRequest, res) => {
+blogsRouter.put('/edit', authenticateUser, async (req: AuthenticatedRequest, res) => {
     if (!req.user) {
         return res.status(401).json({ message: "Unauthorized!" });
     }
     try {
-        const { id } = req.params;
-        const { heading, description } = req.body;
+      
+        const {id, heading, description } = req.body;
 
         const toBeUpdatedBlog = await prisma.blog.findUnique({
             where: { id },

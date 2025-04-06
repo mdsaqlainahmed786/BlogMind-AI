@@ -360,7 +360,7 @@ function Blog() {
                 </button>
               </div>
             </div>
-            <div className="w-full aspect-video">
+            <div className={`w-full aspect-video ${blog?.imageUrl ? "" : "hidden"}`}>
               <img
                 src={blog?.imageUrl}
                 alt={blog?.heading}
@@ -408,7 +408,7 @@ function Blog() {
             </div>
 
             {/* Engagement */}
-            <div className="px-6 py-4 border-t border-gray-700/50 flex items-center justify-between">
+            {/* <div className="px-6 py-4 border-t border-gray-700/50 flex items-center justify-between">
               <div className="flex items-center space-x-6">
                 <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
                   <ThumbsUp className="w-5 h-5" />
@@ -431,7 +431,7 @@ function Blog() {
                 <Share2 className="w-5 h-5" />
                 <span>Share</span>
               </button>
-            </div>
+            </div> */}
             {/* Comments Section */}
             <div className="px-6 py-4 border-t border-gray-700/50">
               <h3 className="text-2xl font-semibold">

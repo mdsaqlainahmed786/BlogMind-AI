@@ -22,9 +22,13 @@ import Navbar from "@/landingPage/NavBar"
 import ReactMarkdown from "react-markdown"
 import AnimatedBackground from "@/UsersAuth/Plasma"
 import AIGenerationModal from "@/Blogs/AIGenerationModal"
+import axios from "axios"
+import { useUserStore } from "@/stores/useUserStore"
+import toast from "react-hot-toast"
 
 function CreateBlog() {
   const [title, setTitle] = useState("")
+  const { user } = useUserStore()
   const [content, setContent] = useState("")
   const [coverImage, setCoverImage] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -53,11 +57,13 @@ function CreateBlog() {
     if (file && file.type.startsWith("image/")) {
       const reader = new FileReader()
       reader.onload = () => {
-        setCoverImage(reader.result as string)
+    setCoverImage(reader.result as string)
       }
       reader.readAsDataURL(file)
     }
   }
+  
+
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -112,8 +118,62 @@ function CreateBlog() {
     setContent(newText)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault()
+    if (!user) return
+    if (!title || !content) {
+      toast.error("Please fill in all fields.", {
+        style: {
+          border: "1px solid red",
+          backgroundColor: "red",
+          padding: "16px",
+          color: "white",
+        },
+        iconTheme: {
+          primary: "red",
+          secondary: "white",
+        },
+      });
+      return
+    }
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/blogs`,
+        {
+          authorId: user.id,
+          isAIGenerated: false,
+          heading: title,
+          description: content,
+          imageUrl: coverImage || "",
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      console.log("Blog created:", response.data)
+      toast.success("Blog submitted successfully!", {
+        style: {
+          border: "1px solid green",
+          backgroundColor: "green",
+          padding: "16px",
+          color: "white",
+        },
+        iconTheme: {
+          primary: "green",
+          secondary: "white",
+        },
+      });
+      setTitle("")
+      setContent("")
+      setCoverImage(null)
+
+    } catch (error) {
+      console.error("Error creating blog:", error)
+    }
+    
   }
 
   const processContent = (text: string) => {
@@ -317,7 +377,8 @@ function CreateBlog() {
             <div className="flex justify-end">
               <button
                 type="submit"
-                className="relative inline-flex items-center justify-center px-8 py-3 overflow-hidden font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg group hover:from-blue-600 hover:to-blue-700 transition-all duration-300"
+
+                className="relative inline-flex items-center justify-center cursor-pointer px-8 py-3 overflow-hidden font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg group hover:from-blue-600 hover:to-blue-700 transition-all duration-300"
               >
                 Publish Blog
               </button>
