@@ -66,7 +66,7 @@ function Blog() {
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(true);
   const { blogId } = useParams<{ blogId: string }>();
-  const [likedByUser, setLikedByUser] = useState(false);
+  const [likedByUser, setLikedByUser] = useState(Boolean);
   const [likesOfBlog, setLikesOfBlog] = useState(0);
   const { user } = useUserStore();
   const commentsRef = useRef<HTMLDivElement>(null);
@@ -195,8 +195,10 @@ function Blog() {
   };
 
   useEffect(() => {
-    getLikesOfBlog();
-  }, [blogId]);
+    const userId = user?.id!== undefined ? user?.id : "";
+    getLikesOfBlog(userId);
+
+  }, [blogId, user?.id]);
 
   useEffect(() => {
     fetchBlogData();
@@ -316,7 +318,7 @@ function Blog() {
     </article>
   );
 
-  const getLikesOfBlog = async () => {
+  const getLikesOfBlog = async (userId?: string) => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/blogs/${blogId}/likes`,
@@ -327,18 +329,23 @@ function Blog() {
           },
         }
       );
-      console.log("Likes fetched:", response.data);
-
-      setLikesOfBlog(response.data.length);
-      const userId = user?.id;
-      const likedUser = response.data?.user?.id
-      if(userId === likedUser) {
-        setLikedByUser(true);
+  
+      const likesData = response.data; // Array of { user: { id, ... }, ... }
+      setLikesOfBlog(likesData.length);
+      console.log("THIS IS LIKES DATA", likesData);
+  
+      // const userId = user?.id;
+      console.log("THIS IS USER ID", userId);
+      if(likesData && userId) {
+        const hasUserLiked = likesData.some((entry: { user: { id: string } }) => entry.user.id === userId);
+        console.log("THIS IS HAS USER RETURNED", hasUserLiked);
+        setLikedByUser(hasUserLiked);
       }
     } catch (error) {
       console.error("Error fetching likes:", error);
     }
   };
+  
 
   const likeHandler = async () => {
     try {
@@ -524,7 +531,7 @@ function Blog() {
                     onClick={likeHandler}
                     className={`flex items-center space-x-2 cursor-pointer transition-colors ${
                       likedByUser
-                        ? "text-blue-600"
+                        ? "text-green-600"
                         : "text-gray-200 hover:text-blue-600"
                     }`}
                   >
