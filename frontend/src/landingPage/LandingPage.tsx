@@ -3,9 +3,11 @@ import { TestimonialsCarousel } from "./TestimonialsCarousel";
 import { useNavigate } from "react-router-dom";
 import NeonCardDemo from "./FeaturesCard";
 import Navbar from "./NavBar";
+import { useUserStore } from "@/stores/useUserStore";
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { user } = useUserStore();
   const info = [
     {
       id: 1,
@@ -68,12 +70,22 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <button
               style={{
-
                 filter: `
                    drop-shadow(0 0 3px #7928CA) 
                    drop-shadow(0 0 4px #0070F3)`,
               }}
-              onClick={() => navigate("/user/membership")}
+              onClick={() => {
+                if (!user) {
+                  navigate("/login");
+                } else if (
+                  user.MemberShipPlan === "STANDARD" ||
+                  user.MemberShipPlan === "PREMIUM"
+                ) {
+                  navigate("blog/create");
+                } else if (user.MemberShipPlan === "BASIC") {
+                  navigate("/user/membership");
+                }
+              }}
               className="bg-gradient-to-r from-blue-500 cursor-pointer to-blue-800 px-5 py-3 rounded-md text-white font-semibold text-lg hover:opacity-90 transition flex items-center justify-center gap-2 hover:scale-105 transform duration-200"
             >
               <span className="bg-gradient-to-br from-[#ff8a05] via-[#ff5478] to-[#ff00c6] group-hover:from-[#ff00c6] group-hover:via-[#ff5478] group-hover:to-[#ff8a05] absolute"></span>
