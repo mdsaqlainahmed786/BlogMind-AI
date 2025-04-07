@@ -195,9 +195,8 @@ function Blog() {
   };
 
   useEffect(() => {
-    const userId = user?.id!== undefined ? user?.id : "";
+    const userId = user?.id !== undefined ? user?.id : "";
     getLikesOfBlog(userId);
-
   }, [blogId, user?.id]);
 
   useEffect(() => {
@@ -329,23 +328,21 @@ function Blog() {
           },
         }
       );
-  
-      const likesData = response.data; // Array of { user: { id, ... }, ... }
+
+      const likesData = response.data;
       setLikesOfBlog(likesData.length);
-      console.log("THIS IS LIKES DATA", likesData);
-  
+
       // const userId = user?.id;
-      console.log("THIS IS USER ID", userId);
-      if(likesData && userId) {
-        const hasUserLiked = likesData.some((entry: { user: { id: string } }) => entry.user.id === userId);
-        console.log("THIS IS HAS USER RETURNED", hasUserLiked);
+      if (likesData && userId) {
+        const hasUserLiked = likesData.some(
+          (entry: { user: { id: string } }) => entry.user.id === userId
+        );
         setLikedByUser(hasUserLiked);
       }
     } catch (error) {
       console.error("Error fetching likes:", error);
     }
   };
-  
 
   const likeHandler = async () => {
     try {
@@ -360,9 +357,7 @@ function Blog() {
       );
       if (response.status === 200) {
         getLikesOfBlog();
-        if (
-          response.data.message === "Blog liked"
-        ) {
+        if (response.data.message === "Blog liked") {
           setLikedByUser(true);
           toast.success("Blog liked successfully!", {
             style: {
@@ -376,9 +371,7 @@ function Blog() {
               secondary: "white",
             },
           });
-        } else if (
-          response.data.message === "Like removed"
-        ) {
+        } else if (response.data.message === "Like removed") {
           setLikedByUser(false);
           toast.success("Blog unliked successfully!", {
             style: {
@@ -454,7 +447,11 @@ function Blog() {
                 <div className="flex items-center space-x-6">
                   <button
                     onClick={likeHandler}
-                    className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors"
+                    className={`flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors ${
+                      likedByUser
+                        ? "text-green-600"
+                        : "text-gray-200 hover:text-blue-600"
+                    }`}
                   >
                     <ThumbsUp className="w-5 h-5" />
                     <span>{likesOfBlog}</span>
@@ -464,7 +461,7 @@ function Blog() {
                     className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors"
                   >
                     <MessageCircle className="w-5 h-5" />
-                    <span>{blog?.Comments.length}</span>
+                    <span>{comments.length}</span>
                   </button>
                   <div className="flex items-center space-x-2 text-gray-200">
                     <Calendar className="w-4 h-4" />
