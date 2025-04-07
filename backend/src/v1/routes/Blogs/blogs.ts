@@ -24,7 +24,7 @@ blogsRouter.post('/', authenticateUser, async (req: AuthenticatedRequest, res) =
         if (!req.user) {
             return res.status(401).json({ message: "Unauthorized!" });
         }
-        const { authorId, isAIGenerated, heading, description } = req.body;
+        const { authorId, isAIGenerated, heading, description, imageUrl } = req.body;
 
 
         const newBlog = await prisma.blog.create({
@@ -33,7 +33,7 @@ blogsRouter.post('/', authenticateUser, async (req: AuthenticatedRequest, res) =
                 isAIGenerated,
                 heading,
                 description,
-                imageUrl: ""
+                imageUrl
             },
         });
         res.status(201).json(newBlog);

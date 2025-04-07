@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { useState, useRef } from "react"
 import {
@@ -67,17 +65,27 @@ function CreateBlog() {
   
 
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader()
-      reader.onload = () => {
-        setCoverImage(reader.result as string)
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("upload_preset", "blog_upload_preset")
+  
+      try {
+        const res = await axios.post(
+          "https://api.cloudinary.com/v1_1/diysvyrv6/image/upload",
+          formData
+        )
+        console.log("Image uploaded:", res.data.secure_url)
+        setCoverImage(res.data.secure_url) // Save Cloudinary image URL
+        console.log("COVER IMAGE URL", res.data.secure_url)
+      } catch (err) {
+        console.error("Image upload failed", err)
       }
-      reader.readAsDataURL(file)
     }
   }
-
+  
   const insertFormat = (format: string) => {
     if (!contentRef.current) return
 
@@ -146,7 +154,7 @@ function CreateBlog() {
           isAIGenerated: false,
           heading: title,
           description: content,
-          imageUrl: coverImage || "",
+          imageUrl: coverImage,
         },
         {
           withCredentials: true,
