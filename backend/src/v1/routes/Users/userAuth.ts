@@ -11,6 +11,7 @@ import { AugmentedRequest } from "express-rate-limit";
 export const userAuth = express.Router();
 const prisma = new PrismaClient();
 const userSignupInput = z.object({
+    avatar: z.string().url(),
     firstName: z.string().min(3).max(20),
     lastName: z.string().min(3).max(20),
     username: z.string().min(3).max(20),
@@ -45,7 +46,7 @@ userAuth.post('/register', async (req: Request, res: Response) => {
         return
     }
 
-    const { firstName, lastName, username, email, password } = bodyParser.data;
+    const {avatar, firstName, lastName, username, email, password } = bodyParser.data;
     try {
         const checkUser = await prisma.user.findUnique({ where: { email } });
         if (checkUser) { res.status(400).json({ message: "User already exists" }); return }
@@ -83,7 +84,7 @@ userAuth.post('/register', async (req: Request, res: Response) => {
         }
         sendMail(transporter, mailOptions)
         const user = await prisma.user.create({
-            data: { avatar: "", firstName, lastName, username, email, password: hashedPassword, isVerified: false, otp }
+            data: { avatar, firstName, lastName, username, email, password: hashedPassword, isVerified: false, otp }
         });
 
         const temporaryToken = jwt.sign({ id: user.id, isVerified: false }, process.env.JWT_SECRET as string, { expiresIn: '10m' });

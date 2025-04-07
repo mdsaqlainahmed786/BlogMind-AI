@@ -25,6 +25,7 @@ interface ValidationErrors {
 }
 
 interface FormData {
+  avatar: string | null;
   firstName: string;
   lastName: string;
   username: string;
@@ -36,6 +37,7 @@ function RegisterUser() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    avatar:"",
     firstName: "",
     lastName: "",
     username: "",
@@ -118,17 +120,25 @@ function RegisterUser() {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
     if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setProfilePicture(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("upload_preset", "blog_avatar_preset")
+  
+      try {
+        const res = await axios.post(
+          "https://api.cloudinary.com/v1_1/diysvyrv6/image/upload",
+          formData
+        )
+        setProfilePicture(res.data.secure_url) // Save Cloudinary image URL
+      } catch (err) {
+        console.error("Image upload failed", err)
+      }
     }
-  };
-
+  }
+  
   const validateField = (name: string, value: string): string => {
     switch (name) {
       case "firstName":
@@ -202,7 +212,16 @@ function RegisterUser() {
     if (Object.values(newErrors).every((error) => error === "")) {
       // navigate("/user/verify", { state: { ...formData, profilePicture } });
       // console.log("User registered:", { ...formData, profilePicture });
-      handleRegisterUser({ ...formData });
+      handleRegisterUser({ ...formData, avatar: profilePicture });
+      setFormData({
+        avatar:"",
+        firstName: "",
+        lastName: "",
+        username: "",
+        email: "",
+        password: "",
+      });
+      setProfilePicture(null);
     }
   };
 
