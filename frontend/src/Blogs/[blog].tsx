@@ -423,7 +423,7 @@ function Blog() {
                     <img
                       src={blog?.author.avatar || "/placeholder.svg"}
                       alt={blog?.author.username}
-                      className="w-10 h-10 rounded-full border-2 border-blue-400"
+                      className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-blue-400"
                     />
                   )}
 

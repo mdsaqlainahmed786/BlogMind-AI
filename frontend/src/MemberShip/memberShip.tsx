@@ -7,6 +7,22 @@ import { useUserStore } from "@/stores/useUserStore";
 import toast from "react-hot-toast";
 
 // Define plan details for consistency
+// Define a type for the Razorpay constructor
+interface RazorpayConstructor {
+  new (options: object): RazorpayInstance;
+}
+
+// Define a minimal interface for the Razorpay instance
+interface RazorpayInstance {
+  open(): void;
+}
+
+// Properly declare Razorpay on the window object
+declare global {
+  interface Window {
+    Razorpay: RazorpayConstructor;
+  }
+}
 const PLANS = {
   BASIC: {
     id: "BASIC",
@@ -174,7 +190,7 @@ function Membership() {
       };
 
       // Open Razorpay checkout
-      const razorpayInstance = new (window as any).Razorpay(options);
+      const razorpayInstance = new (window).Razorpay(options);
       razorpayInstance.open();
     } catch (error) {
       console.error("Error initiating payment:", error);
