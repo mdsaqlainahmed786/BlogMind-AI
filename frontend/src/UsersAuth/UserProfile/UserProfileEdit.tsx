@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Camera, X, Save, Pencil } from "lucide-react";
+import { Camera, X, Save, Pencil, AlertCircle } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import AnimatedBackground from "../Plasma";
 import axios from "axios";
@@ -13,6 +13,12 @@ interface UserProfile {
   username: string | null | undefined;
   email: string | null | undefined;
   avatar: string;
+}
+
+interface ValidationErrors {
+  firstName: string;
+  lastName: string;
+  username: string;
 }
 
 function UserProfileEdit() {
@@ -30,6 +36,16 @@ function UserProfileEdit() {
   const [tempProfile, setTempProfile] = useState(profile);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [errors, setErrors] = useState<ValidationErrors>({
+    firstName: "",
+    lastName: "",
+    username: "",
+  });
+  const [touched, setTouched] = useState({
+    firstName: false,
+    lastName: false,
+    username: false,
+  });
 
   useEffect(() => {
     setProfile({
@@ -54,6 +70,57 @@ function UserProfileEdit() {
     user?.avatar,
   ]);
 
+  const validateField = (name: string, value: string): string => {
+    switch (name) {
+      case "firstName":
+        if (!value) return "First name is required";
+        if (value.length < 2) return "First name must be at least 2 characters";
+        if (value.length > 12) return "First name must be less than 12 characters";
+        if (!/^[a-zA-Z\s]*$/.test(value)) return "First name can only contain letters";
+        return "";
+
+      case "lastName":
+        if (!value) return "Last name is required";
+        if (value.length < 2) return "Last name must be at least 2 characters";
+        if (value.length > 12) return "Last name must be less than 12 characters";
+        if (!/^[a-zA-Z\s]*$/.test(value)) return "Last name can only contain letters";
+        return "";
+
+      case "username":
+        if (!value) return "Username is required";
+        if (!/^[a-z]+-\d{3}$/.test(value)) {
+          return "Username must be in lowercase, contain one hyphen and end with 3 numbers";
+        }
+        return "";
+
+      default:
+        return "";
+    }
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: string
+  ) => {
+    const value = e.target.value;
+    setTempProfile({ ...tempProfile, [field]: value });
+    
+    if (touched[field as keyof typeof touched]) {
+      setErrors({
+        ...errors,
+        [field]: validateField(field, value),
+      });
+    }
+  };
+
+  const handleBlur = (field: string) => {
+    setTouched({ ...touched, [field]: true });
+    setErrors({
+      ...errors,
+      [field]: validateField(field, tempProfile[field as keyof UserProfile] as string || ""),
+    });
+  };
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
@@ -77,18 +144,59 @@ function UserProfileEdit() {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
     if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setTempProfile({ ...tempProfile, avatar: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData()
+      formData.append("file", file)
+      formData.append("upload_preset", "blog_avatar_preset")
+  
+      try {
+        const res = await axios.post(
+          "https://api.cloudinary.com/v1_1/diysvyrv6/image/upload",
+          formData
+        )
+        const imageUrl = res.data.secure_url
+        setTempProfile({ ...tempProfile, avatar: imageUrl })
+        
+      } catch (err) {
+        console.error("Image upload failed", err)
+      }
     }
-  };
+  }
 
   const handleSave = () => {
+    // Validate all fields before saving
+    const newErrors = {
+      firstName: validateField("firstName", tempProfile.firstName || ""),
+      lastName: validateField("lastName", tempProfile.lastName || ""),
+      username: validateField("username", tempProfile.username || ""),
+    };
+
+    setErrors(newErrors);
+    setTouched({
+      firstName: true,
+      lastName: true,
+      username: true,
+    });
+
+    // Check if there are any errors
+    if (Object.values(newErrors).some(error => error !== "")) {
+      toast.error("Please fix the validation errors", {
+        style: {
+          border: "1px solid red",
+          backgroundColor: "red",
+          padding: "16px",
+          color: "white",
+        },
+        iconTheme: {
+          primary: "red",
+          secondary: "white",
+        },
+      });
+      return;
+    }
+
     const updateProfile = async () => {
       try {
         const response = await axios.put(
@@ -110,7 +218,7 @@ function UserProfileEdit() {
         console.log(response.data);
         if (response.status === 200) {
           setProfile(tempProfile);
-          navigate('/');
+          navigate("/");
           toast.success("Profile updated successfully!", {
             style: {
               border: "1px solid blue",
@@ -126,6 +234,18 @@ function UserProfileEdit() {
         }
       } catch (error) {
         console.error("Error updating profile:", error);
+        toast.error("Failed to update profile", {
+          style: {
+            border: "1px solid red",
+            backgroundColor: "red",
+            padding: "16px",
+            color: "white",
+          },
+          iconTheme: {
+            primary: "red",
+            secondary: "white",
+          },
+        });
       }
     };
     updateProfile();
@@ -136,7 +256,25 @@ function UserProfileEdit() {
   const handleCancel = () => {
     setTempProfile(profile);
     setIsEditing(false);
+    setErrors({
+      firstName: "",
+      lastName: "",
+      username: "",
+    });
+    setTouched({
+      firstName: false,
+      lastName: false,
+      username: false,
+    });
   };
+
+  const getInputClassName = (field: string) => `
+    w-full bg-white/10 border rounded-lg py-2 px-3 text-white placeholder-gray-400 
+    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+    ${touched[field as keyof typeof touched] && errors[field as keyof ValidationErrors] 
+      ? "border-red-500 focus:ring-red-500" 
+      : "border-white/20"}
+  `;
 
   return (
     <div className="min-h-screen">
@@ -231,17 +369,22 @@ function UserProfileEdit() {
                         First Name
                       </label>
                       {isEditing ? (
-                        <input
-                          type="text"
-                          value={tempProfile?.firstName || ""}
-                          onChange={(e) =>
-                            setTempProfile({
-                              ...tempProfile,
-                              firstName: e.target.value,
-                            })
-                          }
-                          className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
+                        <div>
+                          <input
+                            type="text"
+                            value={tempProfile?.firstName || ""}
+                            onChange={(e) => handleInputChange(e, "firstName")}
+                            onBlur={() => handleBlur("firstName")}
+                            className={getInputClassName("firstName")}
+                            placeholder="Enter your first name"
+                          />
+                          {touched.firstName && errors.firstName && (
+                            <div className="flex items-center gap-1 mt-1 text-red-400 text-sm">
+                              <AlertCircle className="w-4 h-4" />
+                              <span>{errors.firstName}</span>
+                            </div>
+                          )}
+                        </div>
                       ) : (
                         <p className="text-white/90">{profile.firstName}</p>
                       )}
@@ -252,17 +395,22 @@ function UserProfileEdit() {
                         Last Name
                       </label>
                       {isEditing ? (
-                        <input
-                          type="text"
-                          value={tempProfile?.lastName || ""}
-                          onChange={(e) =>
-                            setTempProfile({
-                              ...tempProfile,
-                              lastName: e.target.value,
-                            })
-                          }
-                          className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
+                        <div>
+                          <input
+                            type="text"
+                            value={tempProfile?.lastName || ""}
+                            onChange={(e) => handleInputChange(e, "lastName")}
+                            onBlur={() => handleBlur("lastName")}
+                            className={getInputClassName("lastName")}
+                            placeholder="Enter your last name"
+                          />
+                          {touched.lastName && errors.lastName && (
+                            <div className="flex items-center gap-1 mt-1 text-red-400 text-sm">
+                              <AlertCircle className="w-4 h-4" />
+                              <span>{errors.lastName}</span>
+                            </div>
+                          )}
+                        </div>
                       ) : (
                         <p className="text-white/90">{profile.lastName}</p>
                       )}
@@ -273,17 +421,22 @@ function UserProfileEdit() {
                         Username
                       </label>
                       {isEditing ? (
-                        <input
-                          type="text"
-                          value={tempProfile?.username || ""}
-                          onChange={(e) =>
-                            setTempProfile({
-                              ...tempProfile,
-                              username: e.target.value,
-                            })
-                          }
-                          className="w-full bg-white/10 border border-white/20 rounded-lg py-2 px-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
+                        <div>
+                          <input
+                            type="text"
+                            value={tempProfile?.username || ""}
+                            onChange={(e) => handleInputChange(e, "username")}
+                            onBlur={() => handleBlur("username")}
+                            className={getInputClassName("username")}
+                            placeholder="e.g., john-123"
+                          />
+                          {touched.username && errors.username && (
+                            <div className="flex items-center gap-1 mt-1 text-red-400 text-sm">
+                              <AlertCircle className="w-4 h-4" />
+                              <span>{errors.username}</span>
+                            </div>
+                          )}
+                        </div>
                       ) : (
                         <p className="text-white/90">@{profile.username}</p>
                       )}
