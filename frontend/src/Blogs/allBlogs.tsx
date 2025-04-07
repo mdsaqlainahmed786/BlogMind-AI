@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ThumbsUp, MessageCircle, Calendar, Sparkles, FlipVertical as EllipsisVertical } from "lucide-react";
+import { ThumbsUp, MessageCircle, Calendar, Sparkles, } from "lucide-react";
 import Navbar from "../landingPage/NavBar";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
@@ -146,10 +146,6 @@ function Blogs() {
                                 @{blog?.username}
                               </span>
                             </div>
-                          </div>
-
-                          <div onClick={(e) => e.stopPropagation()}>
-                            <EllipsisVertical className="text-blue-400 md:hidden" />
                           </div>
                         </div>
 

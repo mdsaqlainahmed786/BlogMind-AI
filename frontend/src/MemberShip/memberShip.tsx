@@ -211,6 +211,11 @@ function Membership() {
           <p className="text-blue-200 mt-2">
             Select the perfect plan for your AI blogging needs
           </p>
+          <span className="text-blue-200 mt-2 block text-sm">
+            <strong>Note:</strong> Use dummy card for payment: 4111 1111 1111
+            1111, expiry: future date, CVV: any 3 digits .Otp any 4 digits and
+            if phone number is asked, use random 10 numbers
+          </span>
         </div>
 
         {/* Plans Grid */}
