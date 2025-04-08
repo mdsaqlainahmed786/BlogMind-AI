@@ -46,7 +46,14 @@ blogsRouter.post('/', authenticateUser, async (req: AuthenticatedRequest, res) =
 //@ts-ignore
 blogsRouter.get('/', async (req, res) => {
     try {
+        // Parse page and limit from query params, set defaults
+        const page = parseInt(req.query.page as string || '1');
+        const limit = parseInt(req.query.limit as string) || 10;
+        const skip = (page - 1) * limit;
+
         const blogs = await prisma.blog.findMany({
+            skip,
+            take: limit,
             include: {
                 author: {
                     select: {
@@ -58,7 +65,6 @@ blogsRouter.get('/', async (req, res) => {
                         email: true,
                     }
                 },
-
                 Comments: {
                     include: {
                         user: {
@@ -68,7 +74,6 @@ blogsRouter.get('/', async (req, res) => {
                                 lastName: true,
                                 username: true,
                                 email: true,
-
                             }
                         }
                     }
@@ -80,8 +85,8 @@ blogsRouter.get('/', async (req, res) => {
             orderBy: {
                 createdAt: 'desc',
             },
-
         });
+
         const blogsWithLikeCount = blogs.map(blog => ({
             id: blog.id,
             authorId: blog.authorId,
@@ -99,11 +104,13 @@ blogsRouter.get('/', async (req, res) => {
             updatedAt: blog.updatedAt,
             likeCount: blog._count.likes,
         }));
+
         res.status(200).json(blogsWithLikeCount);
     } catch (error) {
         res.status(500).json({ error: "Error fetching blogs", details: error });
     }
 });
+
 
 // Get a single blog by ID
 //@ts-ignore

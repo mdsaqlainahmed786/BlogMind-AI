@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { ThumbsUp, MessageCircle, Calendar, Sparkles, } from "lucide-react";
+import { ThumbsUp, MessageCircle, Calendar, Sparkles, Loader2 } from "lucide-react";
+import { useInView } from 'react-intersection-observer';
 import Navbar from "../landingPage/NavBar";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
@@ -24,6 +25,13 @@ interface Blog {
 function Blogs() {
   const [filteredBlogs, setFilteredBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const { ref, inView } = useInView({
+    threshold: 0,
+    triggerOnce: false
+  });
 
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -33,28 +41,43 @@ function Blogs() {
     return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/blogs`,
-          {
-            withCredentials: true,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log("Blogs fetched:", response.data);
-        setFilteredBlogs(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching blogs:", error);
-        setLoading(false);
+  const fetchBlogs = async (pageNumber: number) => {
+    try {
+      setLoadingMore(true);
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/blogs?page=${pageNumber}&limit=10`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      
+      const newBlogs = response.data;
+      if (newBlogs.length === 0) {
+        setHasMore(false);
+      } else {
+        setFilteredBlogs(prev => pageNumber === 1 ? newBlogs : [...prev, ...newBlogs]);
+        setPage(pageNumber);
       }
-    };
-    fetchBlogs();
+    } catch (error) {
+      console.error("Error fetching blogs:", error);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogs(1);
   }, []);
+
+  useEffect(() => {
+    if (inView && !loading && hasMore && !loadingMore) {
+      fetchBlogs(page + 1);
+    }
+  }, [inView, loading, hasMore, loadingMore]);
 
   const BlogSkeleton = () => (
     <div className="backdrop-blur-xl bg-white/10 rounded-xl p-6 border border-white/20 mb-10 animate-pulse">
@@ -113,94 +136,107 @@ function Blogs() {
               ))
             ) : (
               // Show actual blogs when loaded
-              filteredBlogs.map((blog) => (
-                <Link to={`/blog/${blog.id}`} key={blog.id}>
-                  <article
-                    className="backdrop-blur-xl bg-white/10 rounded-xl p-6 border cursor-pointer border-white/20 hover:bg-white/20 transition-all duration-300 mb-10"
-                  >
-                    <div className="flex flex-col-reverse md:flex-row gap-6">
-                      {/* Content Section */}
-                      <div className="flex-grow">
-                        {/* Author Info */}
-                        <div className="flex items-center justify-between gap-3 mb-4">
-                          <div className="flex items-center gap-2">
-                            {blog?.avatar === null || blog?.avatar === "" ? (
-                              <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center text-white text-sm">
-                                {blog.firstName[0]}
-                                {blog.lastName[0]}
-                              </div>
-                            ) : (
-                              <img
-                                src={blog?.avatar || "/placeholder.svg"}
-                                alt={blog?.username}
-                                className="w-10 h-10 rounded-full border-2 border-blue-400"
-                              />
-                            )}
-                            <div className="flex flex-col">
-                              <div className="flex items-center gap-2">
-                                <span className="text-white font-medium">
-                                  {blog?.firstName} {blog?.lastName}
+              <>
+                {filteredBlogs.map((blog) => (
+                  <Link to={`/blog/${blog.id}`} key={blog.id}>
+                    <article className="backdrop-blur-xl bg-white/10 rounded-xl p-6 border cursor-pointer border-white/20 hover:bg-white/20 transition-all duration-300 mb-10">
+                      <div className="flex flex-col-reverse md:flex-row gap-6">
+                        {/* Content Section */}
+                        <div className="flex-grow">
+                          {/* Author Info */}
+                          <div className="flex items-center justify-between gap-3 mb-4">
+                            <div className="flex items-center gap-2">
+                              {blog?.avatar === null || blog?.avatar === "" ? (
+                                <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center text-white text-sm">
+                                  {blog.firstName[0]}
+                                  {blog.lastName[0]}
+                                </div>
+                              ) : (
+                                <img
+                                  src={blog?.avatar || "/placeholder.svg"}
+                                  alt={blog?.username}
+                                  className="w-10 h-10 rounded-full border-2 border-blue-400"
+                                />
+                              )}
+                              <div className="flex flex-col">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-white font-medium">
+                                    {blog?.firstName} {blog?.lastName}
+                                  </span>
+                                </div>
+                                <span className="text-blue-300 text-sm">
+                                  @{blog?.username}
                                 </span>
                               </div>
-                              <span className="text-blue-300 text-sm">
-                                @{blog?.username}
-                              </span>
+                            </div>
+                          </div>
+
+                          {/* Blog Content */}
+                          <h2 className="text-xl md:text-2xl font-bold text-white mb-3">
+                            {blog.heading}
+                          </h2>
+                          <p className="text-blue-200 mb-4 line-clamp-3 text-sm md:text-base">
+                            <ReactMarkdown>
+                              {blog?.description
+                                .replace(/\n/g, " ")
+                                .replace(/\*\*/g, "")}
+                            </ReactMarkdown>
+                          </p>
+
+                          {/* Metadata */}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4 text-blue-300" />
+                                <span className="text-blue-300 text-sm">
+                                  {formatDate(blog?.createdAt)} 2025
+                                </span>
+                              </div>
+                              {blog.isAIGenerated && (
+                                <AiGeneratedBadge className="w-6 h-6" />
+                              )}
+                            </div>
+                            <div className="flex items-center gap-4 text-blue-300 text-sm">
+                              <button className="flex items-center hover:text-blue-400 transition-colors">
+                                <ThumbsUp className="w-4 h-4 mr-1" />
+                                <span>{blog?.likeCount}</span>
+                              </button>
+                              <button className="flex items-center hover:text-blue-400 transition-colors">
+                                <MessageCircle className="w-4 h-4 mr-1" />
+                                <span>{blog?.Comments?.length}</span>
+                              </button>
                             </div>
                           </div>
                         </div>
 
-                        {/* Blog Content */}
-                        <h2 className="text-xl md:text-2xl font-bold text-white mb-3">
-                          {blog.heading}
-                        </h2>
-                        <p className="text-blue-200 mb-4 line-clamp-3 text-sm md:text-base">
-                          <ReactMarkdown>
-                            {blog?.description
-                              .replace(/\n/g, " ")
-                              .replace(/\*\*/g, "")}
-                          </ReactMarkdown>
-                        </p>
-
-                        {/* Metadata */}
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2">
-                              <Calendar className="w-4 h-4 text-blue-300" />
-                              <span className="text-blue-300 text-sm">
-                                {formatDate(blog?.createdAt)} 2025
-                              </span>
-                            </div>
-                            {blog.isAIGenerated && (
-                              <AiGeneratedBadge className="w-6 h-6" />
-                            )}
+                        {/* Image Section */}
+                        {blog.imageUrl && (
+                          <div className="flex-shrink-0 w-full md:w-48 h-48 md:h-full overflow-hidden rounded-lg">
+                            <img
+                              src={blog?.imageUrl || "/placeholder.svg"}
+                              alt={blog.heading}
+                              className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+                            />
                           </div>
-                          <div className="flex items-center gap-4 text-blue-300 text-sm">
-                            <button className="flex items-center hover:text-blue-400 transition-colors">
-                              <ThumbsUp className="w-4 h-4 mr-1" />
-                              <span>{blog?.likeCount}</span>
-                            </button>
-                            <button className="flex items-center hover:text-blue-400 transition-colors">
-                              <MessageCircle className="w-4 h-4 mr-1" />
-                              <span>{blog?.Comments?.length}</span>
-                            </button>
-                          </div>
-                        </div>
+                        )}
                       </div>
+                    </article>
+                  </Link>
+                ))}
 
-                      {/* Image Section */}
-                      {blog.imageUrl && (
-                        <div className="flex-shrink-0 w-full md:w-48 h-48 md:h-full overflow-hidden rounded-lg">
-                          <img
-                            src={blog?.imageUrl || "/placeholder.svg"}
-                            alt={blog.heading}
-                            className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      )}
+                {/* Loading More Indicator */}
+                <div ref={ref} className="w-full flex justify-center py-4">
+                  {loadingMore && hasMore && (
+                    <div className="flex items-center gap-2 text-blue-300">
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                      <span>Loading more blogs...</span>
                     </div>
-                  </article>
-                </Link>
-              ))
+                  )}
+                  {!hasMore && (
+                    <p className="text-blue-300">No more blogs to load</p>
+                  )}
+                </div>
+              </>
             )}
           </div>
         </div>
