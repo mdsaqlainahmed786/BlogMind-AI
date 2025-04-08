@@ -1,12 +1,44 @@
-import { Sparkles, Newspaper, Rocket, Lock } from "lucide-react";
+import { Sparkles, Newspaper, Rocket, Lock, Plus, Minus } from "lucide-react";
 import { TestimonialsCarousel } from "./TestimonialsCarousel";
 import { useNavigate } from "react-router-dom";
 import NeonCardDemo from "./FeaturesCard";
 import { useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Navbar from "./NavBar";
 import { useUserStore } from "@/stores/useUserStore";
 import { GoogleGeminiEffect } from "@/components/ui/google-gemini-effect";
+import { Cover } from "@/components/ui/cover";
+
+const FAQItem = ({ question, answer }: { question: string; answer: string }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border-b border-gray-700">
+      <button
+        className="flex justify-between items-center w-full py-6 text-left"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className="text-xl font-medium text-white">{question}</span>
+        <span className="ml-6">
+          {isOpen ? (
+            <Minus className="w-6 h-6 text-blue-400" />
+          ) : (
+            <Plus className="w-6 h-6 text-blue-400" />
+          )}
+        </span>
+      </button>
+      <div
+        className={`grid overflow-hidden transition-all duration-300 ease-in-out ${
+          isOpen ? "grid-rows-[1fr] opacity-100 pb-6" : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <p className="text-gray-400">{answer}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function LandingPage() {
   const ref = useRef(null);
@@ -55,6 +87,30 @@ export default function LandingPage() {
       glowIntensity: 0.5,
     },
   ];
+
+  const faqs = [
+    {
+      question: "How does the AI writing assistant work?",
+      answer: "Our AI writing assistant uses advanced machine learning algorithms to understand your writing style and content requirements. It analyzes your input and generates high-quality, engaging content while maintaining your unique voice and tone. The AI continuously learns from feedback to improve its output quality."
+    },
+    {
+      question: "What types of content can I create?",
+      answer: "You can create a wide variety of content including blog posts, articles, social media content, product descriptions, and more. Our platform is versatile enough to handle different writing styles and topics, from technical content to creative storytelling."
+    },
+    {
+      question: "How does the image generation feature work?",
+      answer: "Our HD image generation feature uses state-of-the-art AI models to create unique, high-quality images based on your descriptions. Simply describe what you want, and the AI will generate images that perfectly complement your content while maintaining high resolution and visual appeal."
+    },
+    {
+      question: "What's included in the premium membership?",
+      answer: "Premium membership gives you access to advanced AI capabilities, priority processing, higher word limits, HD image generation, and exclusive templates. You'll also get priority support and early access to new features as they're released."
+    },
+    {
+      question: "Can I try the platform before subscribing?",
+      answer: "Yes! We offer a free trial that lets you experience our basic features. This includes limited access to our AI writing assistant and image generation tools, allowing you to see the value our platform provides before committing to a subscription."
+    }
+  ];
+
   return (
     <div className="">
       <Navbar />
@@ -75,8 +131,8 @@ export default function LandingPage() {
 
       <main>
         <section className="container mx-auto px-6 pt-64 pb-48 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-8 text-white">
-            Transform Your Ideas into Engaging Content
+          <h1 className="text-4xl md:text-6xl font-bold mb-8 text-white">
+            Transform Your Ideas into Engaging Content <br /> at <Cover>warp speed</Cover>
           </h1>
           <p className="text-gray-300 text-xl md:text-2xl mb-12 max-w-3xl mx-auto">
             Harness the power of AI to create compelling blog posts that
@@ -117,7 +173,6 @@ export default function LandingPage() {
               <span className="relative w-full text-left text-white transition-colors duration-200 ease-in-out group-hover:text-gray-900">
                 Start Reading
               </span>
-
               <span className="absolute inset-0 border-2 border-white rounded-md"></span>
             </button>
           </div>
@@ -147,12 +202,30 @@ export default function LandingPage() {
 
         <section
           id="features"
-          className="pt-80 container mx-auto px-6 md:py-20"
+          className="pt-80 container mx-auto px-6 md:pb-20 md:-mt-20 md:pt-0"
         >
           <h2 className="text-4xl font-bold text-center mb-16 text-white">
             What Our Users Say
           </h2>
           <TestimonialsCarousel />
+        </section>
+
+        <section className="container mx-auto px-6 py-24">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-white mb-4">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-gray-400 text-lg">
+                Everything you need to know about our AI-powered content creation platform
+              </p>
+            </div>
+            <div className="space-y-4">
+              {faqs.map((faq, index) => (
+                <FAQItem key={index} question={faq.question} answer={faq.answer} />
+              ))}
+            </div>
+          </div>
         </section>
       </main>
     </div>

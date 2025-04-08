@@ -216,3 +216,22 @@
     @apply bg-black/30 rounded-lg p-4 overflow-x-auto my-6;
   }
 }
+
+@keyframes floating {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.2);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+}
+
+.animate-floating {
+  animation: floating infinite;
+}
