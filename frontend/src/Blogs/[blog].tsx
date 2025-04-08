@@ -605,11 +605,11 @@ function Blog() {
               </div>
 
               {blog?.imageUrl && (
-                <div className="w-full aspect-video">
+                <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden">
                   <img
                     src={blog?.imageUrl}
                     alt={blog?.heading}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain bg-black/50"
                   />
                 </div>
               )}
