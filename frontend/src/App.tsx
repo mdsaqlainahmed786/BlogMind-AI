@@ -11,6 +11,7 @@ import UserProfileEdit from "./UsersAuth/UserProfile/UserProfileEdit";
 import YourBlogs from "./Blogs/YourBlogs";
 
 import EditBlog from "./Blogs/EditBlog";
+import NotFound from "./NotFound";
 
 function App() {
   return (
@@ -21,13 +22,17 @@ function App() {
           <Route path="/user/register" element={<RegisterUser />} />
           <Route path="/user/login" element={<LoginUser />} />
           <Route path="/user/membership" element={<MemberShip />} />
-          <Route path="/user/verify" element={<OtpVerification />} /> {/* I can add here /verify/:userID to make it unique */}4
+          <Route path="/user/verify" element={<OtpVerification />} />{" "}
+          {/* I can add here /verify/:userID to make it unique */}4
           <Route path="/blogs/all" element={<AllBlogs />} />
-          <Route path="/blog/:blogId" element={<Blog />} /> 
-          <Route path="/blog/create" element={<CreateBlog />} /> {/* This is for creating a blog */}
-          <Route path="/user/profile" element={<UserProfileEdit />} /> 
-          <Route path="/user/blogs" element={<YourBlogs/>} /> 
-          <Route path="/user/blog/edit/" element={<EditBlog />} /> {/* This is for editing a blog */}
+          <Route path="/blog/:blogId" element={<Blog />} />
+          <Route path="/blog/create" element={<CreateBlog />} />{" "}
+          {/* This is for creating a blog */}
+          <Route path="/user/profile" element={<UserProfileEdit />} />
+          <Route path="/user/blogs" element={<YourBlogs />} />
+          <Route path="/user/blog/edit/" element={<EditBlog />} />{" "}
+          {/* This is for editing a blog */}
+          <Route path="*" element={<NotFound />} /> {/* This is for 404 page */}
         </Routes>
       </BrowserRouter>
     </>

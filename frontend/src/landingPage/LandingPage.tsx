@@ -76,7 +76,7 @@ export default function LandingPage() {
               }}
               onClick={() => {
                 if (!user) {
-                  navigate("/login");
+                  navigate("/user/login");
                 } else if (
                   user.MemberShipPlan === "STANDARD" ||
                   user.MemberShipPlan === "PREMIUM"
