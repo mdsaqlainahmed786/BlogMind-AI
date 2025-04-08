@@ -288,4 +288,59 @@ blogsRouter.get('/:id/likes', async (req: AuthenticatedRequest, res: Response) =
     }
 
 });
+//@ts-ignore
+blogsRouter.get('/user-blogs/:id', authenticateUser, async (req: AuthenticatedRequest, res: Response) => {
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized!" });
+    }
+
+    try {
+       const { id } = req.params; // Blog ID
+
+        const userBlogs = await prisma.blog.findMany({
+            where: {
+                authorId: id,
+            },
+            include:{
+                Comments: {
+                    include: {
+                        user: {
+                            select: {
+                                id: true,
+                                firstName: true,
+                                lastName: true,
+                                username: true,
+                                email: true,
+                            }
+                        }
+                    }
+                },
+                _count: {
+                    select: { likes: true },
+                }
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+
+        const blogsWithLikeCount = userBlogs.map(blog => ({
+            id: blog.id,
+            authorId: blog.authorId,
+            isAIGenerated: blog.isAIGenerated,
+            heading: blog.heading,
+            imageUrl: blog.imageUrl,
+            description: blog.description,
+            Comments: blog.Comments,
+            createdAt: blog.createdAt,
+            updatedAt: blog.updatedAt,
+            likeCount: blog._count.likes,
+        }));
+
+        res.status(200).json(blogsWithLikeCount);
+    } catch (error) {
+        res.status(500).json({ error: "Error fetching user blogs", details: error });
+    }
+});
+
 
