@@ -2,7 +2,7 @@ import { Sparkles, Newspaper, Rocket, Lock, Plus, Minus } from "lucide-react";
 import { TestimonialsCarousel } from "./TestimonialsCarousel";
 import { useNavigate } from "react-router-dom";
 import NeonCardDemo from "./FeaturesCard";
-import { useScroll, useTransform } from "motion/react";
+import {useMotionValueEvent, useScroll, useTransform } from "motion/react";
 import { useRef, useState } from "react";
 import Navbar from "./NavBar";
 import { useUserStore } from "@/stores/useUserStore";
@@ -46,7 +46,9 @@ export default function LandingPage() {
     target: ref,
     offset: ["start start", "end start"],
   });
-
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    console.log("Scroll Progress:", latest);
+  })
   const navigate = useNavigate();
   const { user } = useUserStore();
   const pathLengthFirst = useTransform(scrollYProgress, [0, 0.8], [0.2, 1.2]);

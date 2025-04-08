@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface NeonCardProps {
@@ -17,7 +16,6 @@ interface NeonCardProps {
     gradientColors = ["#FF0080", "#7928CA", "#FF0080"],
     glowIntensity = 0.5,
 }: NeonCardProps) => {
-    const { theme } = useTheme();
     const divRef = useRef<HTMLDivElement>(null);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [isHovered, setIsHovered] = useState(false);
@@ -166,7 +164,7 @@ interface InfoItem {
 export default function NeonCardDemo({ info }: { info: InfoItem[] }) {
     return (
         <div className="flex h-[500px] w-full flex-col gap-6 p-8 lg:h-[300px] lg:flex-row">
-            {info.map((item: any , key: number) => {
+            {info.map((item: InfoItem) => {
                 return (
                     <NeonCard
                         className="flex-1"
@@ -178,7 +176,7 @@ export default function NeonCardDemo({ info }: { info: InfoItem[] }) {
                             <div className="flex items-center justify-center rounded-full p-4 text-blue-500 shadow-xl transition-all duration-500">
                               {item.icon}
                             </div>
-                            <span className={`bg-gradient-to-r ${item.titleColor} bg-clip-text text-2xl font-bold text-transparent drop-shadow-lg`}>
+                            <span className={`bg-gradient-to-r ${item.titleColor} bg-clip-text text-center text-2xl font-bold text-transparent drop-shadow-lg`}>
                                 {item.title}
                             </span>
                             <p className="text-center text-sm font-medium text-white">
