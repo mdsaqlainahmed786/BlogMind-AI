@@ -195,6 +195,12 @@ function Blog() {
   };
 
   useEffect(() => {
+    if (!user?.email) {
+      navigate("/user/login");
+    }
+  }, [user?.email, navigate]);
+
+  useEffect(() => {
     const userId = user?.id !== undefined ? user?.id : "";
     getLikesOfBlog(userId);
   }, [blogId, user?.id]);

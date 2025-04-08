@@ -1,5 +1,5 @@
 import type React from "react"
-import { useState, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
   X,
   Upload,
@@ -44,6 +44,12 @@ function CreateBlog() {
     e.preventDefault()
     setIsDragging(true)
   }
+
+  useEffect(()=>{
+    if(!user?.email){
+      navigate('/user/login')
+    }
+  },[user?.email, navigate])
 
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault()

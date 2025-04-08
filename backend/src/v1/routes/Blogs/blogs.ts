@@ -114,7 +114,7 @@ blogsRouter.get('/', async (req, res) => {
 
 // Get a single blog by ID
 //@ts-ignore
-blogsRouter.get('/:id', async (req, res) => {
+blogsRouter.get('/:id', authenticateUser, async (req, res) => {
     try {
         const { id } = req.params;
         const blog = await prisma.blog.findUnique({

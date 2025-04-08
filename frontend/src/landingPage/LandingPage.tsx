@@ -15,7 +15,7 @@ const FAQItem = ({ question, answer }: { question: string; answer: string }) => 
   return (
     <div className="border-b border-gray-700">
       <button
-        className="flex justify-between items-center w-full py-6 text-left"
+        className="flex justify-between cursor-pointer items-center w-full py-6 text-left"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="text-xl font-medium text-white">{question}</span>
@@ -108,8 +108,8 @@ export default function LandingPage() {
       answer: "Premium membership gives you access to advanced AI capabilities, priority processing, higher word limits, HD image generation, and exclusive templates. You'll also get priority support and early access to new features as they're released."
     },
     {
-      question: "Can I try the platform before subscribing?",
-      answer: "Yes! We offer a free trial that lets you experience our basic features. This includes limited access to our AI writing assistant and image generation tools, allowing you to see the value our platform provides before committing to a subscription."
+      question:"How do I cancel my subscription?",
+      answer:"You can just mail us with all details of your subscription and we will cancel it for you within 24 hours."
     }
   ];
 
