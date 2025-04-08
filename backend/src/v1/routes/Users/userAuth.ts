@@ -7,11 +7,11 @@ import z from "zod";
 import nodemailer from 'nodemailer';
 import { MembershipPlan, PrismaClient } from '@prisma/client';
 import { authenticateUser } from "../../Middleware/authMiddleWare";
-import { AugmentedRequest } from "express-rate-limit";
+import rateLimit from "express-rate-limit";
 export const userAuth = express.Router();
 const prisma = new PrismaClient();
 const userSignupInput = z.object({
-    avatar: z.string().url(),
+    avatar: z.string().nullable(),
     firstName: z.string().min(3).max(20),
     lastName: z.string().min(3).max(20),
     username: z.string().min(3).max(20),
@@ -26,6 +26,13 @@ const userSigninInput = z.object({
 const resetPasswordInput = z.object({
     password: z.string().min(8)
 });
+
+const verifyUserRateLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000, 
+    max: 5,
+    message: "Too many requests, please try again later."
+});
+
 interface AuthenticatedRequest extends Request {
     user?: {
         id: string;
@@ -104,7 +111,7 @@ userAuth.post('/register', async (req: Request, res: Response) => {
         return
     }
 });
-userAuth.post('/verify', async (req, res) => {
+userAuth.post('/verify', verifyUserRateLimiter, async (req, res) => {
     const { otp } = req.body;
     const token = req.cookies.Temptoken;
     if (!token) {
@@ -238,7 +245,7 @@ userAuth.get("/get-user", async (req, res) => {
 });
 
 // @ts-ignore
-userAuth.put('/update-user', authenticateUser, async (req:AugmentedRequest, res) => {
+userAuth.put('/update-user', authenticateUser, async (req:AuthenticatedRequest, res) => {
     if (!req.user) {
         return res.status(401).json({ message: "Unauthorized!" });
     }

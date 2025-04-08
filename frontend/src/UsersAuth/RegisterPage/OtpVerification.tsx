@@ -11,6 +11,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import toast from "react-hot-toast";
 
 function OtpVerification() {
   const [otp, setOtp] = useState("");
@@ -33,6 +34,7 @@ function OtpVerification() {
           throw new Error("Please enter a valid 6-digit code");
         }
         console.log("OTP submitted:", otp);
+      
         const response = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/user/verify`,
           { otp },
@@ -53,13 +55,39 @@ function OtpVerification() {
           response.data.message === "Invalid otp" ||
           response.status === 400
         ) {
+
           setError("Invalid OTP! Please try again");
+          toast.error("Invalid OTP! Please try again", {
+            style: {
+              border: "1px solid red",
+              backgroundColor: "red",
+              padding: "16px",
+              color: "white",
+            },
+            iconTheme: {
+              primary: "red",
+              secondary: "white",
+            },
+          });
         }
+        
 
         // setIsSuccess(true);
       } catch (err) {
         setError("Verification failed");
         console.error("Error during OTP verification:", err);
+        toast.error("Verification failed, Please try again later", {
+          style: {
+            border: "1px solid red",
+            backgroundColor: "red",
+            padding: "16px",
+            color: "white",
+          },
+          iconTheme: {
+            primary: "red",
+            secondary: "white",
+          },
+        });
       } finally {
         setIsLoading(false);
       }

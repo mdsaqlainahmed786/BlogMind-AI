@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { authenticateUser } from '../../Middleware/authMiddleWare';
 import { memberShipMiddleWare } from '../../Middleware/memberShipMiddleware';
 import { Request, Response, NextFunction } from 'express';
+import rateLimit from 'express-rate-limit';
 
 const prisma = new PrismaClient();
 export const blogsRouter = express.Router();
@@ -16,6 +17,13 @@ interface AuthenticatedRequest extends Request {
 
     }
 }
+
+const likeLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 10 minutes
+    max: 5, // Limit each IP to 5 requests per windowMs
+    message: "Too many requests, please try again later.",
+    standardHeaders: true,
+})
 
 // Create a new blog
 //@ts-ignore
@@ -221,7 +229,7 @@ blogsRouter.delete('/:id', authenticateUser, async (req: AuthenticatedRequest, r
 
 // like handler
 //@ts-ignore
-blogsRouter.get('/:id/like', authenticateUser, async (req: AuthenticatedRequest, res: Response) => {
+blogsRouter.get('/:id/like', authenticateUser, likeLimiter,  async (req: AuthenticatedRequest, res: Response) => {
     if (!req.user) {
         return res.status(401).json({ message: "Unauthorized!" });
     }

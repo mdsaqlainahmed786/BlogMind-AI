@@ -6,6 +6,7 @@ import { PrismaClient } from '@prisma/client';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import razorpay, { PLAN_DETAILS, PLAN_PRICES } from '../../razorpayConfig';
+import rateLimit from 'express-rate-limit';
 import axios from 'axios';
 dotenv.config();
 
@@ -22,6 +23,16 @@ interface AuthenticatedRequest extends express.Request {
 interface UnsplashResponse {
     results: { urls: { regular: string } }[];
 }
+
+const upgradeMemberShip = rateLimit({
+    windowMs: 30 * 60 * 1000, // 10 minutes
+    max: 2, // Limit each IP to 5 requests per windowMs
+    message: "Maximum limit reached, please try again later."
+});
+
+
+
+
 //@ts-ignore
 AiBlogsRouter.post('/generate', authenticateUser, memberShipMiddleWare, async (req: AuthenticatedRequest, res) => {
     try {
@@ -174,7 +185,7 @@ AiBlogsRouter.get('/membership', authenticateUser, async (req: AuthenticatedRequ
 //     res.json({ url: session.url });
 //   });
 // Create a new order for membership upgrade
-AiBlogsRouter.post('/create-membership-order', authenticateUser, async (req: AuthenticatedRequest, res) => {
+AiBlogsRouter.post('/create-membership-order', authenticateUser, upgradeMemberShip, async (req: AuthenticatedRequest, res) => {
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized!" });
     }

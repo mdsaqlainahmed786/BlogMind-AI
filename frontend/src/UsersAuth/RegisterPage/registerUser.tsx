@@ -35,9 +35,9 @@ interface FormData {
 
 function RegisterUser() {
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    avatar:"",
+    avatar: "",
     firstName: "",
     lastName: "",
     username: "",
@@ -71,6 +71,9 @@ function RegisterUser() {
     try {
       if (!formData) return;
       if (Object.values(errors).some((error) => error !== "")) return;
+
+      setLoading(true); // Start loading
+
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/user/register`,
         formData,
@@ -81,13 +84,14 @@ function RegisterUser() {
           },
         }
       );
-      console.log("User registered successfully:", response.data);
+
       if (response.status === 200) {
         navigate("/user/verify");
-        console.log("User registered:", { ...formData, profilePicture });
       }
     } catch (error) {
       console.error("Error registering user:", error);
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -121,24 +125,24 @@ function RegisterUser() {
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("upload_preset", "blog_avatar_preset")
-  
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "blog_avatar_preset");
+
       try {
         const res = await axios.post(
           "https://api.cloudinary.com/v1_1/diysvyrv6/image/upload",
           formData
-        )
-        setProfilePicture(res.data.secure_url) // Save Cloudinary image URL
+        );
+        setProfilePicture(res.data.secure_url); // Save Cloudinary image URL
       } catch (err) {
-        console.error("Image upload failed", err)
+        console.error("Image upload failed", err);
       }
     }
-  }
-  
+  };
+
   const validateField = (name: string, value: string): string => {
     switch (name) {
       case "firstName":
@@ -212,9 +216,9 @@ function RegisterUser() {
     if (Object.values(newErrors).every((error) => error === "")) {
       // navigate("/user/verify", { state: { ...formData, profilePicture } });
       // console.log("User registered:", { ...formData, profilePicture });
-      handleRegisterUser({ ...formData, avatar: profilePicture });
+      handleRegisterUser({ ...formData, avatar: profilePicture ?? "" });
       setFormData({
-        avatar:"",
+        avatar: "",
         firstName: "",
         lastName: "",
         username: "",
@@ -450,23 +454,41 @@ function RegisterUser() {
 
             <button
               className={`relative inline-flex w-full cursor-pointer items-center justify-center px-10 py-3 overflow-hidden font-medium tracking-tighter text-white bg-gray-800 rounded-lg group transition-transform duration-150 active:scale-95 ${
-                errors.firstName ||
-                errors.lastName ||
-                errors.username ||
-                errors.email ||
-                errors.password
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
+                loading ? "opacity-70 cursor-not-allowed" : ""
               }`}
-              disabled={Object.values(errors).some((error) => error !== "")}
+              disabled={
+                loading || Object.values(errors).some((error) => error !== "")
+              }
               type="submit"
             >
-              <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-gradient-to-r cursor-pointer from-blue-500 to-blue-600 text-white rounded-lg group-hover:w-full group-hover:h-full"></span>
-              <span className="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-gray-700"></span>
-              <div className="relative flex items-center space-x-2 text-white group-hover:text-white">
-                <span>Create Account</span>
-                <ArrowRight className="w-5 h-5 transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
-              </div>
+              {loading ? (
+                <div className="flex items-center space-x-2">
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+                    ></path>
+                  </svg>
+                  <span>Creating...</span>
+                </div>
+              ) : (
+                <div className="relative flex items-center space-x-2 text-white group-hover:text-white">
+                  <span>Create Account</span>
+                  <ArrowRight className="w-5 h-5 transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
+                </div>
+              )}
             </button>
           </form>
 

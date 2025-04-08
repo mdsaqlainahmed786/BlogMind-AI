@@ -1,7 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import { authenticateUser } from '../../Middleware/authMiddleWare';
-
+import rateLimit from 'express-rate-limit';
 const prisma = new PrismaClient();
 export const commentsRouter = express.Router();
 interface AuthenticatedRequest extends express.Request {
@@ -11,9 +11,17 @@ interface AuthenticatedRequest extends express.Request {
         email: string;
     }
 }
+
+const commentRateLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 10 minutes
+    max: 5, // Limit each IP to 5 requests per windowMs
+    message: "Too many comments created from this IP, please try again later."
+});
+
+
 //@ts-ignore
 // Create Comment
-commentsRouter.post('/', authenticateUser, async (req: AuthenticatedRequest, res) => {
+commentsRouter.post('/', authenticateUser, commentRateLimiter, async (req: AuthenticatedRequest, res) => {
     if (!req.user) {
         res.status(401).json({ message: "Unauthorized!" });
         return
