@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
 import Navbar from "./NavBar";
 import { useUserStore } from "@/stores/useUserStore";
 import { GoogleGeminiEffect } from "@/components/ui/google-gemini-effect";
+import { Cover } from "@/components/ui/cover";
 
 const FAQItem = ({ question, answer }: { question: string; answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -130,8 +131,8 @@ export default function LandingPage() {
 
       <main>
         <section className="container mx-auto px-6 pt-64 pb-48 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-8 text-white">
-            Transform Your Ideas into Engaging Content
+          <h1 className="text-4xl md:text-6xl font-bold mb-8 text-white">
+            Transform Your Ideas into Engaging Content <br /> at <Cover>warp speed</Cover>
           </h1>
           <p className="text-gray-300 text-xl md:text-2xl mb-12 max-w-3xl mx-auto">
             Harness the power of AI to create compelling blog posts that
@@ -201,7 +202,7 @@ export default function LandingPage() {
 
         <section
           id="features"
-          className="pt-80 container mx-auto px-6 md:py-20"
+          className="pt-80 container mx-auto px-6 md:pb-20 md:-mt-20 md:pt-0"
         >
           <h2 className="text-4xl font-bold text-center mb-16 text-white">
             What Our Users Say
