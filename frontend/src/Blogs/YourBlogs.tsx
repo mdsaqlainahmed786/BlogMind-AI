@@ -15,7 +15,6 @@ import AnimatedBackground from "@/UsersAuth/Plasma";
 import { Link } from "react-router-dom";
 import { useUserStore } from "@/stores/useUserStore";
 
-
 // const blogsData: Blog[] = [
 //   {
 //     id: "f086901a-918a-4031-a169-6e0932e0dfd2",
@@ -82,7 +81,6 @@ interface BlogResponse {
   createdAt: string;
   imageUrl?: string;
   likeCount: number;
-
 }
 type SortOption = "recent" | "likes" | "comments";
 

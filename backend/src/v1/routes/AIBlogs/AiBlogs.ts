@@ -265,7 +265,7 @@ AiBlogsRouter.post('/create-membership-order', authenticateUser, async (req: Aut
       });
       
       if (plan === "STANDARD" || plan === "PREMIUM") {
-        const aiBlogs = plan === "STANDARD" ? 10 : 25;
+        const aiBlogs = plan === "STANDARD" ? 3 : 5;
         
         if (userMembership) {
           // Update existing membership

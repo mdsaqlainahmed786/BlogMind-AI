@@ -20,14 +20,14 @@ export const PLAN_DETAILS = {
   STANDARD: {
     name: 'Standard Membership',
     description: 'Access to 10 AI-generated blogs',
-    aiBlogs: 10,
+    aiBlogs: 3,
     price: PLAN_PRICES.STANDARD,
     interval: 'monthly'
   },
   PREMIUM: {
     name: 'Premium Membership',
     description: 'Access to 25 AI-generated blogs',
-    aiBlogs: 25,
+    aiBlogs: 5,
     price: PLAN_PRICES.PREMIUM,
     interval: 'monthly'
   }

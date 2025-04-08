@@ -47,7 +47,7 @@ const PLANS = {
     icon: Image,
     description: "Perfect for beginners",
     features: [
-      "10 AI-generated blogs per month",
+      "3 AI-generated blogs per month",
       "AI image generation",
       "Advanced formatting tools",
       "Priority support",
@@ -65,7 +65,7 @@ const PLANS = {
     icon: Crown,
     description: "For power users",
     features: [
-      "25 AI-generated blogs per month",
+      "5 AI-generated blogs per month",
       "Advanced AI image generation",
       "SEO optimization tools",
       "Analytics dashboard",
