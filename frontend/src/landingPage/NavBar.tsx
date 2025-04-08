@@ -3,14 +3,17 @@ import { ChevronDown, Brain, NotebookPen } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserStore } from "@/stores/useUserStore";
 import axios from "axios";
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const { user, setUser, clearUser } = useUserStore();
   const navigate = useNavigate();
 
-  const handleLogoClick = () => {
-    navigate("/");
-  };
+  const handleLogoClick = () => navigate("/");
+
+  const toggleDropdown = () => setShowDropdown((prev) => !prev);
+  const handleBlur = () => setTimeout(() => setShowDropdown(false), 150);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,9 +30,7 @@ export default function Navbar() {
           `${import.meta.env.VITE_BACKEND_URL}/user/get-user`,
           {
             withCredentials: true,
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
           }
         );
         console.log("User fetched:", response.data);
@@ -59,9 +60,7 @@ export default function Navbar() {
         `${import.meta.env.VITE_BACKEND_URL}/user/logout`,
         {
           withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
       console.log("Logout response:", response.data);
@@ -101,28 +100,39 @@ export default function Navbar() {
             BlogMind AI
           </span>
         </div>
+
+        {/* Right Side: Write + Profile */}
         <div className="flex items-center gap-4 md:gap-6 flex-shrink-0">
+          {/* Write Button */}
           <div
             onClick={() => navigate("/blog/create")}
             className="flex items-center gap-2 group transition-colors duration-300 cursor-pointer"
           >
-            <NotebookPen className="text-white group-hover:text-blue-400 transition-colors duration-300 cursor-pointer h-5 w-5" />
+            <NotebookPen className="text-white group-hover:text-blue-400 transition-colors duration-300 h-5 w-5" />
             <span className="hidden md:block text-white group-hover:text-blue-400 transition-colors duration-300 text-sm">
               Start Writing
             </span>
           </div>
+
+          {/* Profile or Get Started */}
           {user?.email ? (
-            <div className="relative group">
-              <div className="flex items-center gap-2 md:gap-3 cursor-pointer">
-                {user && user?.avatar === null || user?.avatar === "" ? (
+            <div
+              className="relative group md:hover:bg-transparent"
+              onBlur={handleBlur}
+            >
+              <div
+                className="flex items-center gap-2 md:gap-3 cursor-pointer"
+                onClick={toggleDropdown}
+              >
+                {user.avatar === null || user.avatar === "" ? (
                   <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center text-white text-sm">
                     {user.firstName[0]}
                     {user.lastName[0]}
                   </div>
                 ) : (
                   <img
-                    src={user?.avatar || "/placeholder.svg"}
-                    alt={user?.username}
+                    src={user.avatar || "/placeholder.svg"}
+                    alt={user.username}
                     className="w-10 h-10 rounded-full border-2 border-blue-400"
                   />
                 )}
@@ -132,25 +142,38 @@ export default function Navbar() {
                   </h1>
                   <p className="text-xs text-gray-400">{user.email}</p>
                 </div>
-                <ChevronDown className="text-white group-hover:rotate-180 transition-transform duration-200 h-5 w-5" />
+                <ChevronDown
+                  className={`text-white transition-transform duration-200 h-5 w-5 ${
+                    showDropdown ? "rotate-180" : ""
+                  }`}
+                />
               </div>
 
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white/10 backdrop-blur-xl rounded-lg shadow-lg py-2 invisible opacity-0 scale-95 group-hover:visible group-hover:opacity-100 group-hover:scale-100 transition-all duration-200">
+              {/* Dropdown Menu */}
+              <div
+                className={`absolute right-0 top-full mt-2 w-48 bg-white/10 backdrop-blur-xl rounded-lg shadow-lg py-2 z-50 transition-all duration-200
+                ${
+                  showDropdown
+                    ? "visible opacity-100 scale-100"
+                    : "invisible opacity-0 scale-95"
+                }
+                group-hover:visible group-hover:opacity-100 group-hover:scale-100 md:block`}
+              >
                 <Link
                   to="/user/profile"
-                  className="block px-4 py-2 text-sm w-full text-center text-white hover:bg-white/10 transition duration-200"
+                  className="block px-4 py-2 text-sm text-center text-white hover:bg-white/10 transition duration-200"
                 >
                   Profile
                 </Link>
                 <Link
                   to="/user/blogs"
-                  className="block px-4 py-2 text-sm w-full text-center text-white hover:bg-white/10 transition duration-200"
+                  className="block px-4 py-2 text-sm text-center text-white hover:bg-white/10 transition duration-200"
                 >
                   Your Blogs
                 </Link>
                 <button
                   onClick={onLogOutHandler}
-                  className="block px-4 py-2 w-full text-sm text-white hover:bg-white/10 transition duration-200"
+                  className="block w-full px-4 py-2 text-sm text-white hover:bg-white/10 transition duration-200"
                 >
                   Logout
                 </button>

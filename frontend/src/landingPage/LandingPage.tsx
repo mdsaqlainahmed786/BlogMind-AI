@@ -130,7 +130,6 @@ export default function LandingPage() {
           />
         ))}
       </div>
-
       <main>
         <section className="container mx-auto px-6 pt-64 pb-48 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-8 text-white">
@@ -185,7 +184,7 @@ export default function LandingPage() {
           </h2>
           <NeonCardDemo info={info} />
         </section>
-        <section className="pt-60">
+        <section className="pt-">
           <div
             className="h-[50vh] md:h-[150vh] w-full rounded-md relative pt-40 overflow-clip"
             ref={ref}
@@ -201,17 +200,15 @@ export default function LandingPage() {
             />
           </div>
         </section>
-
         <section
           id="features"
-          className="pt-80 container mx-auto px-6 md:pb-20 md:-mt-20 md:pt-0"
+          className="pt-80 container mx-auto px-6 md:pb-20 md:-mt-36 md:pt-0"
         >
           <h2 className="text-4xl font-bold text-center mb-16 text-white">
             What Our Users Say
           </h2>
           <TestimonialsCarousel />
         </section>
-
         <section className="container mx-auto px-6 py-24">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-16">
