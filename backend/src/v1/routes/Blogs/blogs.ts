@@ -170,7 +170,7 @@ blogsRouter.put('/edit', authenticateUser, async (req: AuthenticatedRequest, res
     }
     try {
 
-        const { id, heading, description } = req.body;
+        const { id, heading, description, imageUrl } = req.body;
 
         const toBeUpdatedBlog = await prisma.blog.findUnique({
             where: { id },
@@ -184,7 +184,7 @@ blogsRouter.put('/edit', authenticateUser, async (req: AuthenticatedRequest, res
 
         const updatedBlog = await prisma.blog.update({
             where: { id },
-            data: { heading, description },
+            data: { heading, description, imageUrl },
         });
         res.json(updatedBlog);
     } catch (error) {
