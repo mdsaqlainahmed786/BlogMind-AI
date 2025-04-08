@@ -2,12 +2,27 @@ import { Sparkles, Newspaper, Rocket, Lock } from "lucide-react";
 import { TestimonialsCarousel } from "./TestimonialsCarousel";
 import { useNavigate } from "react-router-dom";
 import NeonCardDemo from "./FeaturesCard";
+import { useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
 import Navbar from "./NavBar";
 import { useUserStore } from "@/stores/useUserStore";
+import { GoogleGeminiEffect } from "@/components/ui/google-gemini-effect";
 
 export default function LandingPage() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+
   const navigate = useNavigate();
   const { user } = useUserStore();
+  const pathLengthFirst = useTransform(scrollYProgress, [0, 0.8], [0.2, 1.2]);
+  const pathLengthSecond = useTransform(scrollYProgress, [0, 0.8], [0.15, 1.2]);
+  const pathLengthThird = useTransform(scrollYProgress, [0, 0.8], [0.1, 1.2]);
+  const pathLengthFourth = useTransform(scrollYProgress, [0, 0.8], [0.05, 1.2]);
+  const pathLengthFifth = useTransform(scrollYProgress, [0, 0.8], [0, 1.2]);
+
   const info = [
     {
       id: 1,
@@ -113,6 +128,23 @@ export default function LandingPage() {
           </h2>
           <NeonCardDemo info={info} />
         </section>
+        <section className="pt-60">
+          <div
+            className="h-[50vh] md:h-[150vh] w-full rounded-md relative pt-40 overflow-clip"
+            ref={ref}
+          >
+            <GoogleGeminiEffect
+              pathLengths={[
+                pathLengthFirst,
+                pathLengthSecond,
+                pathLengthThird,
+                pathLengthFourth,
+                pathLengthFifth,
+              ]}
+            />
+          </div>
+        </section>
+
         <section
           id="features"
           className="pt-80 container mx-auto px-6 md:py-20"

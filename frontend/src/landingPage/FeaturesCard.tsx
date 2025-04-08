@@ -139,7 +139,7 @@ interface NeonCardProps {
                 <div className="relative z-10 h-full">{children}</div>
             </div>
 
-            <style jsx global>{`
+            <style>{`
         @keyframes shimmer {
           from {
             background-position: 0% 50%;
