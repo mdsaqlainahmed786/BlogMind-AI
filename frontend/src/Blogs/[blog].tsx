@@ -303,7 +303,7 @@ function Blog() {
                 Connection Error
               </h2>
               <p className="text-blue-200 max-w-md mx-auto">
-                We couldn't fetch the blogs at the moment. This might be due to
+                We couldn't fetch this blog at the moment. This might be due to
                 a network issue or our servers might be taking a quick break.
               </p>
             </div>

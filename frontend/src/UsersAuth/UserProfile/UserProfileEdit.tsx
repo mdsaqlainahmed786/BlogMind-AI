@@ -47,6 +47,12 @@ function UserProfileEdit() {
     username: false,
   });
 
+  useEffect(()=>{
+    if (!user) {
+      navigate("/user/login");
+    }
+  },[user, navigate])
+
   useEffect(() => {
     setProfile({
       firstName: user?.firstName,
