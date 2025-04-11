@@ -16,6 +16,7 @@ import AnimatedBackground from "../Plasma";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useUserStore } from "@/stores/useUserStore";
+import toast from "react-hot-toast";
 interface ValidationErrors {
   firstName: string;
   lastName: string;
@@ -92,6 +93,18 @@ function RegisterUser() {
       console.error("Error registering user:", error);
     } finally {
       setLoading(false); // Stop loading
+      toast.error("Registration failed. Please try again.",{
+        style: {
+          border: "1px solid red",
+          backgroundColor: "red",
+          padding: "16px",
+          color: "white",
+        },
+        iconTheme: {
+          primary: "red",
+          secondary: "white",
+        },
+      });
     }
   };
 

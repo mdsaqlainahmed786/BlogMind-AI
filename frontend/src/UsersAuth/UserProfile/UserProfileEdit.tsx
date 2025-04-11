@@ -161,6 +161,18 @@ function UserProfileEdit() {
         
       } catch (err) {
         console.error("Image upload failed", err)
+        toast.error("Image upload failed", {
+          style: {
+            border: "1px solid red",
+            backgroundColor: "red",
+            padding: "16px",
+            color: "white",
+          },
+          iconTheme: {
+            primary: "red",
+            secondary: "white",
+          },
+        });
       }
     }
   }

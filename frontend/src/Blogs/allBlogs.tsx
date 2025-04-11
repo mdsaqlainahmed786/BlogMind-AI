@@ -1,8 +1,18 @@
 import { useState, useEffect } from "react";
-import { ThumbsUp, MessageCircle, Calendar, Sparkles, Loader2 } from "lucide-react";
-import { useInView } from 'react-intersection-observer';
+import {
+  ThumbsUp,
+  MessageCircle,
+  Calendar,
+  Sparkles,
+  Loader2,
+  RefreshCcw,
+  WifiOff,
+  Home,
+  ArrowLeft,
+} from "lucide-react";
+import { useInView } from "react-intersection-observer";
 import Navbar from "../landingPage/NavBar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import AnimatedBackground from "@/UsersAuth/Plasma";
 import axios from "axios";
@@ -23,11 +33,13 @@ interface Blog {
 }
 
 function Blogs() {
+  const navigate = useNavigate();
   const [filteredBlogs, setFilteredBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [errorFetching, setErrorFetching] = useState(false);
   const { ref, inView } = useInView({
     threshold: 0,
     triggerOnce: false
@@ -63,6 +75,7 @@ function Blogs() {
       }
     } catch (error) {
       console.error("Error fetching blogs:", error);
+      setErrorFetching(true);
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -122,125 +135,198 @@ function Blogs() {
     </div>
   );
 
-  return (
-    <>
-      <Navbar />
+  const ErrorFallback = () => (
+    <div className="min-h-screen relative overflow-hidden">
       <AnimatedBackground />
-      <div className="min-h-screen py-24">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
-          <div className="space-y-8">
-            {loading ? (
-              // Show skeletons while loading
-              Array.from({ length: 3 }).map((_, index) => (
-                <BlogSkeleton key={index} />
-              ))
-            ) : (
-              // Show actual blogs when loaded
-              <>
-                {filteredBlogs.map((blog) => (
-                  <Link to={`/blog/${blog.id}`} key={blog.id}>
-                    <article className="backdrop-blur-xl bg-white/10 rounded-xl p-6 border cursor-pointer border-white/20 hover:bg-white/20 transition-all duration-300 mb-10">
-                      <div className="flex flex-col-reverse md:flex-row gap-6">
-                        {/* Content Section */}
-                        <div className="flex-grow">
-                          {/* Author Info */}
-                          <div className="flex items-center justify-between gap-3 mb-4">
-                            <div className="flex items-center gap-2">
-                              {blog?.avatar === null || blog?.avatar === "" ? (
-                                <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center text-white text-sm">
-                                  {blog.firstName[0]}
-                                  {blog.lastName[0]}
-                                </div>
-                              ) : (
-                                <img
-                                  src={blog?.avatar || "/placeholder.svg"}
-                                  alt={blog?.username}
-                                  className="w-10 h-10 rounded-full border-2 border-blue-400"
-                                />
-                              )}
-                              <div className="flex flex-col">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-white font-medium">
-                                    {blog?.firstName} {blog?.lastName}
-                                  </span>
-                                </div>
-                                <span className="text-blue-300 text-sm">
-                                  @{blog?.username}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
+      <Navbar />
+      
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <div className="backdrop-blur-xl bg-white/10 rounded-2xl p-8 md:p-12 max-w-2xl w-full border border-white/20 shadow-2xl">
+          <div className="text-center space-y-6">
+            {/* Error Icon */}
+            <div className="relative">
+              <div className="w-24 h-24 mx-auto bg-red-500/20 rounded-full flex items-center justify-center">
+                <WifiOff className="w-12 h-12 text-red-500" />
+              </div>
+              {/* <div className="absolute top-0 left-0 w-full h-full animate-ping bg-red-500 rounded-full opacity-20" /> */}
+            </div>
 
-                          {/* Blog Content */}
-                          <h2 className="text-xl md:text-2xl font-bold text-white mb-3">
-                            {blog.heading}
-                          </h2>
-                          <p className="text-blue-200 mb-4 line-clamp-3 text-sm md:text-base">
-                            <ReactMarkdown>
-                              {blog?.description
-                                .replace(/\n/g, " ")
-                                .replace(/\*\*/g, "")}
-                            </ReactMarkdown>
-                          </p>
+            {/* Error Message */}
+            <div className="space-y-2">
+              <h2 className="text-2xl md:text-3xl font-bold text-white">
+                Connection Error
+              </h2>
+              <p className="text-blue-200 max-w-md mx-auto">
+                We couldn't fetch the blogs at the moment. This might be due to a network issue or our servers might be taking a quick break.
+              </p>
+            </div>
 
-                          {/* Metadata */}
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                              <div className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4 text-blue-300" />
-                                <span className="text-blue-300 text-sm">
-                                  {formatDate(blog?.createdAt)} 2025
-                                </span>
-                              </div>
-                              {blog.isAIGenerated && (
-                                <AiGeneratedBadge className="w-6 h-6" />
-                              )}
-                            </div>
-                            <div className="flex items-center gap-4 text-blue-300 text-sm">
-                              <button className="flex items-center hover:text-blue-400 transition-colors">
-                                <ThumbsUp className="w-4 h-4 mr-1" />
-                                <span>{blog?.likeCount}</span>
-                              </button>
-                              <button className="flex items-center hover:text-blue-400 transition-colors">
-                                <MessageCircle className="w-4 h-4 mr-1" />
-                                <span>{blog?.Comments?.length}</span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="group flex cursor-pointer items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 text-white w-full sm:w-auto justify-center"
+              >
+                <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+                <span>Go Back</span>
+              </button>
 
-                        {/* Image Section */}
-                        {blog.imageUrl && (
-                          <div className="flex-shrink-0 w-full md:w-48 h-48 md:h-full overflow-hidden rounded-lg">
-                            <img
-                              src={blog?.imageUrl || "/placeholder.svg"}
-                              alt={blog.heading}
-                              className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </article>
-                  </Link>
-                ))}
+              <button
+                onClick={() => {
+                  setErrorFetching(false);
+                  setLoading(true);
+                  fetchBlogs(1);
+                }}
+                className="group flex cursor-pointer items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-lg transition-all duration-300 text-white w-full sm:w-auto justify-center"
+              >
+                <RefreshCcw className="w-5 h-5 transition-transform group-hover:rotate-180" />
+                <span>Try Again</span>
+              </button>
 
-                {/* Loading More Indicator */}
-                <div ref={ref} className="w-full flex justify-center py-4">
-                  {loadingMore && hasMore && (
-                    <div className="flex items-center gap-2 text-blue-300">
-                      <Loader2 className="w-6 h-6 animate-spin" />
-                      <span>Loading more blogs...</span>
-                    </div>
-                  )}
-                  {!hasMore && (
-                    <p className="text-blue-300">No more blogs to load</p>
-                  )}
-                </div>
-              </>
-            )}
+              <Link
+                to="/"
+                className="group flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 text-white w-full sm:w-auto justify-center"
+              >
+                <Home className="w-5 h-5 transition-transform group-hover:scale-110" />
+                <span>Home</span>
+              </Link>
+            </div>
           </div>
+
         </div>
       </div>
+
+      {/* Animated Background Lines */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute left-0 w-[120%] h-[1px] bg-gradient-to-r from-transparent via-red-500/50 to-transparent top-1/4 -translate-x-full animate-[slide_3s_linear_infinite]" />
+        <div className="absolute left-0 w-[120%] h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent bottom-1/4 -translate-x-full animate-[slide_3s_linear_infinite_0.5s]" />
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {!errorFetching ? (
+        <>
+          <Navbar />
+          <AnimatedBackground />
+          <div className="min-h-screen py-24">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
+              <div className="space-y-8">
+                {loading ? (
+                  Array.from({ length: 3 }).map((_, index) => (
+                    <BlogSkeleton key={index} />
+                  ))
+                ) : (
+                  <>
+                    {filteredBlogs.map((blog) => (
+                      <Link to={`/blog/${blog.id}`} key={blog.id}>
+                        <article className="backdrop-blur-xl bg-white/10 rounded-xl p-6 border cursor-pointer border-white/20 hover:bg-white/20 transition-all duration-300 mb-10">
+                          <div className="flex flex-col-reverse md:flex-row gap-6">
+                            {/* Content Section */}
+                            <div className="flex-grow">
+                              {/* Author Info */}
+                              <div className="flex items-center justify-between gap-3 mb-4">
+                                <div className="flex items-center gap-2">
+                                  {blog?.avatar === null || blog?.avatar === "" ? (
+                                    <div className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center text-white text-sm">
+                                      {blog.firstName[0]}
+                                      {blog.lastName[0]}
+                                    </div>
+                                  ) : (
+                                    <img
+                                      src={blog?.avatar || "/placeholder.svg"}
+                                      alt={blog?.username}
+                                      className="w-10 h-10 rounded-full border-2 border-blue-400"
+                                    />
+                                  )}
+                                  <div className="flex flex-col">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-white font-medium">
+                                        {blog?.firstName} {blog?.lastName}
+                                      </span>
+                                    </div>
+                                    <span className="text-blue-300 text-sm">
+                                      @{blog?.username}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Blog Content */}
+                              <h2 className="text-xl md:text-2xl font-bold text-white mb-3">
+                                {blog.heading}
+                              </h2>
+                              <p className="text-blue-200 mb-4 line-clamp-3 text-sm md:text-base">
+                                <ReactMarkdown>
+                                  {blog?.description
+                                    .replace(/\n/g, " ")
+                                    .replace(/\*\*/g, "")}
+                                </ReactMarkdown>
+                              </p>
+
+                              {/* Metadata */}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                  <div className="flex items-center gap-2">
+                                    <Calendar className="w-4 h-4 text-blue-300" />
+                                    <span className="text-blue-300 text-sm">
+                                      {formatDate(blog?.createdAt)} 2025
+                                    </span>
+                                  </div>
+                                  {blog.isAIGenerated && (
+                                    <AiGeneratedBadge className="w-6 h-6" />
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-4 text-blue-300 text-sm">
+                                  <button className="flex items-center hover:text-blue-400 transition-colors">
+                                    <ThumbsUp className="w-4 h-4 mr-1" />
+                                    <span>{blog?.likeCount}</span>
+                                  </button>
+                                  <button className="flex items-center hover:text-blue-400 transition-colors">
+                                    <MessageCircle className="w-4 h-4 mr-1" />
+                                    <span>{blog?.Comments?.length}</span>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Image Section */}
+                            {blog.imageUrl && (
+                              <div className="flex-shrink-0 w-full md:w-48 h-48 md:h-full overflow-hidden rounded-lg">
+                                <img
+                                  src={blog?.imageUrl || "/placeholder.svg"}
+                                  alt={blog.heading}
+                                  className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </article>
+                      </Link>
+                    ))}
+
+                    {/* Loading More Indicator */}
+                    <div ref={ref} className="w-full flex justify-center py-4">
+                      {loadingMore && hasMore && (
+                        <div className="flex items-center gap-2 text-blue-300">
+                          <Loader2 className="w-6 h-6 animate-spin" />
+                          <span>Loading more blogs...</span>
+                        </div>
+                      )}
+                      {!hasMore && (
+                        <p className="text-blue-300">No more blogs to load</p>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <ErrorFallback />
+      )}
 
       <style>{`
         @keyframes shine {

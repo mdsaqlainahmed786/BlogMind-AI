@@ -8,9 +8,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "@/stores/useUserStore";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 function LoginUser() {
   const { user } = useUserStore();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -87,6 +89,7 @@ function LoginUser() {
   };
   const handleUserLogin = async (formData: FormData) => {
     try {
+      setIsLoading(true);
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/user/login`,
         formData,
@@ -98,12 +101,27 @@ function LoginUser() {
         }
       );
       console.log("Login successful:", response.data);
+      setIsLoading(false);
       if (response.status === 200) {
         navigate("/");
       }
     } catch (error) {
       console.error("Login failed:", error);
+      setIsLoading(false);
+      toast.error("Login failed. Please check your credentials.",{
+        style: {
+          border: "1px solid red",
+          backgroundColor: "red",
+          padding: "16px",
+          color: "white",
+        },
+        iconTheme: {
+          primary: "red",
+          secondary: "white",
+        },
+      });
     }
+
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -216,11 +234,13 @@ function LoginUser() {
             </div>
 
             {/* Submit Button */}
-            <button className="relative inline-flex w-full cursor-pointer items-center justify-center px-10 py-3 overflow-hidden font-medium tracking-tighter text-white bg-gray-800 rounded-lg group transition-transform duration-150 active:scale-95">
+            <button 
+            disabled={isLoading}
+            className="relative inline-flex w-full cursor-pointer items-center justify-center px-10 py-3 overflow-hidden font-medium tracking-tighter text-white bg-gray-800 rounded-lg group transition-transform duration-150 active:scale-95">
               <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-gradient-to-r cursor-pointer from-blue-500 to-blue-600 text-white rounded-lg group-hover:w-full group-hover:h-full"></span>
               <span className="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-gray-700"></span>
               <div className="relative flex items-center space-x-2 text-white group-hover:text-white">
-                <span>Log In</span>
+                <span>{isLoading ? "Logging In...":"Login In"}</span>
                 <ArrowRight className="w-5 h-5 transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
               </div>
             </button>
@@ -229,7 +249,8 @@ function LoginUser() {
           {/* Sign In Link */}
           <p className="mt-6 text-center text-blue-200">
             Don't Have an account?{" "}
-            <button className="text-blue-400 cursor-pointer hover:text-blue-300 font-medium">
+            <button
+             className="text-blue-400 cursor-pointer hover:text-blue-300 font-medium">
               <Link
                 to="/user/register"
                 className="text-blue-400 hover:text-blue-300"
