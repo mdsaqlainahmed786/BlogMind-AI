@@ -8,7 +8,7 @@ import { AiBlogsRouter } from './AIBlogs/AiBlogs';
 import cors from 'cors';
 
 const app = express();
-
+const port = process.env.PORT || 5000;
 app.use(cors({
   origin: ["http://localhost:5173", "http://192.168.29.45:4173"],
   credentials: true
@@ -27,6 +27,6 @@ app.use("/api/v1/aiblogs", AiBlogsRouter);
 
 
 
-app.listen(5001, () => {
-  console.log("The server is listening on port 5000")
+app.listen(port, () => {
+  console.log(`The server is listening on port ${port}`);
 })
