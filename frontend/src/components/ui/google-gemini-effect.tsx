@@ -28,7 +28,7 @@ export const GoogleGeminiEffect = ({
           `Power up your writing with Gemini AI 2.0, the next generation of AI`}
       </p>
       <div className="w-full h-[890px] -top-60 md:-top-40  flex items-center justify-center bg-red-transparent absolute ">
-        <button className="font-bold bg-white rounded-full md:px-4 md:py-2 px-2 py-1 md:mt-28 mt-12 z-30 md:text-base text-black text-xs  w-fit mx-auto ">
+        <button className="font-bold bg-white rounded-full md:px-4 md:py-2 px-2 py-1 md:mt-32 mt-12 z-30 md:text-base text-black text-xs  w-fit mx-auto ">
         BlogMind AI
         </button>
       </div>
