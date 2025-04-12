@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx tsc -b && nodemon node dist/routes/index.js"
+    "dev": "npx tsc -b && nodemon dist/routes/index.js",
+    "build": "tsc",
+    "start": "node dist/routes/index.js"
   },
   "keywords": [],
   "author": "",
