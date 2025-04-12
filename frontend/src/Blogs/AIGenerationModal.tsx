@@ -23,11 +23,11 @@ export default function AIGenerationModal({
   const [heading, setHeading] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isMemberShipActive, setIsMemberShipActive] = useState(true);
+  const [error, setError] = useState(false);
   const [blogData, setBlogData] = useState({} as BlogData);
   const [canClose, setCanClose] = useState(true);
   const navigate = useNavigate();
   const { user } = useUserStore();
-
 
   useEffect(() => {
     if (isGenerating && !isComplete) {
@@ -73,11 +73,16 @@ export default function AIGenerationModal({
         setIsComplete(true);
         setIsGenerating(false);
         setCanClose(true);
+      } else if (response.status === 401) {
+        setError(true);
+        setIsGenerating(false);
+        setCanClose(true);
       }
     } catch (error) {
       console.error("Error generating blog:", error);
       setIsGenerating(false);
       setCanClose(true);
+      setError(true);
     }
   };
 
@@ -107,8 +112,7 @@ export default function AIGenerationModal({
     setProgress(0);
     setCanClose(true);
     setHeading("");
-    navigate('/blog/' + blogData.id)
-
+    navigate("/blog/" + blogData.id);
   };
 
   if (!isOpen) return null;
@@ -244,6 +248,33 @@ export default function AIGenerationModal({
           }
         }
       `}</style>
+          {error && (
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center">
+              <div className="relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 w-full max-w-md mx-4 border border-white/10 shadow-2xl">
+                {canClose && (
+                  <button
+                    onClick={onClose}
+                    className="absolute top-4 right-4 text-gray-400 cursor-pointer hover:text-white transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
+                <div className="flex justify-center items-center flex-col text-center">
+                  <h3 className="text-lg font-bold mb-4">Error</h3>
+                  <p className="mb-4">
+                    Something went wrong while generating the blog. Please try
+                    again.
+                  </p>
+                  <button
+                    onClick={onClose}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </>
       ) : (
         <>
@@ -267,9 +298,23 @@ export default function AIGenerationModal({
                   Upgrade your membership to generate blogs with AI.
                 </p>
                 <div className="flex flex-col gap-2 mb-4">
-                  <span className="text-gray-500">Your Current Membership: <span className={`${user?.MemberShipPlan === "PREMIUM" && "text-amber-400" || user?.MemberShipPlan==="STANDARD" && "text-white" || user?.MemberShipPlan==="BASIC" && "text-gray-500 "}`}>{user?.MemberShipPlan}</span></span>
-                <span className="text-gray-500">Your AI generated blogs left: <span className="text-red-500">{user?.aiBlogsLeft}</span></span>
-
+                  <span className="text-gray-500">
+                    Your Current Membership:{" "}
+                    <span
+                      className={`${
+                        (user?.MemberShipPlan === "PREMIUM" &&
+                          "text-amber-400") ||
+                        (user?.MemberShipPlan === "STANDARD" && "text-white") ||
+                        (user?.MemberShipPlan === "BASIC" && "text-gray-500 ")
+                      }`}
+                    >
+                      {user?.MemberShipPlan}
+                    </span>
+                  </span>
+                  <span className="text-gray-500">
+                    Your AI generated blogs left:{" "}
+                    <span className="text-red-500">{user?.aiBlogsLeft}</span>
+                  </span>
                 </div>
                 <button
                   onClick={() => navigate("/user/membership")}

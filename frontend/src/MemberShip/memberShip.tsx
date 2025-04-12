@@ -193,19 +193,34 @@ function Membership() {
       const razorpayInstance = new (window).Razorpay(options);
       razorpayInstance.open();
     } catch (error) {
-      console.error("Error initiating payment:", error);
-      toast.error("Could not initiate payment. Please try again.", {
-        style: {
-          border: "1px solid red",
-          backgroundColor: "red",
-          padding: "16px",
-          color: "white",
-        },
-        iconTheme: {
-          primary: "red",
-          secondary: "white",
-        },
-      });
+      if (axios.isAxiosError(error) && error.response?.status === 429) {
+        toast.error("No Spamming Buddy, You are blocked for a while", {
+          style: {
+            border: "1px solid red",
+            backgroundColor: "red",
+            padding: "16px",
+            color: "white",
+          },
+          iconTheme: {
+            primary: "red",
+            secondary: "white",
+          },
+        });
+      } else {
+        console.error("Error creating order", error);
+        toast.error("Failed to create order. Please try again.", {
+          style: {
+            border: "1px solid red",
+            backgroundColor: "red",
+            padding: "16px",
+            color: "white",
+          },
+          iconTheme: {
+            primary: "red",
+            secondary: "white",
+          },
+        });
+      }
     } finally {
       setLoading(false);
     }

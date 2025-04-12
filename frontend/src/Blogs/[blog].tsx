@@ -24,6 +24,8 @@ import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import { AiGeneratedBadge } from "./allBlogs";
 import { useUserStore } from "@/stores/useUserStore";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
 
 interface Author {
   id: string;
@@ -266,19 +268,34 @@ function Blog() {
         },
       });
     } catch (error) {
-      console.error("Error submitting comment:", error);
-      toast.error("Error submitting comment", {
-        style: {
-          border: "1px solid red",
-          backgroundColor: "red",
-          padding: "16px",
-          color: "white",
-        },
-        iconTheme: {
-          primary: "red",
-          secondary: "white",
-        },
-      });
+      if (axios.isAxiosError(error) && error.response?.status === 429) {
+        toast.error("No Spamming Buddy, You are blocked for a while", {
+          style: {
+            border: "1px solid red",
+            backgroundColor: "red",
+            padding: "16px",
+            color: "white",
+          },
+          iconTheme: {
+            primary: "red",
+            secondary: "white",
+          },
+        });
+      } else {
+        console.error("Error submitting comment:", error);
+        toast.error("Error submitting comment", {
+          style: {
+            border: "1px solid red",
+            backgroundColor: "red",
+            padding: "16px",
+            color: "white",
+          },
+          iconTheme: {
+            primary: "red",
+            secondary: "white",
+          },
+        });
+      }
     }
   };
 
@@ -436,6 +453,7 @@ function Blog() {
           },
         }
       );
+  
       if (response.status === 200) {
         getLikesOfBlog();
         if (response.data.message === "Blog liked") {
@@ -469,10 +487,37 @@ function Blog() {
         }
       }
     } catch (error) {
-      console.error("Error toggling like:", error);
+      if (axios.isAxiosError(error) && error.response?.status === 429) {
+        toast.error("No Spamming Buddy, You are blocked for a while", {
+          style: {
+            border: "1px solid red",
+            backgroundColor: "red",
+            padding: "16px",
+            color: "white",
+          },
+          iconTheme: {
+            primary: "red",
+            secondary: "white",
+          },
+        });
+      } else {
+        console.error("Error toggling like:", error);
+        toast.error("Error toggling like", {
+          style: {
+            border: "1px solid red",
+            backgroundColor: "red",
+            padding: "16px",
+            color: "white",
+          },
+          iconTheme: {
+            primary: "red",
+            secondary: "white",
+          },
+        });
+      }
     }
   };
-
+  
   return (
     <>
       {!errorFetching ? (
@@ -750,18 +795,21 @@ function Blog() {
                     <h3 className="text-2xl font-semibold">
                       Comments({comments.length})
                     </h3>
-                    <div className="flex space-x-4 mt-4">
+                    <div className="flex space-x-1 mt-4">
                       {user?.avatar === null || user?.avatar === "" ? (
                         <div className="w-12 h-10 rounded-full border-2 border-white bg-gradient-to-r from-blue-400 to-blue-500 flex items-center justify-center text-white text-sm">
                           {user?.firstName[0]}
                           {user?.lastName[0]}
                         </div>
                       ) : (
-                        <img
-                          src={user?.avatar || "/placeholder.svg"}
-                          alt={user?.username}
-                          className="w-16 h-10 rounded-full border-2 border-blue-400"
-                        />
+                        <Avatar>
+                        <AvatarImage className="border-2 border-blue-400 rounded-full" src={user?.avatar} />
+                        <AvatarFallback>
+                        {user?.firstName[0]}
+                        {user?.lastName[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                      
                       )}
 
                       <input
