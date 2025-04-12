@@ -184,9 +184,9 @@ export default function LandingPage() {
           </h2>
           <NeonCardDemo info={info} />
         </section>
-        <section className="pt-32">
+        <section className="pt-72 md:pt-36">
           <div
-            className="h-[70vh] md:h-[150vh] w-full rounded-md relative pt-40 overflow-clip"
+            className="h-[1000px] md:h-[150vh] w-full rounded-md relative pt-40 overflow-clip"
             ref={ref}
           >
             <GoogleGeminiEffect
@@ -202,7 +202,7 @@ export default function LandingPage() {
         </section>
         <section
           id="features"
-          className="pt-40 container mx-auto px-6 md:pb-20 md:-mt-36 md:pt-0"
+          className="container mx-auto px-6 md:pb-20 -mt-96 md:pt-28"
         >
           <h2 className="text-4xl font-bold text-center mb-16 text-white">
             What Our Users Say
