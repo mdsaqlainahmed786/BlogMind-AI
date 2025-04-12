@@ -131,7 +131,7 @@ export default function LandingPage() {
         ))}
       </div>
       <main>
-        <section className="container mx-auto px-6 pt-64 pb-48 text-center">
+        <section className="container mx-auto px-6 pt-48 pb-48 md:pt-60 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-8 text-white">
             Transform Your Ideas into Engaging Content <br /> at <Cover>warp speed</Cover>
           </h1>
