@@ -27,6 +27,6 @@ app.use("/api/v1/aiblogs", AiBlogsRouter);
 
 
 
-app.listen(3000, () => {
-  console.log('Server running on port 3000');
-});
+app.listen(5001, () => {
+  console.log("The server is listening on port 5000")
+})
