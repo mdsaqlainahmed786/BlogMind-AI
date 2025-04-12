@@ -10,7 +10,7 @@ import cors from 'cors';
 const app = express();
 const port = process.env.PORT || 5000;
 app.use(cors({
-  origin: ["http://localhost:5173", "http://192.168.29.45:4173", "https://blog-mind-ai.vercel.app/"],
+  origin: ["http://localhost:5173", "http://192.168.29.45:4173", "https://blog-mind-ai.vercel.app"],
   credentials: true
 }));
 app.use(cookieParser());
