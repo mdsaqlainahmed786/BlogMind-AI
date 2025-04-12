@@ -124,19 +124,19 @@ function OtpVerification() {
           </p>
         </div>
 
-        <div className="bg-[#1a1f36]/40 backdrop-blur-xl rounded-2xl p-8 shadow-2xl">
+        <div className="bg-[#1a1f36]/40 backdrop-blur-xl rounded-2xl p-8 px-10 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
-              <label className="block text-gray-300 text-xl font-medium mb-2">
+              <label className="block text-gray-300 text-xl text-center font-medium mb-2">
                 Verification Code
               </label>
-              <div className="flex items-center justify-center">
+              <div className="flex items-center pt-2 justify-center">
                 <InputOTP
                   value={otp}
                   onChange={handleOtpChange}
                   maxLength={6}
                   autoFocus
-                  className={error ? "otp-error" : ""}
+                  className={`${error ? "otp-error" : "" }`}
                 >
                   <InputOTPGroup>
                     <InputOTPSlot

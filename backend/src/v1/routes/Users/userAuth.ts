@@ -95,7 +95,11 @@ userAuth.post('/register', async (req: Request, res: Response) => {
         });
 
         const temporaryToken = jwt.sign({ id: user.id, isVerified: false }, process.env.JWT_SECRET as string, { expiresIn: '10m' });
-        res.cookie("Temptoken", temporaryToken);
+        res.cookie("Temptoken", temporaryToken,{
+            secure: true,
+            sameSite: 'none',
+            maxAge: 1000 * 60 * 60 * 24 * 7
+        });
         res.json({ message: "The otp is sent successfully!", otp });
         setTimeout(async () => {
             const unverifiedUser = await prisma.user.findUnique({ where: { id: user.id } });
@@ -137,7 +141,11 @@ userAuth.post('/verify', verifyUserRateLimiter, async (req, res) => {
         await prisma.user.update({ where: { id: user.id }, data: { otp: null } });
         res.clearCookie("Temptoken");
         const accessToken = jwt.sign({ id: user.id, isVerified: true }, process.env.JWT_SECRET as string, { expiresIn: '10h' });
-        res.cookie("AuthToken", accessToken);
+        res.cookie("AuthToken", accessToken, {
+            secure: true,
+            sameSite: 'none',
+            maxAge: 1000 * 60 * 60 * 24 * 7
+        });
         const userMembership = await prisma.membership.findUnique({
             where: { userId: user.id }
         });
@@ -183,9 +191,10 @@ userAuth.post('/login', async (req, res) => {
             return
         }
         const sessionToken = jwt.sign({ id: user.id, isVerified: user.isVerified }, process.env.JWT_SECRET as string, { expiresIn: '10h' });
-        res.cookie("AuthToken", sessionToken, {
+        res.cookie("AuthToken", sessionToken,  {
             secure: true,
             sameSite: 'none',
+            maxAge: 1000 * 60 * 60 * 24 * 7
         });
         res.json({ sessionToken, message: "User logged in successfully" });
         return

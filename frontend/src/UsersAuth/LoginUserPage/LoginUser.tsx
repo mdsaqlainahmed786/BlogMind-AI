@@ -65,7 +65,6 @@ function LoginUser() {
     }
   };
 
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -77,7 +76,6 @@ function LoginUser() {
       }));
     }
   };
-
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -108,7 +106,7 @@ function LoginUser() {
     } catch (error) {
       console.error("Login failed:", error);
       setIsLoading(false);
-      toast.error("Login failed. Please check your credentials.",{
+      toast.error("Login failed. Please check your credentials.", {
         style: {
           border: "1px solid red",
           backgroundColor: "red",
@@ -121,7 +119,6 @@ function LoginUser() {
         },
       });
     }
-
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -190,7 +187,7 @@ function LoginUser() {
                   value={formData.email}
                 />
                 {touched.email && errors.email && (
-                  <p className="mt-1 text-sm text-red-400">{errors.email}</p>
+                  <p className="mt-1 text-xs text-red-400">{errors.email}</p>
                 )}
               </div>
             </div>
@@ -206,7 +203,7 @@ function LoginUser() {
                   }`}
                 />
                 <input
-                 type={showPassword ? "text" : "password"}
+                  type={showPassword ? "text" : "password"}
                   className={getInputClassName("password")}
                   placeholder="••••••••"
                   value={formData.password}
@@ -228,20 +225,47 @@ function LoginUser() {
                   )}
                 </button>
                 {touched.password && errors.password && (
-                  <p className="mt-1 text-sm text-red-400">{errors.password}</p>
+                  <p className="mt-1 text-xs text-red-400">{errors.password}</p>
                 )}
               </div>
             </div>
 
             {/* Submit Button */}
-            <button 
-            disabled={isLoading}
-            className="relative inline-flex w-full cursor-pointer items-center justify-center px-10 py-3 overflow-hidden font-medium tracking-tighter text-white bg-gray-800 rounded-lg group transition-transform duration-150 active:scale-95">
+            <button
+              disabled={isLoading}
+              className="relative inline-flex w-full cursor-pointer items-center justify-center px-10 py-3 overflow-hidden font-medium tracking-tighter text-white bg-gray-800 rounded-lg group transition-transform duration-150 active:scale-95"
+            >
               <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-gradient-to-r cursor-pointer from-blue-500 to-blue-600 text-white rounded-lg group-hover:w-full group-hover:h-full"></span>
               <span className="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-gray-700"></span>
               <div className="relative flex items-center space-x-2 text-white group-hover:text-white">
-                <span>{isLoading ? "Logging In...":"Login In"}</span>
-                <ArrowRight className="w-5 h-5 transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
+                {isLoading ? (
+                  <div className="flex items-center space-x-2">
+                    <svg
+                      className="animate-spin h-5 w-5 text-white"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+                      ></path>
+                    </svg>
+                    <span>Logging In...</span>
+                  </div>
+                ) : (
+                  <div className="relative flex items-center space-x-2 text-white group-hover:text-white">
+                    <span>LogIn</span>
+                    <ArrowRight className="w-5 h-5 transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
+                  </div>
+                )}
               </div>
             </button>
           </form>
@@ -249,8 +273,7 @@ function LoginUser() {
           {/* Sign In Link */}
           <p className="mt-6 text-center text-blue-200">
             Don't Have an account?{" "}
-            <button
-             className="text-blue-400 cursor-pointer hover:text-blue-300 font-medium">
+            <button className="text-blue-400 cursor-pointer hover:text-blue-300 font-medium">
               <Link
                 to="/user/register"
                 className="text-blue-400 hover:text-blue-300"

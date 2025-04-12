@@ -131,7 +131,7 @@ export default function LandingPage() {
         ))}
       </div>
       <main>
-        <section className="container mx-auto px-6 pt-48 pb-48 md:pt-60 text-center">
+        <section className="container mx-auto px-6 pt-38 pb-40 md:pt-60 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-8 text-white">
             Transform Your Ideas into Engaging Content <br /> at <Cover>warp speed</Cover>
           </h1>
@@ -204,7 +204,7 @@ export default function LandingPage() {
           id="features"
           className="container mx-auto px-6 md:pb-20 -mt-96 md:pt-28"
         >
-          <h2 className="text-4xl font-bold text-center mb-16 text-white">
+          <h2 className="text-3xl font-bold text-center mb-16 text-white">
             What Our Users Say
           </h2>
           <TestimonialsCarousel />

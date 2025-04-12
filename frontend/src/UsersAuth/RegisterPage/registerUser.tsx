@@ -91,8 +91,6 @@ function RegisterUser() {
       }
     } catch (error) {
       console.error("Error registering user:", error);
-    } finally {
-      setLoading(false); // Stop loading
       toast.error("Registration failed. Please try again.",{
         style: {
           border: "1px solid red",
@@ -105,6 +103,8 @@ function RegisterUser() {
           secondary: "white",
         },
       });
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -243,7 +243,7 @@ function RegisterUser() {
   };
 
   const getInputClassName = (fieldName: keyof ValidationErrors) => `
-    w-full border rounded-lg py-3 px-12 text-white placeholder-blue-300 
+    w-full border rounded-lg py-3 pl-12 text-white placeholder-blue-300 
     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
     ${
       touched[fieldName] && errors[fieldName]
@@ -342,7 +342,7 @@ function RegisterUser() {
                     onBlur={handleBlur}
                   />
                   {touched.firstName && errors.firstName && (
-                    <p className="mt-1 text-sm text-red-400">
+                    <p className="mt-1 text-xs text-red-400">
                       {errors.firstName}
                     </p>
                   )}
@@ -369,7 +369,7 @@ function RegisterUser() {
                     onBlur={handleBlur}
                   />
                   {touched.lastName && errors.lastName && (
-                    <p className="mt-1 text-sm text-red-400">
+                    <p className="mt-1 text-xs text-red-400">
                       {errors.lastName}
                     </p>
                   )}
@@ -397,7 +397,7 @@ function RegisterUser() {
                   onBlur={handleBlur}
                 />
                 {touched.username && errors.username && (
-                  <p className="mt-1 text-sm text-red-400">{errors.username}</p>
+                  <p className="mt-1 text-xs text-red-400">{errors.username}</p>
                 )}
               </div>
             </div>
@@ -422,7 +422,7 @@ function RegisterUser() {
                   onBlur={handleBlur}
                 />
                 {touched.email && errors.email && (
-                  <p className="mt-1 text-sm text-red-400">{errors.email}</p>
+                  <p className="mt-1 text-xs text-red-400">{errors.email}</p>
                 )}
               </div>
             </div>
@@ -460,7 +460,7 @@ function RegisterUser() {
                   )}
                 </button>
                 {touched.password && errors.password && (
-                  <p className="mt-1 text-sm text-red-400">{errors.password}</p>
+                  <p className="mt-1 text-xs text-red-400">{errors.password}</p>
                 )}
               </div>
             </div>

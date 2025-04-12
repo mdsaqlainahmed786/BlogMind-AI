@@ -6,13 +6,11 @@ import {
   Sparkles,
   Bold,
   Italic,
-  LinkIcon,
   List,
   Quote,
   Code,
   Heading1,
   Heading2,
-  ListOrdered,
   Eye,
   Edit3,
 } from "lucide-react"
@@ -113,14 +111,8 @@ function CreateBlog() {
       case "italic":
         insertion = "_"
         break
-      case "link":
-        insertion = "[](url)"
-        break
       case "bullet":
         insertion = "* "
-        break
-      case "number":
-        insertion = "1. "
         break
       case "quote":
         insertion = "> "
@@ -239,7 +231,7 @@ function CreateBlog() {
       <AnimatedBackground />
       <div className="pt-24 pb-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="backdrop-blur-xl bg-white/10 rounded-2xl p-6 md:p-8 shadow-2xl border border-white/20">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-8 space-x-3">
             <h1 className="text-2xl md:text-3xl font-bold text-white">Create Blog</h1>
             <button
               onClick={handleCreateWithAI}
@@ -250,7 +242,7 @@ function CreateBlog() {
               }}
             >
               <Sparkles className="w-5 h-5 animate-pulse" />
-              <span>Create with AI</span>
+              <span className="text-sm">Create with AI</span>
             </button>
           </div>
 
@@ -341,19 +333,18 @@ function CreateBlog() {
                     <div className="flex items-center gap-1">
                       <ToolbarButton icon={Heading1} title="Heading 1" format="h1" />
                       <ToolbarButton icon={Heading2} title="Heading 2" format="h2" />
+                      <ToolbarButton icon={Code} title="Code" format="code" />
                     </div>
                     <div className="w-px h-6 bg-white/20 mx-1" />
                     <div className="flex items-center gap-1">
                       <ToolbarButton icon={Bold} title="Bold" format="bold" />
                       <ToolbarButton icon={Italic} title="Italic" format="italic" />
-                      <ToolbarButton icon={LinkIcon} title="Link" format="link" />
                     </div>
                     <div className="w-px h-6 bg-white/20 mx-1" />
                     <div className="flex items-center gap-1">
                       <ToolbarButton icon={List} title="Bullet List" format="bullet" />
-                      <ToolbarButton icon={ListOrdered} title="Numbered List" format="number" />
                       <ToolbarButton icon={Quote} title="Quote" format="quote" />
-                      <ToolbarButton icon={Code} title="Code" format="code" />
+                   
                     </div>
                   </div>
                   <textarea

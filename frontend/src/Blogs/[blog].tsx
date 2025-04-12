@@ -526,7 +526,7 @@ function Blog() {
                     </div>
                   </div>
 
-                  <div className="px-6 py-4 border-t md:hidden border-gray-700/50 flex items-center justify-between">
+                  <div className="px-2 py-4 border-t md:hidden border-gray-700/50 flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <button
                         onClick={likeHandler}
@@ -548,7 +548,7 @@ function Blog() {
                       </button>
                       <div className="flex items-center space-x-2 text-gray-200">
                         <Calendar className="w-4 h-4" />
-                        <span className="text-sm">
+                        <span className="text-xs">
                           {blog?.createdAt
                             ? format(new Date(blog.createdAt), "MMM dd, yyyy")
                             : "Date not available"}
@@ -760,7 +760,7 @@ function Blog() {
                         <img
                           src={user?.avatar || "/placeholder.svg"}
                           alt={user?.username}
-                          className="w-12 h-10 rounded-full border-2 border-blue-400"
+                          className="w-16 h-10 rounded-full border-2 border-blue-400"
                         />
                       )}
 
