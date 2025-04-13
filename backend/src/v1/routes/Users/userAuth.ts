@@ -205,7 +205,11 @@ userAuth.post('/login', async (req, res) => {
     }
 });
 userAuth.get('/logout', async (req, res) => {
-    res.clearCookie("AuthToken");
+    res.clearCookie("AuthToken",{
+        secure: true,        // Same as when the cookie was set
+        sameSite: 'none',    // Same as when the cookie was set
+        path: '/',   
+    });
     res.json({ message: "User logged out successfully" });
     return
 });
