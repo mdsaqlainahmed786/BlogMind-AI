@@ -18,14 +18,14 @@ import {
   Home,
   ArrowLeft,
   WifiOff,
+  Calendar1,
 } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import { AiGeneratedBadge } from "./allBlogs";
 import { useUserStore } from "@/stores/useUserStore";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface Author {
   id: string;
@@ -453,7 +453,7 @@ function Blog() {
           },
         }
       );
-  
+
       if (response.status === 200) {
         getLikesOfBlog();
         if (response.data.message === "Blog liked") {
@@ -517,7 +517,7 @@ function Blog() {
       }
     }
   };
-  
+
   return (
     <>
       {!errorFetching ? (
@@ -803,13 +803,15 @@ function Blog() {
                         </div>
                       ) : (
                         <Avatar>
-                        <AvatarImage className="border-2 border-blue-400 rounded-full" src={user?.avatar} />
-                        <AvatarFallback>
-                        {user?.firstName[0]}
-                        {user?.lastName[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      
+                          <AvatarImage
+                            className="border-2 border-blue-400 rounded-full"
+                            src={user?.avatar}
+                          />
+                          <AvatarFallback>
+                            {user?.firstName[0]}
+                            {user?.lastName[0]}
+                          </AvatarFallback>
+                        </Avatar>
                       )}
 
                       <input
@@ -860,30 +862,22 @@ function Blog() {
                               />
                             )}
                             <div className="flex flex-col">
-                              <span className="font-semibold">
-                                {comment?.user?.firstName}{" "}
-                                {comment?.user?.lastName}
-                              </span>
-                              <span className="text-sm text-gray-400">
-                                {format(
-                                  new Date(comment?.createdAt),
-                                  "MMM dd, yyyy"
-                                )}
-                              </span>
+                              <div className="flex space-x-3 items-center">
+                                <span className="font-semibold">
+                                  {comment?.user?.firstName}{" "}
+                                  {comment?.user?.lastName}
+                                </span>
+                                <span className="text-sm text-gray-400">
+                                  {format(
+                                    new Date(comment?.createdAt),
+                                    "MMM dd, yyyy"
+                                  )}
+                                </span>
+                              </div>
+                              <p className="text-gray-200">
+                                {comment?.comment}
+                              </p>
                             </div>
-                          </div>
-                          <p className="mt-2 text-gray-200">
-                            {comment?.comment}
-                          </p>
-                          <div className="flex mt-5 items-center space-x-6">
-                            <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
-                              <ThumbsUp className="w-5 h-5" />
-                              <span>10</span>
-                            </button>
-                            <button className="flex items-center space-x-2 text-gray-200 cursor-pointer hover:text-blue-600 transition-colors">
-                              <ThumbsDown className="w-5 h-5" />
-                              <span>2</span>
-                            </button>
                           </div>
                         </div>
                       ))}
@@ -896,7 +890,7 @@ function Blog() {
         </>
       ) : (
         <>
-        <Navbar />
+          <Navbar />
           <ErrorFallback />
         </>
       )}
