@@ -81,6 +81,10 @@ function Blog() {
     commentsRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  useEffect(()=>{
+    if(!user) navigate('/user/login')
+  },[user])
+
   const handleShareCopyToClipboard = () => {
     const url = window.location.href;
     navigator.clipboard.writeText(url).then(() => {
