@@ -10,7 +10,6 @@ import {
   Share2,
   ThumbsUp,
   Calendar,
-  ThumbsDown,
   SendHorizonal,
   Edit2,
   Trash,
@@ -18,7 +17,6 @@ import {
   Home,
   ArrowLeft,
   WifiOff,
-  Calendar1,
 } from "lucide-react";
 import Navbar from "@/landingPage/NavBar";
 import axios from "axios";
