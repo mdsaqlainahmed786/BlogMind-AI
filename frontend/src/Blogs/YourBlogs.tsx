@@ -194,6 +194,11 @@ function YourBlogs() {
 
           {/* Blog List */}
           <div className="space-y-8">
+            {filteredBlogs.length === 0 && (
+              <div className="text-center text-blue-200 text-lg">
+              You have not created any blogs yet.
+              </div>
+            )}
             {filteredBlogs.map((blog) => (
               <Link to={`/blog/${blog.id}`} key={blog.id}>
                 <article
